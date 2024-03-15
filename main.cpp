@@ -82,10 +82,16 @@ void moveF(char* cube) {
 		cube[i + 9] = tempUp[j];
 		cube[i + 29] = tempDown[j];
 	}
-	for (int i = 0; i < 3; i++) {
-		cube[i + 42] = tempLeft[i];
-		cube[i + 45] = tempRight[i];
-	}
+	// for (int i = 0; i < 3; i++) {
+	// 	cube[i + 42] = tempLeft[i];
+	// 	cube[i + 45] = tempRight[i];
+	// }
+	cube[42] = tempLeft[2];
+	cube[43] = tempLeft[1];
+	cube[44] = tempLeft[0];
+	cube[45] = tempRight[2];
+	cube[46] = tempRight[1];
+	cube[47] = tempRight[0];
 }
 
 void moveU(char* cube) {
@@ -192,6 +198,8 @@ int main(int argc, char* av[]) {
 		string scramble = av[1];
         vector<string> moves = splitString(scramble);
 		for (const string& move : moves) {
+			// printCube(cube);
+			// cout << "applied move" << endl;
             applyMove(cube, move);
         }
 	}

@@ -159,6 +159,25 @@ bool dfs(char* cube, int depth, int maxDepth, vector<string>& solution) {
 	return false;
 }
 
+vector<string> splitString(const string& str, char delimiter = ' ') {
+    vector<string> tokens;
+    stringstream ss(str);
+    string token;
+    while (getline(ss, token, delimiter)) {
+        if (!token.empty()) {
+            tokens.push_back(token);
+        }
+    }
+    return tokens;
+}
+
+void applyMove(char* cube, const string& moveStr) {
+    if (moveStr == "U") moveU(cube);
+    else if (moveStr == "U'") moveUPrime(cube);
+    else if (moveStr == "F") moveF(cube);
+    else if (moveStr == "F'") moveFPrime(cube);
+}
+
 int main(int argc, char* av[]) {
     char cube[54] = {
         'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', // 0,  1,  2,  3   4,  5,  6,  7,  8		FRONT
@@ -169,17 +188,21 @@ int main(int argc, char* av[]) {
         'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'	//  45, 46, 47, 48, 49, 50, 51, 52, 53		DOWN
     };
 	
-	// printCube(cube);
+	if (argc > 1) {
+		string scramble = av[1];
+        vector<string> moves = splitString(scramble);
+		for (const string& move : moves) {
+            applyMove(cube, move);
+        }
+	}
+	printCube(cube);
 	// moveU(cube);
 	// printCube(cube);
 	std::vector <string> solution;
-	moveF(cube);
-	moveU(cube);
-	moveU(cube);
 	for (int i = 1; i < MAX_DEPTH; i++) {
 		if (dfs(cube, 0, i, solution))
 			break;
 	}
-	printCube(cube);
+	// printCube(cube);
     return 0;
 }

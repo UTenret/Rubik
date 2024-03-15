@@ -159,7 +159,7 @@ bool dfs(char* cube, int depth, int maxDepth, vector<string>& solution) {
 	return false;
 }
 
-int main(int argc, string* av[]) {
+int main(int argc, char* av[]) {
     char cube[54] = {
         'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', // 0,  1,  2,  3   4,  5,  6,  7,  8		FRONT
         'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', // 9,  10, 11, 12, 13, 14, 15, 16, 17		RIGHT

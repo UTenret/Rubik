@@ -27,15 +27,106 @@ class Cell {
 	Cell(int color) : _color(color) {}
 };
 
+
 void printCube(char* cube) {
-	cout << "|||PRINTING CUBE|||" << endl;
-	for (int i = 0; i < 54; i++) {
-        std::cout << cube[i];
-        if ((i + 1) % 3 == 0) 
-            std::cout << std::endl;
-        if ((i + 1) % 9 == 0) 
-            std::cout << std::endl;
-    }
+    cout << "|||PRINTING CUBE|||" << endl;
+    cout << endl;
+    
+    for (int i = 0; i < 9; i++) {
+		char color = cube[i];
+		switch (color) {
+			case 'W':
+				cout << "\033[97m" << color << "\033[0m"; // White
+				break;
+			case 'Y':
+				cout << "\033[93m" << color << "\033[0m"; // Yellow
+				break;
+			case 'R':
+				cout << "\033[91m" << color << "\033[0m"; // Red
+				break;
+			case 'O':
+				cout << "\033[95m" << color << "\033[0m"; // Orange
+				break;
+			case 'G':
+				cout << "\033[92m" << color << "\033[0m"; // Green
+				break;
+			case 'B':
+				cout << "\033[94m" << color << "\033[0m"; // Blue
+				break;
+			default:
+				cout << color;
+		}
+        if ((i + 1) % 3 == 0)
+            cout << endl;
+        if ((i + 1) % 9 == 0)
+            cout << endl;
+	}
+	for (int i = 9; i < 45; i++) {
+		char color = cube[i];
+		switch (color) {
+			case 'W':
+				cout << "\033[97m" << color << "\033[0m"; // White
+				break;
+			case 'Y':
+				cout << "\033[93m" << color << "\033[0m"; // Yellow
+				break;
+			case 'R':
+				cout << "\033[91m" << color << "\033[0m"; // Red
+				break;
+			case 'O':
+				cout << "\033[95m" << color << "\033[0m"; // Orange
+				break;
+			case 'G':
+				cout << "\033[92m" << color << "\033[0m"; // Green
+				break;
+			case 'B':
+				cout << "\033[94m" << color << "\033[0m"; // Blue
+				break;
+			default:
+				cout << color;
+		}
+		if (i == 38 || i == 41) {
+			cout << endl;
+			i = i - 27;
+		}
+		else if (i == 44) {
+			cout << endl << endl;
+			break;
+		}
+		else if ((i + 1) % 3 == 0) {
+            cout << " ";
+			i = i + 6;
+		}
+	}
+	for (int i = 45; i < 54; i++) {
+		char color = cube[i];
+		switch (color) {
+			case 'W':
+				cout << "\033[97m" << color << "\033[0m"; // White
+				break;
+			case 'Y':
+				cout << "\033[93m" << color << "\033[0m"; // Yellow
+				break;
+			case 'R':
+				cout << "\033[91m" << color << "\033[0m"; // Red
+				break;
+			case 'O':
+				cout << "\033[95m" << color << "\033[0m"; // Orange
+				break;
+			case 'G':
+				cout << "\033[92m" << color << "\033[0m"; // Green
+				break;
+			case 'B':
+				cout << "\033[94m" << color << "\033[0m"; // Blue
+				break;
+			default:
+				cout << color;
+		}
+        if ((i + 1) % 3 == 0)
+            cout << endl;
+        if ((i + 1) % 9 == 0)
+            cout << endl;
+	}
 }
 
 bool isSolved(char* cube) {
@@ -195,9 +286,9 @@ int main(int argc, char* av[]) {
             applyMove(cube, move);
         }
 	}
-	printCube(cube);
-	// moveU(cube);
 	// printCube(cube);
+	moveU(cube);
+	printCube(cube);
 	std::vector <string> solution;
 	for (int i = 1; i < MAX_DEPTH; i++) {
 		if (dfs(cube, 0, i, solution))

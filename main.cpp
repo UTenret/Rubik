@@ -48,13 +48,19 @@ void moveU(char* cube) {
 	for (int i = 0; i < 9; i++) {
 		cube[i + 45] = tempU[i];						//ROTATE THE UP
 	}
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {						// rotate the top row
 		cube[i] = tempRight[i];
 		cube[i + 9] = tempBack[i];
 		cube[i + 18] = tempLeft[i];
 		cube[i + 27] = tempFront[i];
 	}
 
+}
+
+void moveUPrime(char* cube) {
+	moveU(cube);
+	moveU(cube);
+	moveU(cube);
 }
 
 int main() {
@@ -68,6 +74,8 @@ int main() {
     };
 	printCube(cube);
 	moveU(cube);
+	printCube(cube);
+	moveUPrime(cube);
 	printCube(cube);
     return 0;
 }

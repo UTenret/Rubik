@@ -28,106 +28,72 @@ class Cell {
 };
 
 
+// Helper function to colorize output
+string colorize(char color) {
+    switch (color) {
+        case 'W': return "\033[97mW\033[0m"; // White
+        case 'Y': return "\033[93mY\033[0m"; // Yellow
+        case 'R': return "\033[91mR\033[0m"; // Red
+        case 'O': return "\033[95mO\033[0m"; // Orange
+        case 'G': return "\033[92mG\033[0m"; // Green
+        case 'B': return "\033[94mB\033[0m"; // Blue
+        default: return string(1, color);
+    }
+}
+
 void printCube(char* cube) {
     cout << "|||PRINTING CUBE|||" << endl;
     cout << endl;
     
-    for (int i = 0; i < 9; i++) {
-		char color = cube[i];
-		switch (color) {
-			case 'W':
-				cout << "\033[97m" << color << "\033[0m"; // White
-				break;
-			case 'Y':
-				cout << "\033[93m" << color << "\033[0m"; // Yellow
-				break;
-			case 'R':
-				cout << "\033[91m" << color << "\033[0m"; // Red
-				break;
-			case 'O':
-				cout << "\033[95m" << color << "\033[0m"; // Orange
-				break;
-			case 'G':
-				cout << "\033[92m" << color << "\033[0m"; // Green
-				break;
-			case 'B':
-				cout << "\033[94m" << color << "\033[0m"; // Blue
-				break;
-			default:
-				cout << color;
-		}
-        if ((i + 1) % 3 == 0)
-            cout << endl;
-        if ((i + 1) % 9 == 0)
-            cout << endl;
-	}
-	for (int i = 9; i < 45; i++) {
-		char color = cube[i];
-		switch (color) {
-			case 'W':
-				cout << "\033[97m" << color << "\033[0m"; // White
-				break;
-			case 'Y':
-				cout << "\033[93m" << color << "\033[0m"; // Yellow
-				break;
-			case 'R':
-				cout << "\033[91m" << color << "\033[0m"; // Red
-				break;
-			case 'O':
-				cout << "\033[95m" << color << "\033[0m"; // Orange
-				break;
-			case 'G':
-				cout << "\033[92m" << color << "\033[0m"; // Green
-				break;
-			case 'B':
-				cout << "\033[94m" << color << "\033[0m"; // Blue
-				break;
-			default:
-				cout << color;
-		}
-		if (i == 38 || i == 41) {
-			cout << endl;
-			i = i - 27;
-		}
-		else if (i == 44) {
-			cout << endl << endl;
-			break;
-		}
-		else if ((i + 1) % 3 == 0) {
-            cout << " ";
-			i = i + 6;
-		}
-	}
-	for (int i = 45; i < 54; i++) {
-		char color = cube[i];
-		switch (color) {
-			case 'W':
-				cout << "\033[97m" << color << "\033[0m"; // White
-				break;
-			case 'Y':
-				cout << "\033[93m" << color << "\033[0m"; // Yellow
-				break;
-			case 'R':
-				cout << "\033[91m" << color << "\033[0m"; // Red
-				break;
-			case 'O':
-				cout << "\033[95m" << color << "\033[0m"; // Orange
-				break;
-			case 'G':
-				cout << "\033[92m" << color << "\033[0m"; // Green
-				break;
-			case 'B':
-				cout << "\033[94m" << color << "\033[0m"; // Blue
-				break;
-			default:
-				cout << color;
-		}
-        if ((i + 1) % 3 == 0)
-            cout << endl;
-        if ((i + 1) % 9 == 0)
-            cout << endl;
-	}
+    // Print U
+    for (int i = 36; i < 45; i++) {
+        cout << colorize(cube[i]);
+        if ((i + 1) % 3 == 0) cout << endl;
+    }
+    cout << endl;
+
+    // Print LFR
+    for (int row = 0; row < 3; row++) {
+        // Print L
+        for (int i = 27 + row * 3; i < 30 + row * 3; i++) {
+            cout << colorize(cube[i]);
+        }
+        cout << " ";
+        // Print F
+        for (int i = 0 + row * 3; i < 3 + row * 3; i++) {
+            cout << colorize(cube[i]);
+        }
+        cout << " ";
+        // Print R
+        for (int i = 9 + row * 3; i < 12 + row * 3; i++) {
+            cout << colorize(cube[i]);
+        }
+        cout << endl;
+    }
+    cout << endl;
+
+    // Print D
+    for (int i = 45; i < 54; i++) {
+        cout << colorize(cube[i]);
+        if ((i + 1) % 3 == 0) cout << endl;
+    }
+    cout << endl;
+
+    // Print B
+    for (int row = 2; row >= 0; row--) {
+        for (int i = 26 - row * 3; i > 23 - row * 3; i--) {
+            cout << colorize(cube[i]);
+        }
+        cout << endl;
+    }
 }
+
+/*
+ U
+LFR
+ D
+ B
+*/
 
 bool isSolved(char* cube) {
 	for (int i = 0; i < 9; i++) {
@@ -173,10 +139,6 @@ void moveF(char* cube) {
 		cube[i + 9] = tempUp[j];
 		cube[i + 29] = tempDown[j];
 	}
-	// for (int i = 0; i < 3; i++) {
-	// 	cube[i + 42] = tempLeft[i];
-	// 	cube[i + 45] = tempRight[i];
-	// }
 	cube[42] = tempLeft[2];
 	cube[43] = tempLeft[1];
 	cube[44] = tempLeft[0];
@@ -191,11 +153,11 @@ void moveU(char* cube) {
 	char tempBack[3] = {cube[18], cube[19], cube[20]};
 	char tempLeft[3] = {cube[27], cube[28], cube[29]};
 
-	char tempU[9] = {cube[51],cube[48],cube[45],
-					cube[52],cube[49],cube[46],
-					cube[53],cube[50],cube[47]};
+	char tempU[9] = {cube[42],cube[39],cube[36],
+					cube[43],cube[40],cube[37],
+					cube[44],cube[41],cube[38]};
 	for (int i = 0; i < 9; i++) {
-		cube[i + 45] = tempU[i];						//ROTATE THE UP
+		cube[i + 36] = tempU[i];						//ROTATE THE UP
 	}
 	for (int i = 0; i < 3; i++) {						// rotate the top row
 		cube[i] = tempRight[i];
@@ -295,7 +257,7 @@ int main(int argc, char* av[]) {
         }
 	}
 	// printCube(cube);
-	moveU(cube);
+	// moveU(cube);
 	printCube(cube);
 	std::vector <string> solution;
 	for (int i = 1; i < MAX_DEPTH; i++) {

@@ -27,8 +27,6 @@ class Cell {
 	Cell(int color) : _color(color) {}
 };
 
-
-// Helper function to colorize output
 string colorize(char color) {
     switch (color) {
         case 'W': return "\033[97mW\033[0m"; // White
@@ -168,6 +166,33 @@ void moveU(char* cube) {
 
 }
 
+void moveR(char* cube) {
+	char tempFront[3] = {cube[2],cube[5],cube[8]};
+	char tempUp[3] = {cube[38],cube[41],cube[44]};
+	char tempDown[3] = {cube[47],cube[50],cube[53]};
+	char tempBack[3] = {cube[18],cube[21],cube[24]};
+
+	char tempRight[9] = {cube[15], cube[12], cube[9],
+						cube[16], cube[13], cube[10],
+						cube[17], cube[14], cube[11]};
+
+	for (int i = 0; i < 9; i++) {
+		cube[i + 9] = tempRight[i];
+	}
+	for (int i = 0, j = 0; i < 9; i += 3, j++) {
+		cube[i + 2] = tempDown[j];
+		cube[i + 18] = tempUp[j];
+		cube[i + 38] = tempFront[j];
+		cube[i + 47] = tempBack[j];
+	}
+}
+
+void moveRPrime(char *cube) {
+	moveR(cube);
+	moveR(cube);
+	moveR(cube);
+}
+
 void moveUPrime(char* cube) {
 	moveU(cube);
 	moveU(cube);
@@ -185,6 +210,8 @@ void applyInverseMove(char* cube, const string& moveStr) {
     else if (moveStr == "U'") moveU(cube);
     else if (moveStr == "F") moveFPrime(cube);
     else if (moveStr == "F'") moveF(cube);
+    else if (moveStr == "R") moveRPrime(cube);
+    else if (moveStr == "R'") moveR(cube);
 }
 
 bool dfs(char* cube, int depth, int maxDepth, vector<string>& solution) {
@@ -205,6 +232,8 @@ bool dfs(char* cube, int depth, int maxDepth, vector<string>& solution) {
 		{moveUPrime, "U'"},
 		{moveF, "F"},
 		{moveFPrime, "F'"},
+		{moveR, "R"},
+		{moveRPrime, "R'"},
 	};
 	for (auto& [moveFunc, moveStr] : moves) {
 		moveFunc(cube);
@@ -235,6 +264,8 @@ void applyMove(char* cube, const string& moveStr) {
     else if (moveStr == "U'") moveUPrime(cube);
     else if (moveStr == "F") moveF(cube);
     else if (moveStr == "F'") moveFPrime(cube);
+    else if (moveStr == "R") moveR(cube);
+    else if (moveStr == "R'") moveRPrime(cube);
 }
 
 int main(int argc, char* av[]) {

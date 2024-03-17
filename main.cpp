@@ -210,7 +210,34 @@ void moveR(char* cube) {
 	}
 }
 
-void moveRPrime(char *cube) {
+void moveL(char* cube) {
+	char tempFront[3] = {cube[0],cube[3], cube[6]};
+	char tempBack[3] = {cube[20],cube[23], cube[26]};
+	char tempUp[3] = {cube[36],cube[39], cube[42]};
+	char tempDown[3] = {cube[45],cube[48], cube[51]};
+
+	char tempLeft[9] {cube[33],cube[30], cube[27],
+				cube[34],cube[31], cube[28],
+				cube[35],cube[32], cube[29]};
+
+	for (int i = 0; i < 9; i++) {
+		cube[i + 27] = tempLeft[i];
+	}
+	for (int i = 0, j = 0; i < 9; i += 3, j++) {
+		cube[i] = tempUp[j];
+		cube[i + 20] = tempDown[j];
+		cube[i + 36] = tempBack[j];
+		cube[i + 45] = tempFront[j];
+	}
+}
+
+void moveLPrime(char* cube) {
+	moveL(cube);
+	moveL(cube);
+	moveL(cube);
+}
+
+void moveRPrime(char* cube) {
 	moveR(cube);
 	moveR(cube);
 	moveR(cube);
@@ -243,6 +270,8 @@ void applyInverseMove(char* cube, const string& moveStr) {
     else if (moveStr == "R'") moveR(cube);
     else if (moveStr == "D") moveDPrime(cube);
     else if (moveStr == "D'") moveD(cube);
+    else if (moveStr == "L") moveLPrime(cube);
+    else if (moveStr == "L'") moveL(cube);
 }
 
 bool areInverseMoves(const std::string& move1, const std::string& move2) {
@@ -277,6 +306,8 @@ bool dfs(char* cube, int depth, int maxDepth, vector<string>& solution) {
 		{moveRPrime, "R'"},
 		{moveD, "D"},
 		{moveDPrime, "D'"},
+		{moveL, "L"},
+		{moveLPrime, "L'"},
 	};
 	for (auto& [moveFunc, moveStr] : moves) {
 		 if (!solution.empty() && areInverseMoves(solution.back(), moveStr)) {
@@ -314,6 +345,8 @@ void applyMove(char* cube, const string& moveStr) {
     else if (moveStr == "R'") moveRPrime(cube);
     else if (moveStr == "D") moveD(cube);
     else if (moveStr == "D'") moveDPrime(cube);
+    else if (moveStr == "L") moveL(cube);
+    else if (moveStr == "L'") moveLPrime(cube);
 }
 
 int main(int argc, char* av[]) {
@@ -330,20 +363,14 @@ int main(int argc, char* av[]) {
 		string scramble = av[1];
         vector<string> moves = splitString(scramble);
 		for (const string& move : moves) {
-			// printCube(cube);
-			// cout << "applied move" << endl;
             applyMove(cube, move);
         }
 	}
-	// printCube(cube);
-	// moveU(cube);
-	// cube[18] = 'S';
 	printCube(cube);
 	std::vector <string> solution;
 	for (int i = 1; i < MAX_DEPTH; i++) {
 		if (dfs(cube, 0, i, solution))
 			break;
 	}
-	// printCube(cube);
     return 0;
 }

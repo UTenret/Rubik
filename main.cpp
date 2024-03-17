@@ -191,7 +191,7 @@ void moveU(char* cube) {
 
 void moveR(char* cube) {
 	char tempFront[3] = {cube[2],cube[5],cube[8]};
-	char tempUp[3] = {cube[38],cube[41],cube[44]};
+	char tempUp[3] = {cube[44],cube[41],cube[38]};
 	char tempDown[3] = {cube[47],cube[50],cube[53]};
 	char tempBack[3] = {cube[24],cube[21],cube[18]};
 

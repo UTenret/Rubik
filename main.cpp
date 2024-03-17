@@ -44,9 +44,10 @@ void printCube(char* cube) {
     cout << endl;
     
     // Print U
+	cout << "    ";
     for (int i = 36; i < 45; i++) {
         cout << colorize(cube[i]);
-        if ((i + 1) % 3 == 0) cout << endl;
+        if ((i + 1) % 3 == 0) cout << endl << "    ";
     }
     cout << endl;
 
@@ -71,18 +72,18 @@ void printCube(char* cube) {
     cout << endl;
 
     // Print D
+	cout << "    ";
     for (int i = 45; i < 54; i++) {
         cout << colorize(cube[i]);
-        if ((i + 1) % 3 == 0) cout << endl;
+        if ((i + 1) % 3 == 0) cout << endl << "    ";
     }
     cout << endl;
 
     // Print B
-    for (int row = 2; row >= 0; row--) {
-        for (int i = 26 - row * 3; i > 23 - row * 3; i--) {
-            cout << colorize(cube[i]);
-        }
-        cout << endl;
+	cout << "    ";
+	for (int i = 18; i < 27; i++) {
+        cout << colorize(cube[i]);
+        if ((i + 1) % 3 == 0) cout << endl << "    ";
     }
 }
 
@@ -130,6 +131,7 @@ void moveF(char* cube) {
 	char tempFront[9] = {cube[6], cube[3], cube[0],
 						cube[7], cube[4], cube[1],
 						cube[8], cube[5], cube[2]};
+
 	for (int i = 0; i < 9; i++) {
 		cube[i] = tempFront[i];
 	}
@@ -289,6 +291,7 @@ int main(int argc, char* av[]) {
 	}
 	// printCube(cube);
 	// moveU(cube);
+	// cube[18] = 'S';
 	printCube(cube);
 	std::vector <string> solution;
 	for (int i = 1; i < MAX_DEPTH; i++) {

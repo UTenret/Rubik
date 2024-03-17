@@ -122,6 +122,27 @@ bool isSolved(char* cube) {
 	return true;
 }
 
+void moveD(char* cube) {
+	char tempFront[3] = {cube[6], cube[7], cube[8]};
+	char tempRight[3] = {cube[15], cube[16], cube[17]};
+	char tempBack[3] = {cube[24], cube[25], cube[26]};
+	char tempLeft[3] = {cube[33], cube[34], cube[35]};
+
+	char tempDown[9] = {cube[51], cube[48], cube[45],
+						cube[52], cube[49], cube[46],
+						cube[53], cube[50], cube[47]};
+	for (int i = 0; i < 9; i++) {
+		cube[i + 45] = tempDown[i];
+	}
+	for (int i = 0; i < 3; i++) {
+		cube[i + 6] = tempLeft[i];
+		cube[i + 15] = tempFront[i];
+		cube[i + 24] = tempRight[i];
+		cube[i + 33] = tempBack[i];
+	}
+		
+}
+
 void moveF(char* cube) {
 	char tempLeft[3] = {cube[29], cube[32], cube[35]};
 	char tempRight[3] = {cube[9], cube[12], cube[15]};
@@ -207,6 +228,12 @@ void moveFPrime(char *cube) {
 	moveF(cube);
 }
 
+void moveDPrime(char* cube) {
+	moveD(cube);
+	moveD(cube);
+	moveD(cube);
+}
+
 void applyInverseMove(char* cube, const string& moveStr) {
     if (moveStr == "U") moveUPrime(cube);
     else if (moveStr == "U'") moveU(cube);
@@ -214,6 +241,8 @@ void applyInverseMove(char* cube, const string& moveStr) {
     else if (moveStr == "F'") moveF(cube);
     else if (moveStr == "R") moveRPrime(cube);
     else if (moveStr == "R'") moveR(cube);
+    else if (moveStr == "D") moveDPrime(cube);
+    else if (moveStr == "D'") moveD(cube);
 }
 
 bool dfs(char* cube, int depth, int maxDepth, vector<string>& solution) {
@@ -236,6 +265,8 @@ bool dfs(char* cube, int depth, int maxDepth, vector<string>& solution) {
 		{moveFPrime, "F'"},
 		{moveR, "R"},
 		{moveRPrime, "R'"},
+		{moveD, "D"},
+		{moveDPrime, "D'"},
 	};
 	for (auto& [moveFunc, moveStr] : moves) {
 		moveFunc(cube);
@@ -268,6 +299,8 @@ void applyMove(char* cube, const string& moveStr) {
     else if (moveStr == "F'") moveFPrime(cube);
     else if (moveStr == "R") moveR(cube);
     else if (moveStr == "R'") moveRPrime(cube);
+    else if (moveStr == "D") moveD(cube);
+    else if (moveStr == "D'") moveDPrime(cube);
 }
 
 int main(int argc, char* av[]) {

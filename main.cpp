@@ -193,7 +193,7 @@ void moveR(char* cube) {
 	char tempFront[3] = {cube[2],cube[5],cube[8]};
 	char tempUp[3] = {cube[38],cube[41],cube[44]};
 	char tempDown[3] = {cube[47],cube[50],cube[53]};
-	char tempBack[3] = {cube[18],cube[21],cube[24]};
+	char tempBack[3] = {cube[24],cube[21],cube[18]};
 
 	char tempRight[9] = {cube[15], cube[12], cube[9],
 						cube[16], cube[13], cube[10],
@@ -245,6 +245,16 @@ void applyInverseMove(char* cube, const string& moveStr) {
     else if (moveStr == "D'") moveD(cube);
 }
 
+bool areInverseMoves(const std::string& move1, const std::string& move2) {
+    if (move1.front() == move2.front()) {
+        if ((move1.back() == '\'' && move2.back() != '\'') || 
+            (move1.back() != '\'' && move2.back() == '\'')) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool dfs(char* cube, int depth, int maxDepth, vector<string>& solution) {
 	if(isSolved(cube)) {
 		printCube(cube);
@@ -269,6 +279,9 @@ bool dfs(char* cube, int depth, int maxDepth, vector<string>& solution) {
 		{moveDPrime, "D'"},
 	};
 	for (auto& [moveFunc, moveStr] : moves) {
+		 if (!solution.empty() && areInverseMoves(solution.back(), moveStr)) {
+            continue;
+        }
 		moveFunc(cube);
 		solution.push_back(moveStr);
 		if (dfs(cube, depth + 1, maxDepth, solution)) {

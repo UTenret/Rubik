@@ -231,6 +231,34 @@ void moveL(char* cube) {
 	}
 }
 
+void moveB(char* cube) {
+	char tempRight[3] = {cube[11], cube[14], cube[17]};
+	char tempLeft[3] = {cube[27], cube[30], cube[33]};
+	char tempUp[3] = {cube[36], cube[37], cube[38]};
+	char tempDown[3] = {cube[51], cube[52], cube[53]};
+
+	char tempBack[9] = {cube[24], cube[21], cube[18],
+						cube[25], cube[22], cube[19],
+						cube[26], cube[23], cube[20]};
+	for (int i = 0; i < 9; i++) {
+		cube[i + 18] = tempBack[i];
+	}
+	for (int i = 0; i < 3; i++) {
+		cube[i + 51] = tempLeft[i];
+		cube[i + 36] = tempRight[i];
+	}
+	for (int i = 0, j = 0; i < 9; i += 3, j++) {
+		cube[i + 11] = tempDown[j];
+		cube[i + 27] = tempUp[j];
+	}
+}
+
+void moveBPrime(char* cube) {
+	moveB(cube);
+	moveB(cube);
+	moveB(cube);
+}
+
 void moveLPrime(char* cube) {
 	moveL(cube);
 	moveL(cube);
@@ -272,6 +300,8 @@ void applyInverseMove(char* cube, const string& moveStr) {
     else if (moveStr == "D'") moveD(cube);
     else if (moveStr == "L") moveLPrime(cube);
     else if (moveStr == "L'") moveL(cube);
+    else if (moveStr == "B") moveBPrime(cube);
+    else if (moveStr == "B'") moveB(cube);
 }
 
 bool areInverseMoves(const std::string& move1, const std::string& move2) {
@@ -308,6 +338,8 @@ bool dfs(char* cube, int depth, int maxDepth, vector<string>& solution) {
 		{moveDPrime, "D'"},
 		{moveL, "L"},
 		{moveLPrime, "L'"},
+		{moveB, "B"},
+		{moveBPrime, "B'"},
 	};
 	for (auto& [moveFunc, moveStr] : moves) {
 		 if (!solution.empty() && areInverseMoves(solution.back(), moveStr)) {
@@ -347,6 +379,8 @@ void applyMove(char* cube, const string& moveStr) {
     else if (moveStr == "D'") moveDPrime(cube);
     else if (moveStr == "L") moveL(cube);
     else if (moveStr == "L'") moveLPrime(cube);
+    else if (moveStr == "B") moveB(cube);
+    else if (moveStr == "B'") moveBPrime(cube);
 }
 
 int main(int argc, char* av[]) {

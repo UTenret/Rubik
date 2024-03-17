@@ -18,7 +18,7 @@
 
 using namespace std;
 
-#define MAX_DEPTH 12
+#define MAX_DEPTH 9
 
 class Cell {
 	public :
@@ -94,7 +94,7 @@ LFR
  B
 */
 
-bool isSolved(char* cube) {
+bool isFullySolved(char* cube) {
 	for (int i = 0; i < 9; i++) {
 		if (cube[i] != 'B')
 			return false;
@@ -120,6 +120,36 @@ bool isSolved(char* cube) {
 			return false;
 	}
 	return true;
+}
+
+bool isGroup0Solved(char* cube) {
+    if (!((cube[1] == 'R' || cube[1] == 'B') &&
+          (cube[3] == 'Y' || cube[3] == 'B') &&
+          (cube[5] == 'W' || cube[5] == 'B') &&
+          (cube[7] == 'O' || cube[7] == 'B') &&
+          (cube[10] == 'Y' || cube[10] == 'R') &&
+          (cube[12] == 'B' || cube[12] == 'R') &&
+          (cube[14] == 'G' || cube[14] == 'R') &&
+          (cube[16] == 'W' || cube[16] == 'R') &&
+          (cube[19] == 'Y' || cube[19] == 'G') &&
+          (cube[21] == 'R' || cube[21] == 'G') &&
+          (cube[23] == 'O' || cube[23] == 'G') &&
+          (cube[25] == 'W' || cube[25] == 'G') &&
+          (cube[28] == 'Y' || cube[28] == 'O') &&
+          (cube[30] == 'G' || cube[30] == 'O') &&
+          (cube[32] == 'B' || cube[32] == 'O') &&
+          (cube[34] == 'W' || cube[34] == 'O') &&
+          (cube[37] == 'G' || cube[37] == 'Y') &&
+          (cube[39] == 'O' || cube[39] == 'Y') &&
+          (cube[41] == 'R' || cube[41] == 'Y') &&
+          (cube[43] == 'B' || cube[43] == 'Y') &&
+          (cube[46] == 'B' || cube[46] == 'W') &&
+          (cube[48] == 'O' || cube[48] == 'W') &&
+          (cube[50] == 'R' || cube[50] == 'W') &&
+          (cube[52] == 'G' || cube[52] == 'W'))) { 
+        return false;
+    }
+    return true;
 }
 
 void moveD(char* cube) {
@@ -234,8 +264,8 @@ void moveL(char* cube) {
 void moveB(char* cube) {
 	char tempRight[3] = {cube[11], cube[14], cube[17]};
 	char tempLeft[3] = {cube[27], cube[30], cube[33]};
-	char tempUp[3] = {cube[36], cube[37], cube[38]};
-	char tempDown[3] = {cube[51], cube[52], cube[53]};
+	char tempUp[3] = {cube[38], cube[37], cube[36]};
+	char tempDown[3] = {cube[53], cube[52], cube[51]};
 
 	char tempBack[9] = {cube[24], cube[21], cube[18],
 						cube[25], cube[22], cube[19],
@@ -251,6 +281,31 @@ void moveB(char* cube) {
 		cube[i + 11] = tempDown[j];
 		cube[i + 27] = tempUp[j];
 	}
+}	
+
+void moveB2 (char* cube) {
+	moveB(cube);
+	moveB(cube);
+}
+void moveL2 (char* cube) {
+	moveL(cube);
+	moveL(cube);
+}
+void moveR2 (char* cube) {
+	moveR(cube);
+	moveR(cube);
+}
+void moveF2 (char* cube) {
+	moveF(cube);
+	moveF(cube);
+}
+void moveU2 (char* cube) {
+	moveU(cube);
+	moveU(cube);
+}
+void moveD2 (char* cube) {
+	moveD(cube);
+	moveD(cube);
 }
 
 void moveBPrime(char* cube) {
@@ -302,20 +357,35 @@ void applyInverseMove(char* cube, const string& moveStr) {
     else if (moveStr == "L'") moveL(cube);
     else if (moveStr == "B") moveBPrime(cube);
     else if (moveStr == "B'") moveB(cube);
+    else if (moveStr == "U2") moveU2(cube);
+    else if (moveStr == "F2") moveF2(cube);
+    else if (moveStr == "R2") moveR2(cube);
+    else if (moveStr == "D2") moveD2(cube);
+    else if (moveStr == "L2") moveL2(cube);
+    else if (moveStr == "B2") moveB2(cube);
 }
 
-bool areInverseMoves(const std::string& move1, const std::string& move2) {
-    if (move1.front() == move2.front()) {
-        if ((move1.back() == '\'' && move2.back() != '\'') || 
-            (move1.back() != '\'' && move2.back() == '\'')) {
+bool isMovePrunable(const std::string& lastMove, const std::string& currentMove) {
+    if (lastMove.front() == currentMove.front()) {
+        if ((lastMove == "U" && currentMove == "U'") || (lastMove == "U'" && currentMove == "U") ||
+            (lastMove == "R" && currentMove == "R'") || (lastMove == "R'" && currentMove == "R") ||
+            (lastMove == "F" && currentMove == "F'") || (lastMove == "F'" && currentMove == "F") ||
+            (lastMove == "D" && currentMove == "D'") || (lastMove == "D'" && currentMove == "D") ||
+            (lastMove == "L" && currentMove == "L'") || (lastMove == "L'" && currentMove == "L") ||
+            (lastMove == "B" && currentMove == "B'") || (lastMove == "B'" && currentMove == "B")) {
+            return true;
+        }
+        else if (lastMove == currentMove) {
             return true;
         }
     }
     return false;
 }
 
-bool dfs(char* cube, int depth, int maxDepth, vector<string>& solution) {
-	if(isSolved(cube)) {
+bool iddfs(char* cube, int depth, int maxDepth, vector<string>& solution, 
+			bool (*isSolved)(char*), const vector<pair<void(*)(char*), string>>& allowedMoves) {
+	// if(isSolved(cube) || isFullySolved(cube)) {
+	if(isSolved(cube)){
 		printCube(cube);
 		cout << "SOLUTION :";
 		for (const auto& move : solution) {
@@ -327,27 +397,13 @@ bool dfs(char* cube, int depth, int maxDepth, vector<string>& solution) {
 	if(depth == maxDepth)
 		return false;
 
-	std::vector <pair<void(*)(char*), string>> moves {
-		{moveU, "U"},
-		{moveUPrime, "U'"},
-		{moveF, "F"},
-		{moveFPrime, "F'"},
-		{moveR, "R"},
-		{moveRPrime, "R'"},
-		{moveD, "D"},
-		{moveDPrime, "D'"},
-		{moveL, "L"},
-		{moveLPrime, "L'"},
-		{moveB, "B"},
-		{moveBPrime, "B'"},
-	};
-	for (auto& [moveFunc, moveStr] : moves) {
-		 if (!solution.empty() && areInverseMoves(solution.back(), moveStr)) {
+	for (auto& [moveFunc, moveStr] : allowedMoves) {
+		 if (!solution.empty() && isMovePrunable(solution.back(), moveStr)) {
             continue;
         }
 		moveFunc(cube);
 		solution.push_back(moveStr);
-		if (dfs(cube, depth + 1, maxDepth, solution)) {
+		if (iddfs(cube, depth + 1, maxDepth, solution, isSolved, allowedMoves)) {
 			return true;
 		}
 		applyInverseMove(cube, moveStr); 
@@ -381,6 +437,68 @@ void applyMove(char* cube, const string& moveStr) {
     else if (moveStr == "L'") moveLPrime(cube);
     else if (moveStr == "B") moveB(cube);
     else if (moveStr == "B'") moveBPrime(cube);
+    else if (moveStr == "U2") moveU2(cube);
+    else if (moveStr == "F2") moveF2(cube);
+    else if (moveStr == "R2") moveR2(cube);
+    else if (moveStr == "D2") moveD2(cube);
+    else if (moveStr == "L2") moveL2(cube);
+    else if (moveStr == "B2") moveB2(cube);
+}
+
+void solveGroup(char* cube, bool (*groupSolveCondition)(char*), const vector<pair<void(*)(char*), string>>& moves) {
+    std::vector<string> solution;
+    for (int i = 1; i < MAX_DEPTH; i++) {
+        if (iddfs(cube, 0, i, solution, groupSolveCondition, moves))
+            break;
+    }
+}
+
+void solveCube(char* cube) {
+    vector<pair<void(*)(char*), string>> group0Moves = {
+		{moveU, "U"},
+		{moveUPrime, "U'"},
+		{moveF, "F"},
+		{moveFPrime, "F'"},
+		{moveR, "R"},
+		{moveRPrime, "R'"},
+		{moveD, "D"},
+		{moveDPrime, "D'"},
+		{moveL, "L"},
+		{moveLPrime, "L'"},
+		{moveB, "B"},
+		{moveBPrime, "B'"},
+		{moveU2, "U2"},
+		{moveF2, "F2"},
+		{moveR2, "R2"},
+		{moveD2, "D2"},
+		{moveL2, "L2"},
+		{moveB2, "B2"},
+    };
+
+    solveGroup(cube, isGroup0Solved, group0Moves);
+	printCube(cube);
+	// if (isFullySolved(cube))
+		// return;
+    
+    vector<pair<void(*)(char*), string>> group1Moves = { // no F, F', B, B'
+		{moveU, "U"},
+		{moveUPrime, "U'"},
+		{moveR, "R"},
+		{moveRPrime, "R'"},
+		{moveD, "D"},
+		{moveDPrime, "D'"},
+		{moveL, "L"},
+		{moveLPrime, "L'"},
+		{moveU2, "U2"},
+		{moveF2, "F2"},
+		{moveR2, "R2"},
+		{moveD2, "D2"},
+		{moveL2, "L2"},
+		{moveB2, "B2"},
+    };
+    
+    // solveGroup(cube, isFullySolved, group1Moves);
+
 }
 
 int main(int argc, char* av[]) {
@@ -401,10 +519,7 @@ int main(int argc, char* av[]) {
         }
 	}
 	printCube(cube);
-	std::vector <string> solution;
-	for (int i = 1; i < MAX_DEPTH; i++) {
-		if (dfs(cube, 0, i, solution))
-			break;
-	}
+	solveCube(cube);
+	
     return 0;
 }

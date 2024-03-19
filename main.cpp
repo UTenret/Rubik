@@ -20,14 +20,31 @@ using namespace std;
 
 #define MAX_DEPTH 9
 
-class Cell {
-	public :
-
-	int _color;
-	Cell(int color) : _color(color) {}
+enum EdgePositions {
+    UB, UR, UF, UL,
+    DR, DF, DL, DB,
+    FR, FL, BR, BL,
+    EDGE_COUNT
 };
 
-string colorize(char color) {
+const int edgeIndices[EDGE_COUNT][2] = {
+	{37, 19},	// UB
+	{42, 10},	// UR
+	{44, 1},	// UF
+	{39, 28},	// UL
+
+	{50, 16},	// DR
+	{46, 7},	// DF
+	{48, 34},	// DL
+	{52, 25},	// DB
+
+	{5,  12},	// FR
+	{3,  32},	// FL
+	{21, 14},	// BR
+	{23, 30},	// BL
+};
+
+string colorize(char color) {	
     switch (color) {
         case 'W': return "\033[97mW\033[0m"; // White
         case 'Y': return "\033[93mY\033[0m"; // Yellow
@@ -123,30 +140,30 @@ bool isFullySolved(char* cube) {
 }
 
 bool isGroup0Solved(char* cube) {
-    if (!((cube[1] == 'R' || cube[1] == 'B') &&
-          (cube[3] == 'Y' || cube[3] == 'B') &&
-          (cube[5] == 'W' || cube[5] == 'B') &&
-          (cube[7] == 'O' || cube[7] == 'B') &&
-          (cube[10] == 'Y' || cube[10] == 'R') &&
-          (cube[12] == 'B' || cube[12] == 'R') &&
-          (cube[14] == 'G' || cube[14] == 'R') &&
-          (cube[16] == 'W' || cube[16] == 'R') &&
-          (cube[19] == 'Y' || cube[19] == 'G') &&
-          (cube[21] == 'R' || cube[21] == 'G') &&
-          (cube[23] == 'O' || cube[23] == 'G') &&
-          (cube[25] == 'W' || cube[25] == 'G') &&
-          (cube[28] == 'Y' || cube[28] == 'O') &&
-          (cube[30] == 'G' || cube[30] == 'O') &&
-          (cube[32] == 'B' || cube[32] == 'O') &&
-          (cube[34] == 'W' || cube[34] == 'O') &&
-          (cube[37] == 'G' || cube[37] == 'Y') &&
-          (cube[39] == 'O' || cube[39] == 'Y') &&
-          (cube[41] == 'R' || cube[41] == 'Y') &&
-          (cube[43] == 'B' || cube[43] == 'Y') &&
-          (cube[46] == 'B' || cube[46] == 'W') &&
-          (cube[48] == 'O' || cube[48] == 'W') &&
-          (cube[50] == 'R' || cube[50] == 'W') &&
-          (cube[52] == 'G' || cube[52] == 'W'))) { 
+    if (!((cube[1] == 'B') &&
+          (cube[3] == 'B') &&
+          (cube[5] == 'B') &&
+          (cube[7] == 'B') &&
+          (cube[10] == 'R') &&
+          (cube[12] == 'R') &&
+          (cube[14] == 'R') &&
+          (cube[16] == 'R') &&
+          (cube[19] == 'G') &&
+          (cube[21] == 'G') &&
+          (cube[23] == 'G') &&
+          (cube[25] == 'G') &&
+          (cube[28] == 'O') &&
+          (cube[30] == 'O') &&
+          (cube[32] == 'O') &&
+          (cube[34] == 'O') &&
+          (cube[37] == 'Y') &&
+          (cube[39] == 'Y') &&
+          (cube[41] == 'Y') &&
+          (cube[43] == 'Y') &&
+          (cube[46] == 'W') &&
+          (cube[48] == 'W') &&
+          (cube[50] == 'W') &&
+          (cube[52] == 'W'))) { 
         return false;
     }
     return true;
@@ -382,6 +399,16 @@ bool isMovePrunable(const std::string& lastMove, const std::string& currentMove)
     return false;
 }
 
+std::string encodeCurrentState(const char* cube) {
+    std::string state;
+    state.reserve(EDGE_COUNT * 2);
+    for (int i = 0; i < EDGE_COUNT; ++i) {
+        state.push_back(cube[edgeIndices[i][0]]);
+        state.push_back(cube[edgeIndices[i][1]]);
+    }
+    return state;
+}
+
 bool iddfs(char* cube, int depth, int maxDepth, vector<string>& solution, 
 			bool (*isSolved)(char*), const vector<pair<void(*)(char*), string>>& allowedMoves) {
 	// if(isSolved(cube) || isFullySolved(cube)) {
@@ -501,6 +528,8 @@ void solveCube(char* cube) {
 
 }
 
+
+
 int main(int argc, char* av[]) {
     char cube[54] = {
         'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', // 0,  1,  2,  3   4,  5,  6,  7,  8		FRONT
@@ -510,7 +539,7 @@ int main(int argc, char* av[]) {
         'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', // 36, 37, 38, 39, 40, 41, 42, 43, 44		UP
         'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'	//  45, 46, 47, 48, 49, 50, 51, 52, 53		DOWN
     };
-	
+	std::set<std::string> uniqueStates;
 	if (argc > 1) {
 		string scramble = av[1];
         vector<string> moves = splitString(scramble);
@@ -520,6 +549,6 @@ int main(int argc, char* av[]) {
 	}
 	printCube(cube);
 	solveCube(cube);
-	
+	cout << encodeCurrentState(cube) << endl;
     return 0;
 }

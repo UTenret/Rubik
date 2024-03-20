@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <set>
 
 // MOVES U [UP]		U'
 // MOVES D [DOWN]	D'
@@ -49,7 +50,7 @@ string colorize(char color) {
         case 'W': return "\033[97mW\033[0m"; // White
         case 'Y': return "\033[93mY\033[0m"; // Yellow
         case 'R': return "\033[91mR\033[0m"; // Red
-        case 'O': return "\033[95mO\033[0m"; // Orange
+		case 'O': return "\033[38;5;208mO\033[0m"; // Orange
         case 'G': return "\033[92mG\033[0m"; // Green
         case 'B': return "\033[94mB\033[0m"; // Blue
         default: return string(1, color);
@@ -100,8 +101,9 @@ void printCube(char* cube) {
 	cout << "    ";
 	for (int i = 18; i < 27; i++) {
         cout << colorize(cube[i]);
-        if ((i + 1) % 3 == 0) cout << endl << "    ";
+        if ((i + 1) % 3 == 0 && (i != 26)) cout << endl << "    ";
     }
+	cout << endl;
 }
 
 /*

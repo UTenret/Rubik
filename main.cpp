@@ -103,8 +103,9 @@ void printCube(char* cube) {
 	cout << "    ";
 	for (int i = 18; i < 27; i++) {
         cout << colorize(cube[i]);
-        if ((i + 1) % 3 == 0) cout << endl << "    ";
+        if ((i + 1) % 3 == 0 && (i != 26)) cout << endl << "    ";
     }
+	cout << endl;
 }
 
 /*

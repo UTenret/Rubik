@@ -1,6 +1,9 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <iomanip>
+#include <set>
+#include <cmath>
 
 // MOVES U [UP]		U'
 // MOVES D [DOWN]	D'
@@ -18,7 +21,7 @@
 
 using namespace std;
 
-#define MAX_DEPTH 9
+#define MAX_DEPTH 8
 
 enum EdgePositions {
     UB, UR, UF, UL,
@@ -28,28 +31,28 @@ enum EdgePositions {
 };
 
 const int edgeIndices[EDGE_COUNT][2] = {
-	{37, 19},	// UB
-	{42, 10},	// UR
-	{44, 1},	// UF
-	{39, 28},	// UL
+	{37, 19},	// UB || YG
+	{42, 10},	// UR || YR
+	{44, 1},	// UF || YB
+	{39, 28},	// UL || YO
 
-	{50, 16},	// DR
-	{46, 7},	// DF
-	{48, 34},	// DL
-	{52, 25},	// DB
+	{50, 16},	// DR || WR
+	{46, 7},	// DF || WB
+	{48, 34},	// DL || WO
+	{52, 25},	// DB || WG
 
-	{5,  12},	// FR
-	{3,  32},	// FL
-	{21, 14},	// BR
-	{23, 30},	// BL
+	{5,  12},	// FR || BR
+	{3,  32},	// FL || BO
+	{21, 14},	// BR || GR
+	{23, 30},	// BL || GO
 };
 
-string colorize(char color) {	
+string colorize(char color) {    
     switch (color) {
         case 'W': return "\033[97mW\033[0m"; // White
         case 'Y': return "\033[93mY\033[0m"; // Yellow
         case 'R': return "\033[91mR\033[0m"; // Red
-        case 'O': return "\033[95mO\033[0m"; // Orange
+        case 'O': return "\033[38;5;208mO\033[0m"; // Orange, adjusted for text color
         case 'G': return "\033[92mG\033[0m"; // Green
         case 'B': return "\033[94mB\033[0m"; // Blue
         default: return string(1, color);
@@ -409,6 +412,13 @@ std::string encodeCurrentState(const char* cube) {
     return state;
 }
 
+void decodeStateIntoCube(const std::string& state, char* cube) {
+    for (int i = 0; i < EDGE_COUNT; ++i) {
+        cube[edgeIndices[i][0]] = state[i * 2];
+        cube[edgeIndices[i][1]] = state[i * 2 + 1];
+    }
+}
+
 bool iddfs(char* cube, int depth, int maxDepth, vector<string>& solution, 
 			bool (*isSolved)(char*), const vector<pair<void(*)(char*), string>>& allowedMoves) {
 	// if(isSolved(cube) || isFullySolved(cube)) {
@@ -425,7 +435,7 @@ bool iddfs(char* cube, int depth, int maxDepth, vector<string>& solution,
 		return false;
 
 	for (auto& [moveFunc, moveStr] : allowedMoves) {
-		 if (!solution.empty() && isMovePrunable(solution.back(), moveStr)) {
+		if (!solution.empty() && isMovePrunable(solution.back(), moveStr)) {
             continue;
         }
 		moveFunc(cube);
@@ -438,6 +448,8 @@ bool iddfs(char* cube, int depth, int maxDepth, vector<string>& solution,
 	}
 	return false;
 }
+
+
 
 vector<string> splitString(const string& str, char delimiter = ' ') {
     vector<string> tokens;
@@ -528,7 +540,18 @@ void solveCube(char* cube) {
 
 }
 
+//EDGE IS NOT FLIPPED IF WE CAN BRING IT TO ITS RIGHTFUL PLACE 
+//WITHOUT F OR B (OR F' OR B')
 
+//seems to me like the condition is the same for all up edges or down edges,
+// inner cannot be white(down) or yellow(up)
+// outer cannot be red(right) or orange(left) if we're considering that G1 is restricting F and B and front is blue and up yellow
+// seems to me like its the same condition for literally all my edges
+
+bool isEdgeFlipped(std::pair<char, char> colors) {
+		return (colors.second == 'Y' || colors.second == 'W' || 
+				colors.first == 'O' || colors.first == 'R');
+}
 
 int main(int argc, char* av[]) {
     char cube[54] = {
@@ -539,7 +562,18 @@ int main(int argc, char* av[]) {
         'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', // 36, 37, 38, 39, 40, 41, 42, 43, 44		UP
         'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'	//  45, 46, 47, 48, 49, 50, 51, 52, 53		DOWN
     };
-	std::set<std::string> uniqueStates;
+	ofstream file;
+	file.open("lut.txt");
+	if (!file) {
+		cerr << "Error: file could not be opened";
+		exit(1);
+	}
+	int lut[2048];
+	for (int i = 0; i < 2048; i++) {
+		lut[i] = -1;
+	}
+	std::string baseState = encodeCurrentState(cube);
+    
 	if (argc > 1) {
 		string scramble = av[1];
         vector<string> moves = splitString(scramble);
@@ -549,6 +583,9 @@ int main(int argc, char* av[]) {
 	}
 	printCube(cube);
 	solveCube(cube);
+	for (int i = 0; i < 2048; i++) {
+		file << lut[i] << endl;
+	}
 	cout << encodeCurrentState(cube) << endl;
     return 0;
 }

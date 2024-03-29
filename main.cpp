@@ -4,7 +4,8 @@
 #include <iomanip>
 #include <set>
 #include <cmath>
-
+#include <queue>
+#include <cstring> // For memcpy
 // MOVES U [UP]		U'
 // MOVES D [DOWN]	D'
 // MOVES R [RIGHT]	R'
@@ -32,8 +33,8 @@ enum EdgePositions {
 
 const int edgeIndices[EDGE_COUNT][2] = {
 	{37, 19},	// UB || YG
-	{42, 10},	// UR || YR
-	{44, 1},	// UF || YB
+	{41, 10},	// UR || YR
+	{43, 1},	// UF || YB
 	{39, 28},	// UL || YO
 
 	{50, 16},	// DR || WR
@@ -554,15 +555,60 @@ bool isEdgeFlipped(std::pair<char, char> colors) {
 				colors.first == 'O' || colors.first == 'R');
 }
 
+int calculateStateIndex(const string& state) {
+    int index = 0;
+    for (int i = 0; i < state.length(); ++i) {
+        if (state[i] == '1') { // '1' means flipped
+            index |= (1 << i);
+        }
+    }
+    return index;
+}
+
+std::string encodeEdgeOrientations(const char* cube) {
+    std::string orientation;
+    orientation.reserve(EDGE_COUNT);
+    
+    for (int i = 0; i < EDGE_COUNT; ++i) {
+        std::pair<char, char> edgeColors = {cube[edgeIndices[i][0]], cube[edgeIndices[i][1]]};
+        bool flipped = isEdgeFlipped(edgeColors);
+        
+        // // Debugging output
+        // std::cout << "Edge " << i << ": [" << edgeIndices[i][0] << ", " << edgeIndices[i][1] << "] "
+        //           << "(" << edgeColors.first << ", " << edgeColors.second << ") "
+        //           << "Flipped: " << (flipped ? "Yes" : "No") << "\n";
+
+        if (flipped) {
+            orientation.push_back('1'); // Edge is flipped
+        } else {
+            orientation.push_back('0'); // Edge is not flipped
+        }
+    }
+    
+    // Additional debugging: print the final encoded state
+    // std::cout << "Encoded Orientation: " << orientation << "\n";
+    
+    return orientation;
+}
+
 int main(int argc, char* av[]) {
-    char cube[54] = {
-        'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', // 0,  1,  2,  3   4,  5,  6,  7,  8		FRONT
-        'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', // 9,  10, 11, 12, 13, 14, 15, 16, 17		RIGHT
-        'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', // 18, 19, 20, 21, 22, 23, 24, 25, 26		BACK
-        'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', // 27, 28, 29, 30, 31, 32, 33, 34, 35		LEFT
-        'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', // 36, 37, 38, 39, 40, 41, 42, 43, 44		UP
-        'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'	//  45, 46, 47, 48, 49, 50, 51, 52, 53		DOWN
-    };
+    // char cube[54] = {
+    //     'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', // 0,  1,  2,  3   4,  5,  6,  7,  8		FRONT
+    //     'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', // 9,  10, 11, 12, 13, 14, 15, 16, 17		RIGHT
+    //     'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', 'G', // 18, 19, 20, 21, 22, 23, 24, 25, 26		BACK
+    //     'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', // 27, 28, 29, 30, 31, 32, 33, 34, 35		LEFT
+    //     'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', // 36, 37, 38, 39, 40, 41, 42, 43, 44		UP
+    //     'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W'	//  45, 46, 47, 48, 49, 50, 51, 52, 53		DOWN
+    // };
+
+	std::string cube = 
+    "BBBBBBBBB"  // FRONT: 0 - 8
+    "RRRRRRRRR"  // RIGHT: 9 - 17
+    "GGGGGGGGG"  // BACK: 18 - 26
+    "OOOOOOOOO"  // LEFT: 27 - 35
+    "YYYYYYYYY"  // UP: 36 - 44
+    "WWWWWWWWW"; // DOWN: 45 - 53
+
 	ofstream file;
 	file.open("lut.txt");
 	if (!file) {
@@ -570,20 +616,18 @@ int main(int argc, char* av[]) {
 		exit(1);
 	}
 	int lut[2048];
-	for (int i = 0; i < 2048; i++) {
-		lut[i] = -1;
-	}
-	std::string baseState = encodeCurrentState(cube);
-    
+	memset(lut, -1, sizeof(lut));
+	bfsGenerateLUT(cube, lut);
+	// std::string baseState = encodeCurrentState(cube);
 	if (argc > 1) {
 		string scramble = av[1];
         vector<string> moves = splitString(scramble);
 		for (const string& move : moves) {
             applyMove(cube, move);
         }
+		printCube(cube);
+		solveCube(cube);
 	}
-	printCube(cube);
-	solveCube(cube);
 	for (int i = 0; i < 2048; i++) {
 		file << lut[i] << endl;
 	}

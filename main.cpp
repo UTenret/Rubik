@@ -60,7 +60,7 @@ string colorize(char color) {
     }
 }
 
-void printCube(char* cube) {
+void printCube(const std::string& cube) {
     cout << "|||PRINTING CUBE|||" << endl;
     cout << endl;
     
@@ -116,7 +116,7 @@ LFR
  B
 */
 
-bool isFullySolved(char* cube) {
+bool isFullySolved(const std::string& cube) {
 	for (int i = 0; i < 9; i++) {
 		if (cube[i] != 'B')
 			return false;
@@ -144,7 +144,7 @@ bool isFullySolved(char* cube) {
 	return true;
 }
 
-bool isGroup0Solved(char* cube) {
+bool isGroup0Solved(std::string& cube) {
     if (!((cube[1] == 'B') &&
           (cube[3] == 'B') &&
           (cube[5] == 'B') &&
@@ -174,7 +174,7 @@ bool isGroup0Solved(char* cube) {
     return true;
 }
 
-void moveD(char* cube) {
+void moveD(std::string& cube) {
 	char tempFront[3] = {cube[6], cube[7], cube[8]};
 	char tempRight[3] = {cube[15], cube[16], cube[17]};
 	char tempBack[3] = {cube[24], cube[25], cube[26]};
@@ -195,7 +195,7 @@ void moveD(char* cube) {
 		
 }
 
-void moveF(char* cube) {
+void moveF(std::string& cube) {
 	char tempLeft[3] = {cube[29], cube[32], cube[35]};
 	char tempRight[3] = {cube[9], cube[12], cube[15]};
 	char tempUp[3] = {cube[42], cube[43], cube[44]};
@@ -220,7 +220,7 @@ void moveF(char* cube) {
 	cube[47] = tempRight[0];
 }
 
-void moveU(char* cube) {
+void moveU(std::string& cube) {
 	char tempFront[3] = {cube[0], cube[1], cube[2]};
 	char tempRight[3] = {cube[9], cube[10], cube[11]};
 	char tempBack[3] = {cube[18], cube[19], cube[20]};
@@ -241,7 +241,7 @@ void moveU(char* cube) {
 
 }
 
-void moveR(char* cube) {
+void moveR(std::string& cube) {
 	char tempFront[3] = {cube[2],cube[5],cube[8]};
 	char tempUp[3] = {cube[44],cube[41],cube[38]};
 	char tempDown[3] = {cube[47],cube[50],cube[53]};
@@ -262,7 +262,7 @@ void moveR(char* cube) {
 	}
 }
 
-void moveL(char* cube) {
+void moveL(std::string& cube) {
 	char tempFront[3] = {cube[0],cube[3], cube[6]};
 	char tempBack[3] = {cube[20],cube[23], cube[26]};
 	char tempUp[3] = {cube[36],cube[39], cube[42]};
@@ -283,7 +283,7 @@ void moveL(char* cube) {
 	}
 }
 
-void moveB(char* cube) {
+void moveB(std::string& cube) {
 	char tempRight[3] = {cube[11], cube[14], cube[17]};
 	char tempLeft[3] = {cube[27], cube[30], cube[33]};
 	char tempUp[3] = {cube[38], cube[37], cube[36]};
@@ -305,68 +305,68 @@ void moveB(char* cube) {
 	}
 }	
 
-void moveB2 (char* cube) {
+void moveB2 (std::string& cube) {
 	moveB(cube);
 	moveB(cube);
 }
-void moveL2 (char* cube) {
+void moveL2 (std::string& cube) {
 	moveL(cube);
 	moveL(cube);
 }
-void moveR2 (char* cube) {
+void moveR2 (std::string& cube) {
 	moveR(cube);
 	moveR(cube);
 }
-void moveF2 (char* cube) {
+void moveF2 (std::string& cube) {
 	moveF(cube);
 	moveF(cube);
 }
-void moveU2 (char* cube) {
+void moveU2 (std::string& cube) {
 	moveU(cube);
 	moveU(cube);
 }
-void moveD2 (char* cube) {
+void moveD2 (std::string& cube) {
 	moveD(cube);
 	moveD(cube);
 }
 
-void moveBPrime(char* cube) {
+void moveBPrime(std::string& cube) {
 	moveB(cube);
 	moveB(cube);
 	moveB(cube);
 }
 
-void moveLPrime(char* cube) {
+void moveLPrime(std::string& cube) {
 	moveL(cube);
 	moveL(cube);
 	moveL(cube);
 }
 
-void moveRPrime(char* cube) {
+void moveRPrime(std::string& cube) {
 	moveR(cube);
 	moveR(cube);
 	moveR(cube);
 }
 
-void moveUPrime(char* cube) {
+void moveUPrime(std::string& cube) {
 	moveU(cube);
 	moveU(cube);
 	moveU(cube);
 }
 
-void moveFPrime(char *cube) {
+void moveFPrime(std::string& cube) {
 	moveF(cube);
 	moveF(cube);
 	moveF(cube);
 }
 
-void moveDPrime(char* cube) {
+void moveDPrime(std::string& cube) {
 	moveD(cube);
 	moveD(cube);
 	moveD(cube);
 }
 
-void applyInverseMove(char* cube, const string& moveStr) {
+void applyInverseMove(std::string& cube, const string& moveStr) {
     if (moveStr == "U") moveUPrime(cube);
     else if (moveStr == "U'") moveU(cube);
     else if (moveStr == "F") moveFPrime(cube);
@@ -404,7 +404,7 @@ bool isMovePrunable(const std::string& lastMove, const std::string& currentMove)
     return false;
 }
 
-std::string encodeCurrentState(const char* cube) {
+std::string encodeCurrentState(std::string& cube) {
     std::string state;
     state.reserve(EDGE_COUNT * 2);
     for (int i = 0; i < EDGE_COUNT; ++i) {
@@ -414,15 +414,15 @@ std::string encodeCurrentState(const char* cube) {
     return state;
 }
 
-void decodeStateIntoCube(const std::string& state, char* cube) {
+void decodeStateIntoCube(const std::string& state, std::string& cube) {
     for (int i = 0; i < EDGE_COUNT; ++i) {
         cube[edgeIndices[i][0]] = state[i * 2];
         cube[edgeIndices[i][1]] = state[i * 2 + 1];
     }
 }
 
-bool iddfs(char* cube, int depth, int maxDepth, vector<string>& solution, 
-			bool (*isSolved)(char*), const vector<pair<void(*)(char*), string>>& allowedMoves) {
+bool iddfs(std::string& cube, int depth, int maxDepth, vector<string>& solution, 
+			bool (*isSolved)(std::string&), const vector<pair<void(*)(std::string&), string>>& allowedMoves) {
 	// if(isSolved(cube) || isFullySolved(cube)) {
 	if(isSolved(cube)){
 		printCube(cube);
@@ -451,8 +451,6 @@ bool iddfs(char* cube, int depth, int maxDepth, vector<string>& solution,
 	return false;
 }
 
-
-
 vector<string> splitString(const string& str, char delimiter = ' ') {
     vector<string> tokens;
     stringstream ss(str);
@@ -465,7 +463,7 @@ vector<string> splitString(const string& str, char delimiter = ' ') {
     return tokens;
 }
 
-void applyMove(char* cube, const string& moveStr) {
+void applyMove(std::string& cube, const string& moveStr) {
     if (moveStr == "U") moveU(cube);
     else if (moveStr == "U'") moveUPrime(cube);
     else if (moveStr == "F") moveF(cube);
@@ -486,7 +484,7 @@ void applyMove(char* cube, const string& moveStr) {
     else if (moveStr == "B2") moveB2(cube);
 }
 
-void solveGroup(char* cube, bool (*groupSolveCondition)(char*), const vector<pair<void(*)(char*), string>>& moves) {
+void solveGroup(std::string& cube, bool (*groupSolveCondition)(std::string&), const vector<pair<void(*)(std::string&), string>>& moves) {
     std::vector<string> solution;
     for (int i = 1; i < MAX_DEPTH; i++) {
         if (iddfs(cube, 0, i, solution, groupSolveCondition, moves))
@@ -494,8 +492,8 @@ void solveGroup(char* cube, bool (*groupSolveCondition)(char*), const vector<pai
     }
 }
 
-void solveCube(char* cube) {
-    vector<pair<void(*)(char*), string>> group0Moves = {
+void solveCube(std::string& cube) {
+    vector<pair<void(*)(std::string&), string>> group0Moves = {
 		{moveU, "U"},
 		{moveUPrime, "U'"},
 		{moveF, "F"},
@@ -521,7 +519,7 @@ void solveCube(char* cube) {
 	// if (isFullySolved(cube))
 		// return;
     
-    vector<pair<void(*)(char*), string>> group1Moves = { // no F, F', B, B'
+    vector<pair<void(*)(std::string&), string>> group1Moves = { // no F, F', B, B'
 		{moveU, "U"},
 		{moveUPrime, "U'"},
 		{moveR, "R"},
@@ -555,17 +553,19 @@ bool isEdgeFlipped(std::pair<char, char> colors) {
 				colors.first == 'O' || colors.first == 'R');
 }
 
-int calculateStateIndex(const string& state) {
+    // we use only the first 11 edges for index calculation, as it respects the parity rule
+	// removes the issuse about having 4096 entry
+int calculateStateIndex(const std::string& edgeOrientation) {
     int index = 0;
-    for (int i = 0; i < state.length(); ++i) {
-        if (state[i] == '1') { // '1' means flipped
-            index |= (1 << i);
+    for (size_t i = 0; i < edgeOrientation.size() - 1; ++i) {
+        if (edgeOrientation[i] == '1') {
+            index += (1 << i);
         }
     }
     return index;
 }
 
-std::string encodeEdgeOrientations(const char* cube) {
+std::string encodeEdgeOrientations(const std::string& cube) {
     std::string orientation;
     orientation.reserve(EDGE_COUNT);
     
@@ -585,10 +585,47 @@ std::string encodeEdgeOrientations(const char* cube) {
         }
     }
     
-    // Additional debugging: print the final encoded state
     // std::cout << "Encoded Orientation: " << orientation << "\n";
     
     return orientation;
+}
+
+/*
+the queue holds cube state as a string and the distance to solved
+visited holds the edges orientations because we dont care about anything else for G0->G1
+
+*/
+void bfsGenerateLUT(const std::string& initialCube, int lut[2048]) {
+    std::queue<std::pair<std::string, int>> q;
+    std::set<std::string> visited;
+    q.push({initialCube, 0});
+    visited.insert(encodeEdgeOrientations(initialCube));
+
+    std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F", "F'", "B", "B'", "U2", "D2", "R2", "L2", "F2", "B2"};
+
+    while (!q.empty()) {
+        auto [currentState, dist] = q.front();
+        q.pop();
+        std::string currentEdgeOrientation = encodeEdgeOrientations(currentState);
+		// cout << currentState << ", " << currentState.size() << endl;
+        int index = calculateStateIndex(currentEdgeOrientation);
+		// cout << "index = " << index << endl;
+        if (lut[index] == -1 || lut[index] > dist) {
+            lut[index] = dist;
+        }
+
+        if (dist >= MAX_DEPTH) continue;
+
+        for (const auto& move : moves) {
+            std::string newState = currentState;
+            applyMove(newState, move);
+
+            std::string newEdgeOrientation = encodeEdgeOrientations(newState);
+            if (visited.insert(newEdgeOrientation).second) {
+                q.push({newState, dist + 1});
+            }
+        }
+    }
 }
 
 int main(int argc, char* av[]) {
@@ -618,7 +655,6 @@ int main(int argc, char* av[]) {
 	int lut[2048];
 	memset(lut, -1, sizeof(lut));
 	bfsGenerateLUT(cube, lut);
-	// std::string baseState = encodeCurrentState(cube);
 	if (argc > 1) {
 		string scramble = av[1];
         vector<string> moves = splitString(scramble);

@@ -21,8 +21,21 @@
 // char* [24]	corner_cells;
 
 using namespace std;
-
-#define MAX_DEPTH 8
+std::string encodeEdgeOrientationsG0(const std::string& cube);
+int calculateStateIndexG0(const std::string& edgeOrientation);
+typedef std::string (*EncodeStateFunc)(const std::string&);
+typedef int (*CalculateIndexFunc)(const std::string&);
+void iterativeSolve(
+    std::string& cube,
+    const std::vector<int>& lut,
+    const std::vector<std::string>& moves,
+    EncodeStateFunc encodeState,
+    CalculateIndexFunc calculateIndex,
+    std::vector<std::string>& solution
+);
+#define MAX_DEPTH 9
+#define G0_N_SOLUTIONS 2048
+#define G1_N_SOLUTIONS 1082565
 
 enum EdgePositions {
     UB, UR, UF, UL,
@@ -53,7 +66,7 @@ string colorize(char color) {
         case 'W': return "\033[97mW\033[0m"; // White
         case 'Y': return "\033[93mY\033[0m"; // Yellow
         case 'R': return "\033[91mR\033[0m"; // Red
-        case 'O': return "\033[38;5;208mO\033[0m"; // Orange, adjusted for text color
+        case 'O': return "\033[38;5;208mO\033[0m"; // Orange
         case 'G': return "\033[92mG\033[0m"; // Green
         case 'B': return "\033[94mB\033[0m"; // Blue
         default: return string(1, color);
@@ -116,7 +129,7 @@ LFR
  B
 */
 
-bool isFullySolved(const std::string& cube) {
+bool isFullySolved(std::string& cube) {
 	for (int i = 0; i < 9; i++) {
 		if (cube[i] != 'B')
 			return false;
@@ -142,36 +155,6 @@ bool isFullySolved(const std::string& cube) {
 			return false;
 	}
 	return true;
-}
-
-bool isGroup0Solved(std::string& cube) {
-    if (!((cube[1] == 'B') &&
-          (cube[3] == 'B') &&
-          (cube[5] == 'B') &&
-          (cube[7] == 'B') &&
-          (cube[10] == 'R') &&
-          (cube[12] == 'R') &&
-          (cube[14] == 'R') &&
-          (cube[16] == 'R') &&
-          (cube[19] == 'G') &&
-          (cube[21] == 'G') &&
-          (cube[23] == 'G') &&
-          (cube[25] == 'G') &&
-          (cube[28] == 'O') &&
-          (cube[30] == 'O') &&
-          (cube[32] == 'O') &&
-          (cube[34] == 'O') &&
-          (cube[37] == 'Y') &&
-          (cube[39] == 'Y') &&
-          (cube[41] == 'Y') &&
-          (cube[43] == 'Y') &&
-          (cube[46] == 'W') &&
-          (cube[48] == 'W') &&
-          (cube[50] == 'W') &&
-          (cube[52] == 'W'))) { 
-        return false;
-    }
-    return true;
 }
 
 void moveD(std::string& cube) {
@@ -404,23 +387,6 @@ bool isMovePrunable(const std::string& lastMove, const std::string& currentMove)
     return false;
 }
 
-std::string encodeCurrentState(std::string& cube) {
-    std::string state;
-    state.reserve(EDGE_COUNT * 2);
-    for (int i = 0; i < EDGE_COUNT; ++i) {
-        state.push_back(cube[edgeIndices[i][0]]);
-        state.push_back(cube[edgeIndices[i][1]]);
-    }
-    return state;
-}
-
-void decodeStateIntoCube(const std::string& state, std::string& cube) {
-    for (int i = 0; i < EDGE_COUNT; ++i) {
-        cube[edgeIndices[i][0]] = state[i * 2];
-        cube[edgeIndices[i][1]] = state[i * 2 + 1];
-    }
-}
-
 bool iddfs(std::string& cube, int depth, int maxDepth, vector<string>& solution, 
 			bool (*isSolved)(std::string&), const vector<pair<void(*)(std::string&), string>>& allowedMoves) {
 	// if(isSolved(cube) || isFullySolved(cube)) {
@@ -492,30 +458,37 @@ void solveGroup(std::string& cube, bool (*groupSolveCondition)(std::string&), co
     }
 }
 
-void solveCube(std::string& cube) {
-    vector<pair<void(*)(std::string&), string>> group0Moves = {
-		{moveU, "U"},
-		{moveUPrime, "U'"},
-		{moveF, "F"},
-		{moveFPrime, "F'"},
-		{moveR, "R"},
-		{moveRPrime, "R'"},
-		{moveD, "D"},
-		{moveDPrime, "D'"},
-		{moveL, "L"},
-		{moveLPrime, "L'"},
-		{moveB, "B"},
-		{moveBPrime, "B'"},
-		{moveU2, "U2"},
-		{moveF2, "F2"},
-		{moveR2, "R2"},
-		{moveD2, "D2"},
-		{moveL2, "L2"},
-		{moveB2, "B2"},
-    };
+void solveCube(std::string& cube, const std::vector<int>& lut) {
+	std::vector<std::string> solution;
+    // vector<pair<void(*)(std::string&), string>> group0Moves = {
+	// 	{moveU, "U"},
+	// 	{moveUPrime, "U'"},
+	// 	{moveF, "F"},
+	// 	{moveFPrime, "F'"},
+	// 	{moveR, "R"},
+	// 	{moveRPrime, "R'"},
+	// 	{moveD, "D"},
+	// 	{moveDPrime, "D'"},
+	// 	{moveL, "L"},
+	// 	{moveLPrime, "L'"},
+	// 	{moveB, "B"},
+	// 	{moveBPrime, "B'"},
+	// 	{moveU2, "U2"},
+	// 	{moveF2, "F2"},
+	// 	{moveR2, "R2"},
+	// 	{moveD2, "D2"},
+	// 	{moveL2, "L2"},
+	// 	{moveB2, "B2"},
+    // };
 
-    solveGroup(cube, isGroup0Solved, group0Moves);
-	printCube(cube);
+	std::vector<std::string> group0Moves = {
+    	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'", 
+    	"U2", "F2", "R2", "D2", "L2", "B2"
+	};
+
+	iterativeSolve(cube, lut, group0Moves, encodeEdgeOrientationsG0, calculateStateIndexG0, solution);
+    // solveGroup(cube, isGroup0Solved, group0Moves);
+	// printCube(cube);
 	// if (isFullySolved(cube))
 		// return;
     
@@ -536,7 +509,7 @@ void solveCube(std::string& cube) {
 		{moveB2, "B2"},
     };
     
-    // solveGroup(cube, isFullySolved, group1Moves);
+    solveGroup(cube, isFullySolved, group1Moves);
 
 }
 
@@ -554,8 +527,8 @@ bool isEdgeFlipped(std::pair<char, char> colors) {
 }
 
     // we use only the first 11 edges for index calculation, as it respects the parity rule
-	// removes the issuse about having 4096 entry
-int calculateStateIndex(const std::string& edgeOrientation) {
+	// removes the issue about having 4096 entry
+int calculateStateIndexG0(const std::string& edgeOrientation) {
     int index = 0;
     for (size_t i = 0; i < edgeOrientation.size() - 1; ++i) {
         if (edgeOrientation[i] == '1') {
@@ -565,7 +538,7 @@ int calculateStateIndex(const std::string& edgeOrientation) {
     return index;
 }
 
-std::string encodeEdgeOrientations(const std::string& cube) {
+std::string encodeEdgeOrientationsG0(const std::string& cube) {
     std::string orientation;
     orientation.reserve(EDGE_COUNT);
     
@@ -595,20 +568,20 @@ the queue holds cube state as a string and the distance to solved
 visited holds the edges orientations because we dont care about anything else for G0->G1
 
 */
-void bfsGenerateLUT(const std::string& initialCube, int lut[2048]) {
+void bfsGenerateLUTG0(const std::string& initialCube, int lut[2048]) {
     std::queue<std::pair<std::string, int>> q;
     std::set<std::string> visited;
     q.push({initialCube, 0});
-    visited.insert(encodeEdgeOrientations(initialCube));
+    visited.insert(encodeEdgeOrientationsG0(initialCube));
 
     std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F", "F'", "B", "B'", "U2", "D2", "R2", "L2", "F2", "B2"};
 
     while (!q.empty()) {
         auto [currentState, dist] = q.front();
         q.pop();
-        std::string currentEdgeOrientation = encodeEdgeOrientations(currentState);
+        std::string currentEdgeOrientation = encodeEdgeOrientationsG0(currentState);
 		// cout << currentState << ", " << currentState.size() << endl;
-        int index = calculateStateIndex(currentEdgeOrientation);
+        int index = calculateStateIndexG0(currentEdgeOrientation);
 		// cout << "index = " << index << endl;
         if (lut[index] == -1 || lut[index] > dist) {
             lut[index] = dist;
@@ -620,12 +593,66 @@ void bfsGenerateLUT(const std::string& initialCube, int lut[2048]) {
             std::string newState = currentState;
             applyMove(newState, move);
 
-            std::string newEdgeOrientation = encodeEdgeOrientations(newState);
+            std::string newEdgeOrientation = encodeEdgeOrientationsG0(newState);
             if (visited.insert(newEdgeOrientation).second) {
                 q.push({newState, dist + 1});
             }
         }
     }
+}
+
+void iterativeSolve(
+    std::string& cube,
+    const std::vector<int>& lut,
+    const std::vector<std::string>& moves,
+    EncodeStateFunc encodeState,
+    CalculateIndexFunc calculateIndex,
+    std::vector<std::string>& solution
+) {
+    bool progress = true;
+
+    while (progress) {
+        progress = false;
+        std::string currentStateEncoded = encodeState(cube);
+        int currentDistance = lut[calculateIndex(currentStateEncoded)];
+
+        if (currentDistance == 0) {
+            std::cout << "Solution found: ";
+            for (const auto& move : solution) std::cout << move << " ";
+            std::cout << "\n";
+            break;
+        }
+
+        for (const auto& move : moves) {
+            std::string newState = cube;
+            applyMove(newState, move);
+            std::string newStateEncoded = encodeState(newState);
+            int newIndex = calculateIndex(newStateEncoded);
+            if (lut[newIndex] < currentDistance) {
+                cube = newState;
+                solution.push_back(move);
+                progress = true;
+                break;
+            }
+        }
+    }
+
+    if (!progress && solution.empty()) {
+        std::cout << "No solution found with the given LUT and moves.\n";
+    }
+}
+
+std::vector<int> loadLUTG0(const std::string& filename) {
+    std::vector<int> lut(2048, -1);
+    std::ifstream file(filename);
+    int distance;
+    int index = 0;
+
+    while (file >> distance && index < lut.size()) {
+        lut[index++] = distance;
+    }
+
+    return lut;
 }
 
 int main(int argc, char* av[]) {
@@ -647,14 +674,18 @@ int main(int argc, char* av[]) {
     "WWWWWWWWW"; // DOWN: 45 - 53
 
 	ofstream file;
-	file.open("lut.txt");
+	file.open("G0.txt");
 	if (!file) {
 		cerr << "Error: file could not be opened";
 		exit(1);
 	}
 	int lut[2048];
 	memset(lut, -1, sizeof(lut));
-	bfsGenerateLUT(cube, lut);
+	bfsGenerateLUTG0(cube, lut);
+	for (int i = 0; i < 2048; i++) {
+		file << lut[i] << endl;
+	}
+	std::vector<int> lutG0 = loadLUTG0("G0.txt");
 	if (argc > 1) {
 		string scramble = av[1];
         vector<string> moves = splitString(scramble);
@@ -662,11 +693,8 @@ int main(int argc, char* av[]) {
             applyMove(cube, move);
         }
 		printCube(cube);
-		solveCube(cube);
+		solveCube(cube, lutG0);
 	}
-	for (int i = 0; i < 2048; i++) {
-		file << lut[i] << endl;
-	}
-	cout << encodeCurrentState(cube) << endl;
+	// cout << encodeCurrentState(cube) << endl;
     return 0;
 }

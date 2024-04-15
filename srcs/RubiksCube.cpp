@@ -252,52 +252,52 @@ std::string RubiksCube::colorize(char color) {
 }
 
 void RubiksCube::printCube(const std::string& cube) {
-    cout << "|||PRINTING CUBE|||" << endl;
-    cout << endl;
+    std::cout << "|||PRINTING CUBE|||" << std::endl;
+    std::cout << std::endl;
     
     // Print U
-	cout << "    ";
+	std::cout << "    ";
     for (int i = 36; i < 45; i++) {
-        cout << colorize(cube[i]);
-        if ((i + 1) % 3 == 0) cout << endl << "    ";
+        std::cout << colorize(cube[i]);
+        if ((i + 1) % 3 == 0) std::cout << std::endl << "    ";
     }
-    cout << endl;
+    std::cout << std::endl;
 
     // Print LFR
     for (int row = 0; row < 3; row++) {
         // Print L
         for (int i = 27 + row * 3; i < 30 + row * 3; i++) {
-            cout << colorize(cube[i]);
+            std::cout << colorize(cube[i]);
         }
-        cout << " ";
+        std::cout << " ";
         // Print F
         for (int i = 0 + row * 3; i < 3 + row * 3; i++) {
-            cout << colorize(cube[i]);
+            std::cout << colorize(cube[i]);
         }
-        cout << " ";
+        std::cout << " ";
         // Print R
         for (int i = 9 + row * 3; i < 12 + row * 3; i++) {
-            cout << colorize(cube[i]);
+            std::cout << colorize(cube[i]);
         }
-        cout << endl;
+        std::cout << std::endl;
     }
-    cout << endl;
+    std::cout << std::endl;
 
     // Print D
-	cout << "    ";
+	std::cout << "    ";
     for (int i = 45; i < 54; i++) {
-        cout << colorize(cube[i]);
-        if ((i + 1) % 3 == 0) cout << endl << "    ";
+        std::cout << colorize(cube[i]);
+        if ((i + 1) % 3 == 0) std::cout << std::endl << "    ";
     }
-    cout << endl;
+    std::cout << std::endl;
 
     // Print B
-	cout << "    ";
+	std::cout << "    ";
 	for (int i = 18; i < 27; i++) {
-        cout << colorize(cube[i]);
-        if ((i + 1) % 3 == 0 && (i != 26)) cout << endl << "    ";
+        std::cout << colorize(cube[i]);
+        if ((i + 1) % 3 == 0 && (i != 26)) std::cout << std::endl << "    ";
     }
-	cout << endl;
+	std::cout << std::endl;
 }
 
 bool RubiksCube::isSolved(const std::string& cube) const {

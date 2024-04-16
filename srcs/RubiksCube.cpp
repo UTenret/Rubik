@@ -2,6 +2,8 @@
 
 RubiksCube::RubiksCube(const std::string& initialState) : state(initialState) {}
 
+RubiksCube::RubiksCube(const RubiksCube& other) : state(other.state) {}
+
 const std::string& RubiksCube::getState() const {
 	return state;
 }
@@ -326,4 +328,44 @@ bool RubiksCube::isSolved() const {
 			return false;
 	}
 	return true;
+}
+
+std::string RubiksCube::encodeEdgeOrientationsG0(const std::string& cubeState) {
+    std::string orientation;
+    orientation.reserve(EDGE_COUNT);
+    
+    for (int i = 0; i < EDGE_COUNT; ++i) {
+        std::pair<char, char> edgeColors = {cubeState[edgeIndices[i][0]], cubeState[edgeIndices[i][1]]};
+        bool flipped = isEdgeFlipped(edgeColors);
+        
+        // // Debugging output
+        // std::cout << "Edge " << i << ": [" << edgeIndices[i][0] << ", " << edgeIndices[i][1] << "] "
+        //           << "(" << edgeColors.first << ", " << edgeColors.second << ") "
+        //           << "Flipped: " << (flipped ? "Yes" : "No") << "\n";
+
+        if (flipped) {
+            orientation.push_back('1'); // Edge is flipped
+        } else {
+            orientation.push_back('0'); // Edge is not flipped
+        }
+    }
+    
+    // std::cout << "Encoded Orientation: " << orientation << "\n";
+    
+    return orientation;
+}
+
+int RubiksCube::calculateStateIndexG0(const std::string& edgeOrientation) {
+    int index = 0;
+    for (size_t i = 0; i < edgeOrientation.size() - 1; ++i) {
+        if (edgeOrientation[i] == '1') {
+            index += (1 << i);
+        }
+    }
+    return index;
+}
+
+bool RubiksCube::isEdgeFlipped(std::pair<char, char> colors) {
+		return (colors.second == 'Y' || colors.second == 'W' || 
+				colors.first == 'O' || colors.first == 'R');
 }

@@ -2,20 +2,20 @@
 
 PruningTable::PruningTable(const RubiksCube& cube) : cube(cube) {}
 
-void PruningTable::bfsGenerateLUT() {
+void PruningTable::bfsGenerateLUTG0() {
     std::queue<std::pair<std::string, int>> q;
     std::set<std::string> visited;
-    q.push({initialState, 0});
-    visited.insert(encodeEdgeOrientations(initialState));
+    q.push({cube.getState(), 0});
+    visited.insert(cube.encodeEdgeOrientationsG0(cube.getState()));
 
-    std::vector<std::string> moves = getValidMoves();
+	std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F", "F'", "B", "B'", "U2", "D2", "R2", "L2", "F2", "B2"};
 
     while (!q.empty()) {
         auto [currentState, dist] = q.front();
         q.pop();
 
-        std::string currentEdgeOrientation = encodeEdgeOrientations(currentState);
-        int index = calculateStateIndex(currentEdgeOrientation);
+        std::string currentEdgeOrientation = cube.encodeEdgeOrientationsG0(currentState);
+        int index = cube.calculateStateIndexG0(currentEdgeOrientation);
         if (lut[index] == -1 || lut[index] > dist) {
             lut[index] = dist;
         }
@@ -24,9 +24,9 @@ void PruningTable::bfsGenerateLUT() {
 
         for (const auto& move : moves) {
             std::string newState = currentState;
-            cube.applyMove(newState, move); // Needs to be defined or available externally.
+            cube.applyMove(move);
 
-            std::string newEdgeOrientation = encodeEdgeOrientations(newState);
+            std::string newEdgeOrientation = cube.encodeEdgeOrientationsG0(newState);
             if (visited.insert(newEdgeOrientation).second) {
                 q.push({newState, dist + 1});
             }
@@ -35,7 +35,7 @@ void PruningTable::bfsGenerateLUT() {
 }
 
 void PruningTable::generateLUT(const std::string& filename) {
-    bfsGenerateLUT();
+    bfsGenerateLUTG0();
     std::ofstream file(filename);
     if (!file) {
         std::cerr << "Error: file could not be opened";
@@ -50,16 +50,11 @@ std::vector<int> PruningTable::loadLUT(const std::string& filename) {
     std::ifstream file(filename);
     int distance;
     std::vector<int> loadedLUT(2048, -1);
-    int index = 0;
+    unsigned long index = 0;
 
     while (file >> distance && index < loadedLUT.size()) {
         loadedLUT[index++] = distance;
     }
 
     return loadedLUT;
-}
-
-bool PruningTable::isEdgeFlipped(std::pair<char, char> colors) {
-		return (colors.second == 'Y' || colors.second == 'W' || 
-				colors.first == 'O' || colors.first == 'R');
 }

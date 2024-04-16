@@ -1,3 +1,5 @@
+#pragma once
+
 #include "RubiksCube.hpp"
 #include "PruningTable.hpp"
 
@@ -6,7 +8,7 @@ public:
 	typedef std::string (*EncodeStateFunc)(const std::string&);
 	typedef int (*CalculateIndexFunc)(const std::string&);
 
-	explicit Solver(const RubiksCube& initialCube) : cube(initialCube) {}
+	explicit Solver(const RubiksCube& cube, const PruningTable& table) : cube(cube), table(table) {}
 
 	bool iddfs(int depth, int maxDepth, std::vector<std::string>& solution, 
 			bool (*isSolved)(const std::string&), const std::vector<std::pair<void(*)(std::string&),
@@ -22,8 +24,13 @@ public:
 		std::vector<std::string>& solution
 	);
 
+	bool isMovePrunable(const std::string& lastMove, const std::string& currentMove);
+	int calculateStateIndexG0(const std::string& edgeOrientation);
+	std::string encodeEdgeOrientationsG0(const std::string& cube);
+	bool isEdgeFlipped(std::pair<char, char> colors);
+
 private:
 
 	RubiksCube cube;
-	//PruningTable table;
+	PruningTable table;
 };

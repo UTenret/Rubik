@@ -30,6 +30,46 @@ bool Solver::iddfs(int depth, int maxDepth, std::vector<std::string>& solution,
 	return false;
 }
 
+int Solver::calculateStateIndexG0(const std::string& edgeOrientation) {
+    int index = 0;
+    for (size_t i = 0; i < edgeOrientation.size() - 1; ++i) {
+        if (edgeOrientation[i] == '1') {
+            index += (1 << i);
+        }
+    }
+    return index;
+}
+
+bool Solver::isEdgeFlipped(std::pair<char, char> colors) {
+		return (colors.second == 'Y' || colors.second == 'W' || 
+				colors.first == 'O' || colors.first == 'R');
+}
+
+std::string Solver::encodeEdgeOrientationsG0(const std::string& cube) {
+    std::string orientation;
+    orientation.reserve(EDGE_COUNT);
+    
+    for (int i = 0; i < EDGE_COUNT; ++i) {
+        std::pair<char, char> edgeColors = {cube[edgeIndices[i][0]], cube[edgeIndices[i][1]]};
+        bool flipped = isEdgeFlipped(edgeColors);
+        
+        // // Debugging output
+        // std::cout << "Edge " << i << ": [" << edgeIndices[i][0] << ", " << edgeIndices[i][1] << "] "
+        //           << "(" << edgeColors.first << ", " << edgeColors.second << ") "
+        //           << "Flipped: " << (flipped ? "Yes" : "No") << "\n";
+
+        if (flipped) {
+            orientation.push_back('1'); // Edge is flipped
+        } else {
+            orientation.push_back('0'); // Edge is not flipped
+        }
+    }
+    
+    // std::cout << "Encoded Orientation: " << orientation << "\n";
+    
+    return orientation;
+}
+
 void Solver::solveCube(const std::vector<int>& lut) {
 	std::vector<std::string> solution;
 
@@ -58,6 +98,23 @@ void Solver::solveCube(const std::vector<int>& lut) {
     };
     
     solveGroup(cube, isFullySolved, group1Moves);
+}
+
+bool Solver::isMovePrunable(const std::string& lastMove, const std::string& currentMove) {
+    if (lastMove.front() == currentMove.front()) {
+        if ((lastMove == "U" && currentMove == "U'") || (lastMove == "U'" && currentMove == "U") ||
+            (lastMove == "R" && currentMove == "R'") || (lastMove == "R'" && currentMove == "R") ||
+            (lastMove == "F" && currentMove == "F'") || (lastMove == "F'" && currentMove == "F") ||
+            (lastMove == "D" && currentMove == "D'") || (lastMove == "D'" && currentMove == "D") ||
+            (lastMove == "L" && currentMove == "L'") || (lastMove == "L'" && currentMove == "L") ||
+            (lastMove == "B" && currentMove == "B'") || (lastMove == "B'" && currentMove == "B")) {
+            return true;
+        }
+        else if (lastMove == currentMove) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void solveGroup(std::string& cube, bool (*groupSolveCondition)(std::string&), const std::vector<std::pair<void(*)(std::string&), std::string>>& moves) {

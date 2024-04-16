@@ -6,240 +6,240 @@ const std::string& RubiksCube::getState() const {
 	return state;
 }
 
-void RubiksCube::applyMove(std::string& cube, const string& moveStr) {
-	if (moveStr == "U") moveU(cube);
-    else if (moveStr == "U'") moveUPrime(cube);
-    else if (moveStr == "F") moveF(cube);
-    else if (moveStr == "F'") moveFPrime(cube);
-    else if (moveStr == "R") moveR(cube);
-    else if (moveStr == "R'") moveRPrime(cube);
-    else if (moveStr == "D") moveD(cube);
-    else if (moveStr == "D'") moveDPrime(cube);
-    else if (moveStr == "L") moveL(cube);
-    else if (moveStr == "L'") moveLPrime(cube);
-    else if (moveStr == "B") moveB(cube);
-    else if (moveStr == "B'") moveBPrime(cube);
-    else if (moveStr == "U2") moveU2(cube);
-    else if (moveStr == "F2") moveF2(cube);
-    else if (moveStr == "R2") moveR2(cube);
-    else if (moveStr == "D2") moveD2(cube);
-    else if (moveStr == "L2") moveL2(cube);
-    else if (moveStr == "B2") moveB2(cube);
+void RubiksCube::applyMove(const std::string& moveStr) {
+	if (moveStr == "U") moveU();
+    else if (moveStr == "U'") moveUPrime();
+    else if (moveStr == "F") moveF();
+    else if (moveStr == "F'") moveFPrime();
+    else if (moveStr == "R") moveR();
+    else if (moveStr == "R'") moveRPrime();
+    else if (moveStr == "D") moveD();
+    else if (moveStr == "D'") moveDPrime();
+    else if (moveStr == "L") moveL();
+    else if (moveStr == "L'") moveLPrime();
+    else if (moveStr == "B") moveB();
+    else if (moveStr == "B'") moveBPrime();
+    else if (moveStr == "U2") moveU2();
+    else if (moveStr == "F2") moveF2();
+    else if (moveStr == "R2") moveR2();
+    else if (moveStr == "D2") moveD2();
+    else if (moveStr == "L2") moveL2();
+    else if (moveStr == "B2") moveB2();
 }
 
-void RubiksCube::moveB2 (std::string& cube) {
-	moveB(cube);
-	moveB(cube);
+void RubiksCube::moveB2 () {
+	moveB();
+	moveB();
 }
-void RubiksCube::moveL2 (std::string& cube) {
-	moveL(cube);
-	moveL(cube);
+void RubiksCube::moveL2 () {
+	moveL();
+	moveL();
 }
-void RubiksCube::moveR2 (std::string& cube) {
-	moveR(cube);
-	moveR(cube);
+void RubiksCube::moveR2 () {
+	moveR();
+	moveR();
 }
-void RubiksCube::moveF2 (std::string& cube) {
-	moveF(cube);
-	moveF(cube);
+void RubiksCube::moveF2 () {
+	moveF();
+	moveF();
 }
-void RubiksCube::moveU2 (std::string& cube) {
-	moveU(cube);
-	moveU(cube);
+void RubiksCube::moveU2 () {
+	moveU();
+	moveU();
 }
-void RubiksCube::moveD2 (std::string& cube) {
-	moveD(cube);
-	moveD(cube);
-}
-
-void RubiksCube::moveBPrime(std::string& cube) {
-	moveB(cube);
-	moveB(cube);
-	moveB(cube);
+void RubiksCube::moveD2 () {
+	moveD();
+	moveD();
 }
 
-void RubiksCube::moveLPrime(std::string& cube) {
-	moveL(cube);
-	moveL(cube);
-	moveL(cube);
+void RubiksCube::moveBPrime() {
+	moveB();
+	moveB();
+	moveB();
 }
 
-void RubiksCube::moveRPrime(std::string& cube) {
-	moveR(cube);
-	moveR(cube);
-	moveR(cube);
+void RubiksCube::moveLPrime() {
+	moveL();
+	moveL();
+	moveL();
 }
 
-void RubiksCube::moveUPrime(std::string& cube) {
-	moveU(cube);
-	moveU(cube);
-	moveU(cube);
+void RubiksCube::moveRPrime() {
+	moveR();
+	moveR();
+	moveR();
 }
 
-void RubiksCube::moveFPrime(std::string& cube) {
-	moveF(cube);
-	moveF(cube);
-	moveF(cube);
+void RubiksCube::moveUPrime() {
+	moveU();
+	moveU();
+	moveU();
 }
 
-void RubiksCube::moveDPrime(std::string& cube) {
-	moveD(cube);
-	moveD(cube);
-	moveD(cube);
+void RubiksCube::moveFPrime() {
+	moveF();
+	moveF();
+	moveF();
 }
 
-void RubiksCube::applyInverseMove(std::string& cube, const string& moveStr) {
-    if (moveStr == "U") moveUPrime(cube);
-    else if (moveStr == "U'") moveU(cube);
-    else if (moveStr == "F") moveFPrime(cube);
-    else if (moveStr == "F'") moveF(cube);
-    else if (moveStr == "R") moveRPrime(cube);
-    else if (moveStr == "R'") moveR(cube);
-    else if (moveStr == "D") moveDPrime(cube);
-    else if (moveStr == "D'") moveD(cube);
-    else if (moveStr == "L") moveLPrime(cube);
-    else if (moveStr == "L'") moveL(cube);
-    else if (moveStr == "B") moveBPrime(cube);
-    else if (moveStr == "B'") moveB(cube);
-    else if (moveStr == "U2") moveU2(cube);
-    else if (moveStr == "F2") moveF2(cube);
-    else if (moveStr == "R2") moveR2(cube);
-    else if (moveStr == "D2") moveD2(cube);
-    else if (moveStr == "L2") moveL2(cube);
-    else if (moveStr == "B2") moveB2(cube);
+void RubiksCube::moveDPrime() {
+	moveD();
+	moveD();
+	moveD();
 }
 
-void RubiksCube::moveD(std::string& cube) {
-	char tempFront[3] = {cube[6], cube[7], cube[8]};
-	char tempRight[3] = {cube[15], cube[16], cube[17]};
-	char tempBack[3] = {cube[24], cube[25], cube[26]};
-	char tempLeft[3] = {cube[33], cube[34], cube[35]};
+void RubiksCube::applyInverseMove(const std::string& moveStr) {
+    if (moveStr == "U") moveUPrime();
+    else if (moveStr == "U'") moveU();
+    else if (moveStr == "F") moveFPrime();
+    else if (moveStr == "F'") moveF();
+    else if (moveStr == "R") moveRPrime();
+    else if (moveStr == "R'") moveR();
+    else if (moveStr == "D") moveDPrime();
+    else if (moveStr == "D'") moveD();
+    else if (moveStr == "L") moveLPrime();
+    else if (moveStr == "L'") moveL();
+    else if (moveStr == "B") moveBPrime();
+    else if (moveStr == "B'") moveB();
+    else if (moveStr == "U2") moveU2();
+    else if (moveStr == "F2") moveF2();
+    else if (moveStr == "R2") moveR2();
+    else if (moveStr == "D2") moveD2();
+    else if (moveStr == "L2") moveL2();
+    else if (moveStr == "B2") moveB2();
+}
 
-	char tempDown[9] = {cube[51], cube[48], cube[45],
-						cube[52], cube[49], cube[46],
-						cube[53], cube[50], cube[47]};
+void RubiksCube::moveD() {
+	char tempFront[3] = {state[6], state[7], state[8]};
+	char tempRight[3] = {state[15], state[16], state[17]};
+	char tempBack[3] = {state[24], state[25], state[26]};
+	char tempLeft[3] = {state[33], state[34], state[35]};
+
+	char tempDown[9] = {state[51], state[48], state[45],
+						state[52], state[49], state[46],
+						state[53], state[50], state[47]};
 	for (int i = 0; i < 9; i++) {
-		cube[i + 45] = tempDown[i];
+		state[i + 45] = tempDown[i];
 	}
 	for (int i = 0; i < 3; i++) {
-		cube[i + 6] = tempLeft[i];
-		cube[i + 15] = tempFront[i];
-		cube[i + 24] = tempRight[i];
-		cube[i + 33] = tempBack[i];
+		state[i + 6] = tempLeft[i];
+		state[i + 15] = tempFront[i];
+		state[i + 24] = tempRight[i];
+		state[i + 33] = tempBack[i];
 	}
 		
 }
 
-void RubiksCube::moveF(std::string& cube) {
-	char tempLeft[3] = {cube[29], cube[32], cube[35]};
-	char tempRight[3] = {cube[9], cube[12], cube[15]};
-	char tempUp[3] = {cube[42], cube[43], cube[44]};
-	char tempDown[3] = {cube[45], cube[46], cube[47]};
+void RubiksCube::moveF() {
+	char tempLeft[3] = {state[29], state[32], state[35]};
+	char tempRight[3] = {state[9], state[12], state[15]};
+	char tempUp[3] = {state[42], state[43], state[44]};
+	char tempDown[3] = {state[45], state[46], state[47]};
 
-	char tempFront[9] = {cube[6], cube[3], cube[0],
-						cube[7], cube[4], cube[1],
-						cube[8], cube[5], cube[2]};
+	char tempFront[9] = {state[6], state[3], state[0],
+						state[7], state[4], state[1],
+						state[8], state[5], state[2]};
 
 	for (int i = 0; i < 9; i++) {
-		cube[i] = tempFront[i];
+		state[i] = tempFront[i];
 	}
 	for (int i = 0, j = 0; i < 9; i += 3, j++) {
-		cube[i + 9] = tempUp[j];
-		cube[i + 29] = tempDown[j];
+		state[i + 9] = tempUp[j];
+		state[i + 29] = tempDown[j];
 	}
-	cube[42] = tempLeft[2];
-	cube[43] = tempLeft[1];
-	cube[44] = tempLeft[0];
-	cube[45] = tempRight[2];
-	cube[46] = tempRight[1];
-	cube[47] = tempRight[0];
+	state[42] = tempLeft[2];
+	state[43] = tempLeft[1];
+	state[44] = tempLeft[0];
+	state[45] = tempRight[2];
+	state[46] = tempRight[1];
+	state[47] = tempRight[0];
 }
 
-void RubiksCube::moveU(std::string& cube) {
-	char tempFront[3] = {cube[0], cube[1], cube[2]};
-	char tempRight[3] = {cube[9], cube[10], cube[11]};
-	char tempBack[3] = {cube[18], cube[19], cube[20]};
-	char tempLeft[3] = {cube[27], cube[28], cube[29]};
+void RubiksCube::moveU() {
+	char tempFront[3] = {state[0], state[1], state[2]};
+	char tempRight[3] = {state[9], state[10], state[11]};
+	char tempBack[3] = {state[18], state[19], state[20]};
+	char tempLeft[3] = {state[27], state[28], state[29]};
 
-	char tempU[9] = {cube[42],cube[39],cub?>>ee[36],
-					cube[43],cube[40],cube[37],
-					cube[44],cube[41],cube[38]};
+	char tempU[9] = {state[42],state[39],state[36],
+					state[43],state[40],state[37],
+					state[44],state[41],state[38]};
 	for (int i = 0; i < 9; i++) {
-		cube[i + 36] = tempU[i];						//ROTATE THE UP
+		state[i + 36] = tempU[i];						//ROTATE THE UP
 	}
 	for (int i = 0; i < 3; i++) {						// rotate the top row
-		cube[i] = tempRight[i];
-		cube[i + 9] = tempBack[i];
-		cube[i + 18] = tempLeft[i];
-		cube[i + 27] = tempFront[i];
+		state[i] = tempRight[i];
+		state[i + 9] = tempBack[i];
+		state[i + 18] = tempLeft[i];
+		state[i + 27] = tempFront[i];
 	}
 }
 
-void RubiksCube::moveR(std::string& cube) {
-	char tempFront[3] = {cube[2],cube[5],cube[8]};
-	char tempUp[3] = {cube[44],cube[41],cube[38]};
-	char tempDown[3] = {cube[47],cube[50],cube[53]};
-	char tempBack[3] = {cube[24],cube[21],cube[18]};
+void RubiksCube::moveR() {
+	char tempFront[3] = {state[2],state[5],state[8]};
+	char tempUp[3] = {state[44],state[41],state[38]};
+	char tempDown[3] = {state[47],state[50],state[53]};
+	char tempBack[3] = {state[24],state[21],state[18]};
 
-	char tempRight[9] = {cube[15], cube[12], cube[9],
-						cube[16], cube[13], cube[10],
-						cube[17], cube[14], cube[11]};
+	char tempRight[9] = {state[15], state[12], state[9],
+						state[16], state[13], state[10],
+						state[17], state[14], state[11]};
 
 	for (int i = 0; i < 9; i++) {
-		cube[i + 9] = tempRight[i];
+		state[i + 9] = tempRight[i];
 	}
 	for (int i = 0, j = 0; i < 9; i += 3, j++) {
-		cube[i + 2] = tempDown[j];
-		cube[i + 18] = tempUp[j];
-		cube[i + 38] = tempFront[j];
-		cube[i + 47] = tempBack[j];
+		state[i + 2] = tempDown[j];
+		state[i + 18] = tempUp[j];
+		state[i + 38] = tempFront[j];
+		state[i + 47] = tempBack[j];
 	}
 }
 
-void RubiksCube::moveL(std::string& cube) {
-	char tempFront[3] = {cube[0],cube[3], cube[6]};
-	char tempBack[3] = {cube[20],cube[23], cube[26]};
-	char tempUp[3] = {cube[36],cube[39], cube[42]};
-	char tempDown[3] = {cube[45],cube[48], cube[51]};
+void RubiksCube::moveL() {
+	char tempFront[3] = {state[0],state[3], state[6]};
+	char tempBack[3] = {state[20],state[23], state[26]};
+	char tempUp[3] = {state[36],state[39], state[42]};
+	char tempDown[3] = {state[45],state[48], state[51]};
 
-	char tempLeft[9] {cube[33],cube[30], cube[27],
-				cube[34],cube[31], cube[28],
-				cube[35],cube[32], cube[29]};
+	char tempLeft[9] {state[33],state[30], state[27],
+				state[34],state[31], state[28],
+				state[35],state[32], state[29]};
 
 	for (int i = 0; i < 9; i++) {
-		cube[i + 27] = tempLeft[i];
+		state[i + 27] = tempLeft[i];
 	}
 	for (int i = 0, j = 0; i < 9; i += 3, j++) {
-		cube[i] = tempUp[j];
-		cube[i + 20] = tempDown[j];
-		cube[i + 36] = tempBack[j];
-		cube[i + 45] = tempFront[j];
+		state[i] = tempUp[j];
+		state[i + 20] = tempDown[j];
+		state[i + 36] = tempBack[j];
+		state[i + 45] = tempFront[j];
 	}
 }
 
-void RubiksCube::moveB(std::string& cube) {
-	char tempRight[3] = {cube[11], cube[14], cube[17]};
-	char tempLeft[3] = {cube[27], cube[30], cube[33]};
-	char tempUp[3] = {cube[38], cube[37], cube[36]};
-	char tempDown[3] = {cube[53], cube[52], cube[51]};
+void RubiksCube::moveB() {
+	char tempRight[3] = {state[11], state[14], state[17]};
+	char tempLeft[3] = {state[27], state[30], state[33]};
+	char tempUp[3] = {state[38], state[37], state[36]};
+	char tempDown[3] = {state[53], state[52], state[51]};
 
-	char tempBack[9] = {cube[24], cube[21], cube[18],
-						cube[25], cube[22], cube[19],
-						cube[26], cube[23], cube[20]};
+	char tempBack[9] = {state[24], state[21], state[18],
+						state[25], state[22], state[19],
+						state[26], state[23], state[20]};
 	for (int i = 0; i < 9; i++) {
-		cube[i + 18] = tempBack[i];
+		state[i + 18] = tempBack[i];
 	}
 	for (int i = 0; i < 3; i++) {
-		cube[i + 51] = tempLeft[i];
-		cube[i + 36] = tempRight[i];
+		state[i + 51] = tempLeft[i];
+		state[i + 36] = tempRight[i];
 	}
 	for (int i = 0, j = 0; i < 9; i += 3, j++) {
-		cube[i + 11] = tempDown[j];
-		cube[i + 27] = tempUp[j];
+		state[i + 11] = tempDown[j];
+		state[i + 27] = tempUp[j];
 	}
 }
 
-std::string RubiksCube::colorize(char color) {    
+std::string RubiksCube::colorize(const char color) const {    
     switch (color) {
         case 'W': return "\033[97mW\033[0m"; // White
         case 'Y': return "\033[93mY\033[0m"; // Yellow
@@ -247,18 +247,18 @@ std::string RubiksCube::colorize(char color) {
         case 'O': return "\033[38;5;208mO\033[0m"; // Orange
         case 'G': return "\033[92mG\033[0m"; // Green
         case 'B': return "\033[94mB\033[0m"; // Blue
-        default: return string(1, color);
+        default: return std::string(1, color);
     }
 }
 
-void RubiksCube::printCube(const std::string& cube) {
+void RubiksCube::printCube() const {
     std::cout << "|||PRINTING CUBE|||" << std::endl;
     std::cout << std::endl;
     
     // Print U
 	std::cout << "    ";
     for (int i = 36; i < 45; i++) {
-        std::cout << colorize(cube[i]);
+        std::cout << colorize(state[i]);
         if ((i + 1) % 3 == 0) std::cout << std::endl << "    ";
     }
     std::cout << std::endl;
@@ -267,17 +267,17 @@ void RubiksCube::printCube(const std::string& cube) {
     for (int row = 0; row < 3; row++) {
         // Print L
         for (int i = 27 + row * 3; i < 30 + row * 3; i++) {
-            std::cout << colorize(cube[i]);
+            std::cout << colorize(state[i]);
         }
         std::cout << " ";
         // Print F
         for (int i = 0 + row * 3; i < 3 + row * 3; i++) {
-            std::cout << colorize(cube[i]);
+            std::cout << colorize(state[i]);
         }
         std::cout << " ";
         // Print R
         for (int i = 9 + row * 3; i < 12 + row * 3; i++) {
-            std::cout << colorize(cube[i]);
+            std::cout << colorize(state[i]);
         }
         std::cout << std::endl;
     }
@@ -286,7 +286,7 @@ void RubiksCube::printCube(const std::string& cube) {
     // Print D
 	std::cout << "    ";
     for (int i = 45; i < 54; i++) {
-        std::cout << colorize(cube[i]);
+        std::cout << colorize(state[i]);
         if ((i + 1) % 3 == 0) std::cout << std::endl << "    ";
     }
     std::cout << std::endl;
@@ -294,35 +294,35 @@ void RubiksCube::printCube(const std::string& cube) {
     // Print B
 	std::cout << "    ";
 	for (int i = 18; i < 27; i++) {
-        std::cout << colorize(cube[i]);
+        std::cout << colorize(state[i]);
         if ((i + 1) % 3 == 0 && (i != 26)) std::cout << std::endl << "    ";
     }
 	std::cout << std::endl;
 }
 
-bool RubiksCube::isSolved(const std::string& cube) const {
+bool RubiksCube::isSolved() const {
 	for (int i = 0; i < 9; i++) {
-		if (cube[i] != 'B')
+		if (state[i] != 'B')
 			return false;
 	}
 	for (int i = 9; i < 18; i++) {
-		if (cube[i] != 'R')
+		if (state[i] != 'R')
 			return false;
 	}
 	for (int i = 18; i < 27; i++) {
-		if (cube[i] != 'G')
+		if (state[i] != 'G')
 			return false;
 	}
 	for (int i = 27; i < 36; i++) {
-		if (cube[i] != 'O')
+		if (state[i] != 'O')
 			return false;
 	}
 	for (int i = 36; i < 45; i++) {
-		if (cube[i] != 'Y')
+		if (state[i] != 'Y')
 			return false;
 	}
 	for (int i = 45; i < 54; i++) {
-		if (cube[i] != 'W')
+		if (state[i] != 'W')
 			return false;
 	}
 	return true;

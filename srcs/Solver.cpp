@@ -154,6 +154,10 @@ void Solver::iterativeSolve(
 		// cube.printCube();
 
         if (currentDistance == 0) {
+			if (solution.empty()) {
+				std::cout << "Cube is already solved for this group." << std::endl;
+				break;
+			}
             std::cout << "Solution found: ";
             for (const auto& move : solution) std::cout << move << " ";
             std::cout << "\n";
@@ -173,7 +177,7 @@ void Solver::iterativeSolve(
         }
     }
 
-    if (!progress && solution.empty()) {
+    if (!progress && solution.empty() && lut[calculateIndex(encodeState(cube.getState()))] != 0) {
         std::cout << "No solution found with the given LUT and moves.\n";
     }
 }

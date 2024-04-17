@@ -8,6 +8,7 @@
 #include <cmath>
 #include <queue>
 #include <cstring>
+#include <sstream>
 
 enum EdgePositions {
 	UB, UR, UF, UL,
@@ -59,6 +60,7 @@ class RubiksCube {
 	void applyMove(const std::string& moveStr);
     void applyInverseMove(const std::string& moveStr);
     void printCube() const;
+    void scramble(const std::string& moves);
 
 	private:
 

@@ -111,6 +111,14 @@ void RubiksCube::applyInverseMove(const std::string& moveStr) {
     else if (moveStr == "B2") moveB2();
 }
 
+void RubiksCube::scramble(const std::string& moves) {
+    std::istringstream iss(moves);
+    std::string move;
+    while (iss >> move) {
+        applyMove(move);
+    }
+}
+
 void RubiksCube::moveD() {
 	char tempFront[3] = {state[6], state[7], state[8]};
 	char tempRight[3] = {state[15], state[16], state[17]};

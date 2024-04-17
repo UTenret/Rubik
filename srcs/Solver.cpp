@@ -144,7 +144,14 @@ void Solver::iterativeSolve(
     while (progress) {
         progress = false;
         std::string currentStateEncoded = encodeState(cube.getState());
+		// std::cout << "cube.getState(): " << cube.getState() << std::endl;
+		// std::cout << "currentStateEncoded: " << currentStateEncoded << std::endl;
+		// std::cout << "cube.getState(): " << cube.getState() << std::endl;
         int currentDistance = lut[calculateIndex(currentStateEncoded)];
+		// std::cout << "calculateIndex(currentStateEncoded) : " << calculateIndex(currentStateEncoded) << std::endl;
+		// std::cout << "calculateIndex(currentStateEncoded) : " << calculateIndex(currentStateEncoded) << std::endl;
+		// std::cout << "currentDistance: " << currentDistance << std::endl;
+		// cube.printCube();
 
         if (currentDistance == 0) {
             std::cout << "Solution found: ";
@@ -152,7 +159,6 @@ void Solver::iterativeSolve(
             std::cout << "\n";
             break;
         }
-
         for (const auto& move : moves) {
             cube.applyMove(move);
             std::string newStateEncoded = encodeState(cube.getState());
@@ -160,9 +166,9 @@ void Solver::iterativeSolve(
             if (lut[newIndex] < currentDistance) {
                 solution.push_back(move);
                 progress = true;
-                break;  // Found a move that improves the situation, proceed further with this state
+                break;
             } else {
-                cube.applyInverseMove(move);  // Revert the move since it didn't help
+                cube.applyInverseMove(move);
             }
         }
     }

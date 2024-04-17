@@ -5,7 +5,7 @@ bool Solver::iddfs(int depth, int maxDepth, std::vector<std::string>& solution,
 			 const std::vector<std::string>& allowedMoves) {
 	if(isSolved()){
 		cube.printCube();
-		std::cout << "SOLUTION :";
+		std::cout << "FULL SOLUTION :";
 		for (const auto& move : solution) {
 			std::cout << move << " ";
 		}
@@ -84,7 +84,7 @@ bool Solver::isMovePrunable(const std::string& lastMove, const std::string& curr
     return false;
 }
 
-void Solver::solveGroup(std::function<bool()> groupSolveCondition, const std::vector<std::string>& moves, vector<std::string> solution) {
+void Solver::solveGroup(std::function<bool()> groupSolveCondition, const std::vector<std::string>& moves, std::vector<std::string> solution) {
     for (int i = 1; i < MAX_DEPTH; i++) {
         if (iddfs(0, i, solution, groupSolveCondition, moves))
             break;

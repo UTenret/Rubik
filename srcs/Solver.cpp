@@ -64,7 +64,7 @@ void Solver::solveCube() {
 		{"B2"},
     };
     
-    solveGroup([this]() { return cube.isSolved(); }, group1Moves);
+    solveGroup([this]() { return cube.isSolved(); }, group1Moves, solution);
 }
 
 bool Solver::isMovePrunable(const std::string& lastMove, const std::string& currentMove) {
@@ -84,53 +84,12 @@ bool Solver::isMovePrunable(const std::string& lastMove, const std::string& curr
     return false;
 }
 
-void Solver::solveGroup(std::function<bool()> groupSolveCondition, const std::vector<std::string>& moves) {
-    std::vector<std::string> solution;
+void Solver::solveGroup(std::function<bool()> groupSolveCondition, const std::vector<std::string>& moves, vector<std::string> solution) {
     for (int i = 1; i < MAX_DEPTH; i++) {
         if (iddfs(0, i, solution, groupSolveCondition, moves))
             break;
     }
 }
-
-// void Solver::iterativeSolve(
-//     const std::vector<int>& lut,
-//     const std::vector<std::string>& moves,
-//     EncodeStateFunc encodeState,
-//     CalculateIndexFunc calculateIndex,
-//     std::vector<std::string>& solution
-// ) {
-//     bool progress = true;
-
-//     while (progress) {
-//         progress = false;
-//         std::string currentStateEncoded = encodeState(cube.getState());
-//         int currentDistance = lut[calculateIndex(currentStateEncoded)];
-
-//         if (currentDistance == 0) {
-//             std::cout << "Solution found: ";
-//             for (const auto& move : solution) std::cout << move << " ";
-//             std::cout << "\n";
-//             break;
-//         }
-
-//         for (const auto& move : moves) {
-//             RubiksCube currentCube(cube);
-//             cube.applyMove(newState, move);
-//             std::string newStateEncoded = encodeState(newState);
-//             int newIndex = calculateIndex(newStateEncoded);
-//             if (lut[newIndex] < currentDistance) {
-//                 cube = newState;
-//                 solution.push_back(move);
-//                 progress = true;
-//                 break;
-//             }
-//         }
-//     }
-
-//     if (!progress && solution.empty()) {
-//         std::cout << "No solution found with the given LUT and moves.\n";
-//     }
-// }
 
 void Solver::iterativeSolve(
     const std::vector<int>& lut,

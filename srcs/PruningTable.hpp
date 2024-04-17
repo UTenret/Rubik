@@ -14,7 +14,7 @@ public:
 
     void generateLUT(const std::string& filename);
     std::vector<int> loadLUT(const std::string& filename);
-    void solveCube(std::string& cube, const std::vector<int>& lut);
+	const std::vector<int>& getLUT() const;
 
 private:
 	RubiksCube cube;

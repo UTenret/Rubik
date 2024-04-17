@@ -1,6 +1,6 @@
 #include "PruningTable.hpp"
 
-PruningTable::PruningTable(const RubiksCube& cube) : cube(cube) {}
+PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), lut(2048, -1) {}
 
 void PruningTable::bfsGenerateLUTG0() {
     std::queue<std::pair<std::string, int>> q;
@@ -9,7 +9,7 @@ void PruningTable::bfsGenerateLUTG0() {
     visited.insert(cube.encodeEdgeOrientationsG0(cube.getState()));
 
 	std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F", "F'", "B", "B'", "U2", "D2", "R2", "L2", "F2", "B2"};
-
+	std::cerr << "here\n";
     while (!q.empty()) {
         auto [currentState, dist] = q.front();
         q.pop();
@@ -19,9 +19,7 @@ void PruningTable::bfsGenerateLUTG0() {
         if (lut[index] == -1 || lut[index] > dist) {
             lut[index] = dist;
         }
-
         if (dist >= MAX_DEPTH) continue;
-
         for (const auto& move : moves) {
             std::string newState = currentState;
             cube.applyMove(move);
@@ -57,4 +55,8 @@ std::vector<int> PruningTable::loadLUT(const std::string& filename) {
     }
 
     return loadedLUT;
+}
+
+const std::vector<int>& PruningTable::getLUT() const {
+    return lut;
 }

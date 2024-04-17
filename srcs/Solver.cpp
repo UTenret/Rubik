@@ -32,7 +32,7 @@ bool Solver::iddfs(int depth, int maxDepth, std::vector<std::string>& solution,
 	return false;
 }
 
-void Solver::solveCube(const std::vector<int>& lut) {
+void Solver::solveCube() {
 	std::vector<std::string> solution;
 
 	std::vector<std::string> group0Moves = {
@@ -41,7 +41,7 @@ void Solver::solveCube(const std::vector<int>& lut) {
 	};
 
     // Pass lambdas to the function
-	iterativeSolve(lut,
+	iterativeSolve(table.getLUT(),
 					group0Moves,
 					 RubiksCube::encodeEdgeOrientationsG0,
 					  RubiksCube::calculateStateIndexG0,
@@ -92,6 +92,46 @@ void Solver::solveGroup(std::function<bool()> groupSolveCondition, const std::ve
     }
 }
 
+// void Solver::iterativeSolve(
+//     const std::vector<int>& lut,
+//     const std::vector<std::string>& moves,
+//     EncodeStateFunc encodeState,
+//     CalculateIndexFunc calculateIndex,
+//     std::vector<std::string>& solution
+// ) {
+//     bool progress = true;
+
+//     while (progress) {
+//         progress = false;
+//         std::string currentStateEncoded = encodeState(cube.getState());
+//         int currentDistance = lut[calculateIndex(currentStateEncoded)];
+
+//         if (currentDistance == 0) {
+//             std::cout << "Solution found: ";
+//             for (const auto& move : solution) std::cout << move << " ";
+//             std::cout << "\n";
+//             break;
+//         }
+
+//         for (const auto& move : moves) {
+//             RubiksCube currentCube(cube);
+//             cube.applyMove(newState, move);
+//             std::string newStateEncoded = encodeState(newState);
+//             int newIndex = calculateIndex(newStateEncoded);
+//             if (lut[newIndex] < currentDistance) {
+//                 cube = newState;
+//                 solution.push_back(move);
+//                 progress = true;
+//                 break;
+//             }
+//         }
+//     }
+
+//     if (!progress && solution.empty()) {
+//         std::cout << "No solution found with the given LUT and moves.\n";
+//     }
+// }
+
 void Solver::iterativeSolve(
     const std::vector<int>& lut,
     const std::vector<std::string>& moves,
@@ -114,15 +154,15 @@ void Solver::iterativeSolve(
         }
 
         for (const auto& move : moves) {
-            RubiksCube currentCube(cube);
-            cube.applyMove(newState, move);
-            std::string newStateEncoded = encodeState(newState);
+            cube.applyMove(move);
+            std::string newStateEncoded = encodeState(cube.getState());
             int newIndex = calculateIndex(newStateEncoded);
             if (lut[newIndex] < currentDistance) {
-                cube = newState;
                 solution.push_back(move);
                 progress = true;
-                break;
+                break;  // Found a move that improves the situation, proceed further with this state
+            } else {
+                cube.applyInverseMove(move);  // Revert the move since it didn't help
             }
         }
     }

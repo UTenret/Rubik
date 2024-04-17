@@ -54,7 +54,6 @@ class RubiksCube {
 	RubiksCube(const RubiksCube& other);
 
 	const std::string& getState() const;
-	const std::string& getState() const;
 
 	bool isSolved() const;
 	void applyMove(const std::string& moveStr);

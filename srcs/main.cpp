@@ -53,9 +53,8 @@ int main(int argc, char* argv[]) {
 
 	RubiksCube		cube(initialState);
 	PruningTable	table(cube);
+	table.generateLUT("G0.txt");
 	Solver			solver(cube, table);
-	(void)argc;
-	(void)argv;
 
 	// std::ofstream file;
 	// file.open("G0.txt");
@@ -70,15 +69,10 @@ int main(int argc, char* argv[]) {
 	// 	file << lut[i] << std::endl;
 	// }
 	// std::vector<int> lutG0 = loadLUTG0("G0.txt");
-	// if (argc > 1) {
-	// 	string scramble = av[1];
-    //     std::vector<std::string> moves = splitString(scramble);
-	// 	for (const string& move : moves) {
-    //         applyMove(cube, move);
-    //     }
-	// 	printCube(cube);
-	// 	solveCube(cube, lutG0);
-	// }
+	if (argc > 1) {
+		std::string scramble = argv[1];
+		solver.solveCube();
+	}
 	// cout << encodeCurrentState(cube) << endl;
     return 0;
 }

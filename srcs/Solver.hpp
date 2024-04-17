@@ -15,7 +15,7 @@ public:
            std::function<bool ()> isSolved,
            const std::vector<std::string>& allowedMoves);
 
-	void solveCube(const std::vector<int>& lut);
+	void solveCube();
 	
 	void iterativeSolve(
 		const std::vector<int>& lut,

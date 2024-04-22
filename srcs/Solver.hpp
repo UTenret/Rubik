@@ -24,7 +24,8 @@ public:
 		CalculateIndexFunc calculateIndex,
 		std::vector<std::string>& solution
 	);
-	void solveGroup(std::function<bool()> groupSolveCondition, const std::vector<std::string>& moves, std::vector<std::string> solution);
+	void solveGroup(std::function<bool()> groupSolveCondition, const std::vector<std::string>& moves,
+	 std::vector<std::string> solution);
 
 	bool isMovePrunable(const std::string& lastMove, const std::string& currentMove);
 

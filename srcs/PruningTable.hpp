@@ -12,13 +12,15 @@ class PruningTable {
 public:
     explicit PruningTable(const RubiksCube& cube);
 
-    void generateLUT(const std::string& filename);
+    void generateLUT();
     std::vector<int> loadLUT(const std::string& filename);
-	const std::vector<int>& getLUT() const;
+	const std::vector<int>& getLUT(int lutNumber) const;
 
 private:
 	RubiksCube cube;
-    std::vector<int> lut;
+    std::vector<int> lut0;
+    std::vector<int> lut1;
 
     void bfsGenerateLUTG0();
+    void bfsGenerateLUTG1();
 };

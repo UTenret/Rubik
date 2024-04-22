@@ -41,7 +41,7 @@ void Solver::solveCube() {
 	};
 
     // Pass lambdas to the function
-	iterativeSolve(table.getLUT(),
+	iterativeSolve(table.getLUT(0),
 					group0Moves,
 					 RubiksCube::encodeEdgeOrientationsG0,
 					  RubiksCube::calculateStateIndexG0,
@@ -64,6 +64,7 @@ void Solver::solveCube() {
 		{"B2"},
     };
     
+	RubiksCube::calculateStateIndexG1(cube);
     solveGroup([this]() { return cube.isSolved(); }, group1Moves, solution);
 }
 

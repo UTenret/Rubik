@@ -20,19 +20,6 @@ std::vector<std::string> splitString(const std::string& str, char delimiter = ' 
     return tokens;
 }
 
-//EDGE IS NOT FLIPPED IF WE CAN BRING IT TO ITS RIGHTFUL PLACE 
-//WITHOUT F OR B (OR F' OR B')
-
-//seems to me like the condition is the same for all up edges or down edges,
-// inner cannot be white(down) or yellow(up)
-// outer cannot be red(right) or orange(left) if we're considering that G1 is restricting F and B and front is blue and up yellow
-// seems to me like its the same condition for literally all my edges
-
-
-    // we use only the first 11 edges for index calculation, as it respects the parity rule
-	// removes the issue about having 4096 entry
-
-
 int main(int argc, char* argv[]) {
     // char cube[54] = {
     //     'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', 'B', // 0,  1,  2,  3   4,  5,  6,  7,  8		FRONT
@@ -52,7 +39,10 @@ int main(int argc, char* argv[]) {
     "WWWWWWWWW"; // DOWN: 45 - 53
 
 	RubiksCube		cube(initialState);
-	PruningTable	table(cube);
+	PruningTable	table(cube); // keep this shit here we need the initial state to make the LUTs
+	table.generateLUT();
+	std::cout << "state: " << cube.getState() << std::endl;
+
 	if (argc > 1) {
 		std::string scramble = argv[1];
 		cube.scramble(argv[1]);
@@ -62,25 +52,11 @@ int main(int argc, char* argv[]) {
 		std::cout << "Please input a scramble\n";
 		return 1;
 	}
-	table.generateLUT("G0.txt");
+	
 
 	Solver			solver(cube, table);
 	solver.solveCube();
+	std::cout << "encodeEdgeOrientationsG0: " << RubiksCube::encodeEdgeOrientationsG0(cube.getState()) << std::endl;
 
-	// std::ofstream file;
-	// file.open("G0.txt");
-	// if (!file) {
-	// 	std::cerr << "Error: file could not be opened";
-	// 	exit(1);
-	// }
-	// int lut[2048];
-	// memset(lut, -1, sizeof(lut));
-	// bfsGenerateLUTG0(cube, lut);
-	// for (int i = 0; i < 2048; i++) {
-	// 	file << lut[i] << std::endl;
-	// }
-	// std::vector<int> lutG0 = loadLUTG0("G0.txt");
-
-	// cout << encodeCurrentState(cube) << endl;
     return 0;
 }

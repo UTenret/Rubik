@@ -13,8 +13,10 @@ bool Solver::iddfs(int depth, int maxDepth, std::vector<std::string>& solution,
 		return true;
 	}
 
-	if(depth == maxDepth)
+	if(depth == maxDepth) {
+		// std::cout << "Max depth reached without a solution" << std::endl;
 		return false;
+	}
 
 	for (const auto& moveStr : allowedMoves) {
 		if (!solution.empty() && isMovePrunable(solution.back(), moveStr)) {
@@ -35,18 +37,25 @@ bool Solver::iddfs(int depth, int maxDepth, std::vector<std::string>& solution,
 void Solver::solveCube() {
 	std::vector<std::string> solution;
 
-	std::vector<std::string> group0Moves = {
-    	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'", 
-    	"U2", "F2", "R2", "D2", "L2", "B2"
+	// std::vector<std::string> group0Moves = {
+    // 	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'", 
+    // 	"U2", "F2", "R2", "D2", "L2", "B2"
+	// };
+
+	const std::vector<std::string> group0Moves = {
+    	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'",
 	};
 
     // Pass lambdas to the function
+	table.setLUT(0, table.loadLUT("G0.txt", 2048));
 	iterativeSolve(table.getLUT(0),
 					group0Moves,
 					 RubiksCube::encodeEdgeOrientationsG0,
 					  RubiksCube::calculateStateIndexG0,
 					   solution);
-    
+    std::cout << "AFTER G0->G1" << std::endl;
+	cube.printCube();
+
     std::vector<std::string> group1Moves = { // no F, F', B, B'
 		{"U"},
 		{"U'"},
@@ -56,16 +65,29 @@ void Solver::solveCube() {
 		{"D'"},
 		{"L"},
 		{"L'"},
-		{"U2"},
 		{"F2"},
-		{"R2"},
-		{"D2"},
-		{"L2"},
 		{"B2"},
     };
-    
-	RubiksCube::calculateStateIndexG1(cube);
-    solveGroup([this]() { return cube.isSolved(); }, group1Moves, solution);
+
+	solution.clear();
+	table.setLUT(1, table.loadLUT("G1.txt", 1082565));
+	iterativeSolveG1(table.getLUT(1), group1Moves, solution);
+
+
+	std::vector<std::string> group2Moves = { // no F, F', B, B', L, L', R, R'
+		{"U"},
+		{"U'"},
+		{"D"},
+		{"D'"},
+		{"L2"},
+		{"R2"},
+		{"F2"},
+		{"B2"},
+    };
+    std::cout << "AFTER G1->G2" << std::endl;
+	cube.printCube();
+
+    solveGroup([this]() { return cube.isSolved(); }, group2Moves, solution);
 }
 
 bool Solver::isMovePrunable(const std::string& lastMove, const std::string& currentMove) {
@@ -115,10 +137,10 @@ void Solver::iterativeSolve(
 
         if (currentDistance == 0) {
 			if (solution.empty()) {
-				std::cout << "Cube is already solved for this group." << std::endl;
+				std::cout << "Cube is already solved for G0-G1 transition." << std::endl;
 				break;
 			}
-            std::cout << "Solution found: ";
+            std::cout << "Solution found for G0-G1 transition.: ";
             for (const auto& move : solution) std::cout << move << " ";
             std::cout << "\n";
             break;
@@ -129,6 +151,7 @@ void Solver::iterativeSolve(
             int newIndex = calculateIndex(newStateEncoded);
             if (lut[newIndex] < currentDistance) {
                 solution.push_back(move);
+				std::cout << "newIndex: " << newIndex << std::endl;
                 progress = true;
                 break;
             } else {
@@ -139,5 +162,47 @@ void Solver::iterativeSolve(
 
     if (!progress && solution.empty() && lut[calculateIndex(encodeState(cube.getState()))] != 0) {
         std::cout << "No solution found with the given LUT and moves.\n";
+    }
+}
+
+void Solver::iterativeSolveG1(
+    const std::vector<int>& lut,
+    const std::vector<std::string>& moves,
+    std::vector<std::string>& solution
+) {
+    bool progress = true;
+
+    while (progress) {
+        progress = false;
+        int currentStateIndex = RubiksCube::calculateStateIndexG1(cube);
+        int currentDistance = lut[currentStateIndex];
+
+        if (currentDistance == 0) {
+            if (solution.empty()) {
+                std::cout << "Cube is already solved for G1-G2 transition." << std::endl;
+                break;
+            }
+			std::cout << "currentStateIndex: " << currentStateIndex << std::endl;
+            std::cout << "Solution found for G1-G2 transition: ";
+            for (const auto& move : solution) std::cout << move << " ";
+            std::cout << "\n";
+            break;
+        }
+
+        for (const auto& move : moves) {
+            cube.applyMove(move);
+            int newStateIndex = RubiksCube::calculateStateIndexG1(cube);
+            if (lut[newStateIndex] < currentDistance) {
+                solution.push_back(move);
+                progress = true;
+                break;  // Stop after finding the first productive move
+            } else {
+                cube.applyInverseMove(move);  // Undo the move if it doesn't reduce distance
+            }
+        }
+    }
+
+    if (!progress && solution.empty() && lut[RubiksCube::calculateStateIndexG1(cube)] != 0) {
+        std::cout << "No solution found with the given LUT and moves for G1-G2." << std::endl;
     }
 }

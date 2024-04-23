@@ -389,6 +389,17 @@ bool RubiksCube::isEdgeFlippedG0(std::pair<char, char> colors) {
 				colors.first == 'O' || colors.first == 'R');
 }
 
+int factorial(int n) {
+    return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
+}
+
+// Function to calculate binomial coefficient nCk
+int binomialCoefficient(int n, int k) {
+    if (k > n) return 0;
+    if (k == 0 || k == n) return 1;
+    return factorial(n) / (factorial(k) * factorial(n - k));
+}
+
 int RubiksCube::getCornerOrientationG1(int cornerIndex) const {
     const auto& indices = cornerIndices[cornerIndex];
     char colorU = state[indices[0]]; // top part
@@ -455,8 +466,8 @@ bool RubiksCube::isEdgeInESliceG1(int edgeIndex) const {
     std::pair<char, char> color = edgesBaseColours[edgeIndex];
 	for (std::pair<char, char> pair : middleColor) {
 		if (pair == color)  {
-			std::cout << "pair.first: " << pair.first <<  ", pair.second: " << pair.second <<std::endl;
-			std::cout << "color.first: " << color.first << ", color.second: " << color.second <<std::endl;
+			// std::cout << "pair.first: " << pair.first <<  ", pair.second: " << pair.second <<std::endl;
+			// std::cout << "color.first: " << color.first << ", color.second: " << color.second <<std::endl;
 			return true;
 		}
 	}
@@ -475,13 +486,37 @@ int RubiksCube::encodeCornerOrientationsG1(const RubiksCube& cube) {
     return index;
 }
 
+// int RubiksCube::encodeEdgeSlicePositionsG1(const RubiksCube& cube) {
+//     int index = 0;
+//     for (int i = 0; i < 12; i++) {  // Assume 12 edges, check if each is in E slice
+//         if (cube.isEdgeInESliceG1(i)) {
+// 			// std::cout << "edge: " << i << " is in ES slice\n";
+//             index |= (1 << i);
+//         }
+//     }
+//     return index;
+// }
+
 int RubiksCube::encodeEdgeSlicePositionsG1(const RubiksCube& cube) {
-    int index = 0;
-    for (int i = 0; i < 12; i++) {  // Assume 12 edges, check if each is in E slice
+    std::vector<int> positions; // To hold positions of edges that are in the E slice
+    for (int i = 0; i < 12; i++) {
         if (cube.isEdgeInESliceG1(i)) {
-			std::cout << "edge: " << i << " is in ES slice\n";
-            index |= (1 << i);
+            positions.push_back(i);
         }
+    }
+
+    // Now we need to encode these positions into a combinatorial index
+    // Assume positions are always sorted and exactly four are in the E slice
+    int index = 0, k = 4;
+    for (unsigned long i = 0; i < positions.size(); ++i) {
+        int pos = positions[i];
+        for (int j = 0; j < pos; ++j) {
+            if (std::find(positions.begin(), positions.end(), j) == positions.end()) {
+                // j is not in positions, it's a combination without this element
+                index += binomialCoefficient(11 - j, k - 1);
+            }
+        }
+        k--;
     }
     return index;
 }
@@ -490,8 +525,11 @@ int RubiksCube::calculateStateIndexG1(const RubiksCube& cube) {
     int cornerIndex = encodeCornerOrientationsG1(cube);
     int edgeIndex = encodeEdgeSlicePositionsG1(cube);
 
-	std::cout << "corner index = " << cornerIndex << std::endl;
-	std::cout << "edgeIndex = " << edgeIndex << std::endl;
-	std::cout << "cornerIndex * 495 + edgeIndex = " << cornerIndex * 495 + edgeIndex << std::endl;
+	// std::cout << "corner index = " << cornerIndex << std::endl;
+	// std::cout << "edgeIndex = " << edgeIndex << std::endl;
+	// std::cout << "cornerIndex * 495 + edgeIndex = " << cornerIndex * 495 + edgeIndex << std::endl;
+	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
+	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
+    // return cornerIndex;
     return cornerIndex * 495 + edgeIndex;
 }

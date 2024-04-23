@@ -9,6 +9,7 @@
 #include <queue>
 #include <cstring>
 #include <sstream>
+#include <algorithm>
 
 enum EdgePositions {
 	UB, UR, UF, UL,
@@ -56,14 +57,14 @@ const std::vector<std::pair<char, char>> edgesBaseColours = {
 };
 
 const int cornerIndices[CORNER_COUNT][3] = {
-    {36, 27, 18},
-    {38, 9, 20},
-    {44, 11, 2},
+    {36, 27, 20},
+    {38, 18, 11},
+    {44, 9, 2},
     {42, 0, 29},
-    {53, 33, 24},
-    {51, 15, 26},
-    {47, 17, 8},
-    {45, 35, 6}
+    {45, 35, 6},
+    {47, 8, 15},
+    {53, 17, 24},
+    {51, 33, 26},
 };
 
 #define MAX_DEPTH 9

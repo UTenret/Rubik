@@ -194,6 +194,8 @@ void Solver::iterativeSolveG1(
             int newStateIndex = RubiksCube::calculateStateIndexG1(cube);
             if (lut[newStateIndex] < currentDistance) {
                 solution.push_back(move);
+				std::cout << "lut[newStateIndex]: " << lut[newStateIndex] << std::endl;
+				std::cout << "currentDistance: " << currentDistance << std::endl;
                 progress = true;
                 break;  // Stop after finding the first productive move
             } else {

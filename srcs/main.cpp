@@ -40,7 +40,8 @@ int main(int argc, char* argv[]) {
 
 	RubiksCube		cube(initialState);
 	PruningTable	table(cube); // keep this shit here we need the initial state to make the LUTs
-	table.generateLUT();
+	if (argc > 2)
+		table.generateLUT();
 	std::cout << "state: " << cube.getState() << std::endl;
 
 	if (argc > 1) {

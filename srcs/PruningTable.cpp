@@ -57,8 +57,12 @@ void PruningTable::bfsGenerateLUTG1() {
     q.push({initialCube, 0});
     visitedIndices.insert(initialIndex);
 
-    std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "U2", "D2", "R2", "L2", "F2", "B2"};
-    // std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"};
+    // std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "U2", "D2", "R2", "L2", "F2", "B2"};
+    std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"};
+	// const std::vector<std::string> moves = {
+    // 	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'",	//the moves for G0->G1 which are wrong ADD MORE -1 SOMEHOW
+	// };
+    // std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F", "F'", "B", "B'", "U2", "D2", "R2", "L2", "F2", "B2"}; //more than what should be as well
 
     while (!q.empty()) {
         auto [currentCube, dist] = q.front();

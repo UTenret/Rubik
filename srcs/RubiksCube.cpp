@@ -569,8 +569,8 @@ int RubiksCube::encodeEdgeSlicePositionsG1(const RubiksCube& cube) {
         index += bc;
 		k--;
 	}
+	std::cout << "index: " << index << std::endl;
 	return index;
-	// std::cout << "index: " << index << std::endl;
 	// exit(1);
 }
 
@@ -579,12 +579,13 @@ int RubiksCube::calculateStateIndexG1(const RubiksCube& cube) {
     int cornerIndex = encodeCornerOrientationsG1(cube);
     int edgeIndex = encodeEdgeSlicePositionsG1(cube);
 
-	// std::cout << "corner index = " << cornerIndex << std::endl;
-	// std::cout << "edgeIndex = " << edgeIndex << std::endl;
-	// std::cout << "cornerIndex * 495 + edgeIndex = " << cornerIndex * 495 + edgeIndex << std::endl;
+	std::cout << "corner index = " << cornerIndex << std::endl;
+	std::cout << "edgeIndex = " << edgeIndex << std::endl;
+	std::cout << "cornerIndex * 495 + edgeIndex = " << cornerIndex * 495 + edgeIndex << std::endl;
 	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
 	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
     // return cornerIndex;
+
     return cornerIndex * 495 + edgeIndex;
     // return edgeIndex;
 }

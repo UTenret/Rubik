@@ -48,17 +48,17 @@ void PruningTable::bfsGenerateLUTG0() {
     }
 }
 
-
 void PruningTable::bfsGenerateLUTG1() {
     std::queue<std::pair<RubiksCube, int>> q;
     std::set<int> visitedIndices;
     RubiksCube initialCube = cube;
-
+	luts[1].resize(1082565, -1);
     int initialIndex = RubiksCube::calculateStateIndexG1(initialCube);
     q.push({initialCube, 0});
     visitedIndices.insert(initialIndex);
 
     std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "U2", "D2", "R2", "L2", "F2", "B2"};
+    // std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"};
 
     while (!q.empty()) {
         auto [currentCube, dist] = q.front();
@@ -83,13 +83,41 @@ void PruningTable::bfsGenerateLUTG1() {
     }
 }
 
+// void PruningTable::bfsGenerateLUTG1() {
+//     std::queue<RubiksCube> q;
+//     q.push(cube);
+// 	luts[1].resize(1082565, -1);
+//     luts[1][RubiksCube::calculateStateIndexG1(cube)] = 0;  // Start from the initial cube state
+
+//     // std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "U2", "D2", "R2", "L2", "F2", "B2"};
+//     std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"};
+
+//     while (!q.empty()) {
+//         RubiksCube currentCube = q.front();
+//         q.pop();
+//         int currentIndex = RubiksCube::calculateStateIndexG1(currentCube);
+//         int currentDistance = luts[1][currentIndex];
+
+//         for (const auto& move : moves) {
+//             RubiksCube newStateCube = currentCube;
+//             newStateCube.applyMove(move);
+//             int newIndex = RubiksCube::calculateStateIndexG1(newStateCube);
+//             if (luts[1][newIndex] == -1 || luts[1][newIndex] > currentDistance + 1) {
+//                 luts[1][newIndex] = currentDistance + 1;
+//                 q.push(newStateCube);
+//             }
+//         }
+//     }
+// }
+
+
 // No F, F', B, B' for G1->G2
 
 void PruningTable::generateLUT() {
     bfsGenerateLUTG0();
-    // bfsGenerateLUTG1();
+    bfsGenerateLUTG1();
     std::ofstream file("G0.txt");
-    // std::ofstream file2("G1.txt");
+    std::ofstream file2("G1.txt");
     // if (!file || !file2) {
     if (!file ) {
         std::cerr << "Error: file could not be opened";
@@ -98,9 +126,9 @@ void PruningTable::generateLUT() {
     for (int value : luts[0]) {
         file << value << std::endl;
     }
-	// for (int value : lut1) {
-	// 	file2 << value << std::endl;
-	// }
+	for (int value : luts[1]) {
+		file2 << value << std::endl;
+	}
 }
 
 std::vector<int> PruningTable::loadLUT(const std::string& filename, int size) {

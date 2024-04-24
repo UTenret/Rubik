@@ -42,19 +42,24 @@ const int edgeIndices[EDGE_COUNT][2] = {
 };
 
 const std::vector<std::pair<char, char>> edgesBaseColours = {
-    {'Y', 'G'}, // UB || Yellow-Green
-    {'Y', 'R'}, // UR || Yellow-Red
-    {'Y', 'B'}, // UF || Yellow-Blue
-    {'Y', 'O'}, // UL || Yellow-Orange
-    {'W', 'R'}, // DR || White-Red
-    {'W', 'B'}, // DF || White-Blue
-    {'W', 'O'}, // DL || White-Orange
-    {'W', 'G'}, // DB || White-Green
-    {'B', 'R'}, // FR || Blue-Red
-    {'B', 'O'}, // FL || Blue-Orange
-    {'G', 'R'}, // BR || Green-Red
-    {'G', 'O'}  // BL || Green-Orange
+    {'Y', 'G'}, // UB || Yellow-Green		0
+    {'Y', 'R'}, // UR || Yellow-Red			1
+    {'Y', 'B'}, // UF || Yellow-Blue		2
+    {'Y', 'O'}, // UL || Yellow-Orange		3
+    {'W', 'R'}, // DR || White-Red			4
+    {'W', 'B'}, // DF || White-Blue			5
+    {'W', 'O'}, // DL || White-Orange		6
+    {'W', 'G'}, // DB || White-Green		7
+    {'B', 'R'}, // FR || Blue-Red			8
+    {'B', 'O'}, // FL || Blue-Orange		9
+    {'G', 'R'}, // BR || Green-Red			10
+    {'G', 'O'}  // BL || Green-Orange		11
 };
+
+// 	White-Orange		6
+// 	Blue-Orange			9
+//	Green-Red			10
+//	Green-Orange		11
 
 const int cornerIndices[CORNER_COUNT][3] = {
     {36, 27, 20},
@@ -67,7 +72,8 @@ const int cornerIndices[CORNER_COUNT][3] = {
     {51, 33, 26},
 };
 
-#define MAX_DEPTH 15
+#define MAX_DEPTH 20
+// #define MAX_DEPTH 3
 #define G0_N_SOLUTIONS 2048
 #define G1_N_SOLUTIONS 1082565
 
@@ -105,6 +111,7 @@ class RubiksCube {
 	void applyMove(const std::string& moveStr);
     void applyInverseMove(const std::string& moveStr);
     void printCube() const;
+    void printState() const;
     void scramble(const std::string& moves);
 
 	private:

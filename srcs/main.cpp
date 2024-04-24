@@ -38,12 +38,16 @@ int main(int argc, char* argv[]) {
     "YYYYYYYYY"  // UP: 36 - 44
     "WWWWWWWWW"; // DOWN: 45 - 53
 
+	std::string testState = "YGBYBBYGBOROOROOROGBWGGWGBWRRROOORRRBYWBYWBYWGWYGWYGWY";
+
 	RubiksCube		cube(initialState);
+	// RubiksCube		cube(testState);
 	PruningTable	table(cube); // keep this shit here we need the initial state to make the LUTs
 	if (argc > 2)
 		table.generateLUT();
-	std::cout << "state: " << cube.getState() << std::endl;
-
+	// std::cout << "state: " << cube.getState() << std::endl;
+	// std::cout << "index: " << RubiksCube::encodeEdgeSlicePositionsG1(cube) << std::endl;
+	// exit(1);
 	if (argc > 1) {
 		std::string scramble = argv[1];
 		cube.scramble(argv[1]);
@@ -54,10 +58,12 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 	
+	// std::cout << "state: " << cube.getState() << std::endl;
+	// std::cout << "index: " << RubiksCube::encodeEdgeSlicePositionsG1(cube) << std::endl;
+	// exit(1);
 
 	Solver			solver(cube, table);
 	solver.solveCube();
-	std::cout << "encodeEdgeOrientationsG0: " << RubiksCube::encodeEdgeOrientationsG0(cube.getState()) << std::endl;
 
     return 0;
 }

@@ -58,28 +58,40 @@ void PruningTable::bfsGenerateLUTG1() {
     visitedIndices.insert(initialIndex);
 
     // std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "U2", "D2", "R2", "L2", "F2", "B2"};
-    std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"};
+    // std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"};
+    std::vector<std::string> moves = {"U", "D", "R", "L", "F2", "B2"};
 	// const std::vector<std::string> moves = {
     // 	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'",	//the moves for G0->G1 which are wrong ADD MORE -1 SOMEHOW
 	// };
     // std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F", "F'", "B", "B'", "U2", "D2", "R2", "L2", "F2", "B2"}; //more than what should be as well
 
+		cube.printCube();
     while (!q.empty()) {
         auto [currentCube, dist] = q.front();
         q.pop();
 
         int currentIndex = RubiksCube::calculateStateIndexG1(currentCube);
-        if (luts[1][currentIndex] == -1 || luts[1][currentIndex] > dist) {
+        // if (luts[1][currentIndex] == -1 || luts[1][currentIndex] > dist) {
+        if (luts[1][currentIndex] == -1 || luts[1][currentIndex] < dist) {
             luts[1][currentIndex] = dist;
         }
 
-        if (dist >= MAX_DEPTH) continue;
+        if (dist >= MAX_DEPTH)  {
+			std::cout << "dist: "<< dist << std::endl;
+			continue;
+		}
 
         for (const auto& move : moves) {
             RubiksCube newStateCube = currentCube;
             newStateCube.applyMove(move);
 
             int newIndex = RubiksCube::calculateStateIndexG1(newStateCube);
+
+			// std::cout << "dist: " << dist << std::endl;
+			// std::cout << "move: " << move << std::endl;
+			// std::cout << "state: " << newIndex << std::endl;
+			// std::cout << "index: " << newIndex << std::endl;
+
             if (visitedIndices.insert(newIndex).second) {
                 q.push({newStateCube, dist + 1});
             }
@@ -169,7 +181,7 @@ void PruningTable::setLUT(int lutNumber, const std::vector<int>& lutData) {
         throw std::out_of_range("LUT number out of range.");
     }
     if (lutNumber >= luts.size()) {
-        luts.resize(lutNumber + 1); // Ensure the luts vector can accommodate the new LUT
+        luts.resize(lutNumber + 1);
     }
-    luts[lutNumber] = lutData; // Directly assign the lutData to the correct slot
+    luts[lutNumber] = lutData;
 }

@@ -147,6 +147,7 @@ void PruningTable::bfsGenerateLUTG1() {
 
             // if (visitedIndices.insert(newIndex).second) {
 				// std::cout << "added state: " << newIndex << " to visited\n";
+				if (currentIndex == 0 && newIndex == 0 && depth > 4) continue;
 				if (currentIndex == 0)
                 	q.push({newStateCube, 1, depth + 1});
 				else

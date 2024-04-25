@@ -168,6 +168,10 @@ void Solver::iterativeSolve(
     }
 }
 
+
+// corner index * 495 + edgeIndex
+// 
+
 void Solver::iterativeSolveG1(
     const std::vector<int>& lut,
     const std::vector<std::string>& moves,

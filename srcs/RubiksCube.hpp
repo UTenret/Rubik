@@ -72,7 +72,7 @@ const int cornerIndices[CORNER_COUNT][3] = {
     {51, 33, 26},
 };
 
-#define MAX_DEPTH 20
+#define MAX_DEPTH 3
 // #define MAX_DEPTH 3
 #define G0_N_SOLUTIONS 2048
 #define G1_N_SOLUTIONS 1082565

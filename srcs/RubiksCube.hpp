@@ -10,6 +10,7 @@
 #include <cstring>
 #include <sstream>
 #include <algorithm>
+#include <tuple>
 
 enum EdgePositions {
 	UB, UR, UF, UL,
@@ -61,18 +62,20 @@ const std::vector<std::pair<char, char>> edgesBaseColours = {
 //	Green-Red			10
 //	Green-Orange		11
 
+
+
 const int cornerIndices[CORNER_COUNT][3] = {
-    {36, 27, 20},
-    {38, 18, 11},
-    {44, 9, 2},
-    {42, 0, 29},
-    {45, 35, 6},
-    {47, 8, 15},
-    {53, 17, 24},
-    {51, 33, 26},
+    {36, 27, 20},		// YOG || ULB
+    {38, 18, 11},		// YGR || UBR
+    {44, 9, 2},			// YRB || URF
+    {42, 0, 29},		// YBO || UFL
+    {45, 35, 6},		// WOB || DLF
+    {47, 8, 15},		// WBR || DFR
+    {53, 17, 24},		// WRG || DRB
+    {51, 26, 33},		// WGO || DBL
 };
 
-#define MAX_DEPTH 3
+#define MAX_DEPTH 14
 // #define MAX_DEPTH 3
 #define G0_N_SOLUTIONS 2048
 #define G1_N_SOLUTIONS 1082565

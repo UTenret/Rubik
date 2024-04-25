@@ -69,6 +69,7 @@ void Solver::solveCube() {
 	// 	{"B2"},
     // };
 
+    // std::vector<std::string> group1Moves = {"U'", "R'", "L'"};
     std::vector<std::string> group1Moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"};
 
 	solution.clear();
@@ -177,9 +178,11 @@ void Solver::iterativeSolveG1(
     while (progress) {
         progress = false;
         int currentStateIndex = RubiksCube::calculateStateIndexG1(cube);
-		std::cout << "currentStateIndex: " << currentStateIndex << std::endl;
+		// std::cout << "currentStateIndex: " << currentStateIndex << std::endl;
         int currentDistance = lut[currentStateIndex];
-
+		// std::cout << "currentDistance: " << currentDistance << std::endl;
+		// std::cout << "|||||||||||||||OUTER LOOP STATE||||||||||\n";
+		// cube.printState();
         if (currentDistance == 0) {
             if (solution.empty()) {
                 std::cout << "Cube is already solved for G1-G2 transition." << std::endl;
@@ -194,21 +197,22 @@ void Solver::iterativeSolveG1(
 
         for (const auto& move : moves) {
             cube.applyMove(move);
-			std::cout << "applied move: " << move << std::endl;
+			// std::cout << "applied move: " << move << std::endl;
+			// cube.printState();
             int newStateIndex = RubiksCube::calculateStateIndexG1(cube);
-			std::cout << "outside loop newStateIndex: " << newStateIndex << std::endl;
-			std::cout << "distance: " << lut[newStateIndex] << std::endl;
-			std::cout << "currentDistance: " << currentDistance << std::endl;
-            if (lut[newStateIndex] < currentDistance) {
+			// std::cout << "inner loop newStateIndex: " << newStateIndex << std::endl;
+			// std::cout << "distance: " << lut[newStateIndex] << std::endl;
+			// std::cout << "inner loop currentDistance: " << currentDistance << std::endl;
+            if (lut[newStateIndex] < currentDistance && lut[newStateIndex] != -1) {
                 solution.push_back(move);
-				std::cout << "added move to solution: " << move << std::endl;
-				std::cout << "lut[newStateIndex]: " << lut[newStateIndex] << std::endl;
-				std::cout << "indexo: " << RubiksCube::calculateStateIndexG1(cube) << std::endl;
-				std::cout << "currentDistance: " << currentDistance << std::endl;
+				// std::cout << "added move to solution: " << move << std::endl;
+				// std::cout << "lut[newStateIndex]: " << lut[newStateIndex] << std::endl;
+				// std::cout << "indexo: " << RubiksCube::calculateStateIndexG1(cube) << std::endl;
+				// std::cout << "currentDistance: " << currentDistance << std::endl;
                 progress = true;
                 break;  // Stop after finding the first productive move
             } else {
-				std::cout << "removed move: " << move << std::endl;
+				// std::cout << "removed move: " << move << std::endl;
                 cube.applyInverseMove(move);  // Undo the move if it doesn't reduce distance
             }
         }

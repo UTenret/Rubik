@@ -451,8 +451,12 @@ int RubiksCube::encodeCornerOrientationsG1(const RubiksCube& cube) {
     int index = 0;
     int multiplier = 1;
     for (int i = 0; i < 7; i++) {  // Assuming the last corner's orientation is implicitly determined
+		// std::cout << "i: " << i << std::endl;
+		// std::cout << "multiplier: " << multiplier << std::endl;
         int orientation = cube.getCornerOrientationG1(i);
+		// std::cout << "orientation: " << orientation << std::endl;
         index += orientation * multiplier;
+		// std::cout << "index: " << index << std::endl;
         multiplier *= 3;
     }
     return index;

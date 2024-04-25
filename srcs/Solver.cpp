@@ -69,7 +69,7 @@ void Solver::solveCube() {
 	// 	{"B2"},
     // };
 
-    std::vector<std::string> group1Moves = {"U", "D", "R", "L", "F2", "B2"};
+    std::vector<std::string> group1Moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"};
 
 	solution.clear();
 	table.setLUT(1, table.loadLUT("G1.txt", 1082565));

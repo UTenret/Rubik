@@ -75,7 +75,7 @@ const int cornerIndices[CORNER_COUNT][3] = {
     {51, 26, 33},		// WGO || DBL
 };
 
-#define MAX_DEPTH 8
+#define MAX_DEPTH 14
 // #define MAX_DEPTH 3
 #define G0_N_SOLUTIONS 2048
 #define G1_N_SOLUTIONS 1082565

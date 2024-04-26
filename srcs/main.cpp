@@ -57,7 +57,6 @@ int main(int argc, char* argv[]) {
 		std::cout << "Please input a scramble\n";
 		return 1;
 	}
-	
 	// std::cout << "state: " << cube.getState() << std::endl;
 	// std::cout << "index: " << RubiksCube::encodeEdgeSlicePositionsG1(cube) << std::endl;
 	// exit(1);

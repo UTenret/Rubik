@@ -424,28 +424,47 @@ int RubiksCube::getCornerOrientationG1(int cornerIndex) const {
     return -1; // Error case if something unexpected
 }
 
-bool RubiksCube::isEdgeInESliceG1(int edgeIndex) const {
-	std::vector<std::pair<char, char>> middleColor;
-	middleColor.push_back({state[5], state[12]});
-	middleColor.push_back({state[3], state[32]});
-	middleColor.push_back({state[21], state[14]});
-	middleColor.push_back({state[23], state[30]});
+// bool RubiksCube::isEdgeInESliceG1(int edgeIndex) const {
+// 	std::vector<std::pair<char, char>> middleColor;
+// 	middleColor.push_back({state[5], state[12]});
+// 	middleColor.push_back({state[3], state[32]});
+// 	middleColor.push_back({state[21], state[14]});
+// 	middleColor.push_back({state[23], state[30]});
 
-    std::pair<char, char> color = edgesBaseColours[edgeIndex];
-	for (std::pair<char, char> pair : middleColor) {
-		// if (pair == color)  {
-		if ((pair.first == color.first && pair.second == color.second) ||
-				(pair.first == color.second && pair.second == color.first) )  {
-			// std::cout << "first color: " << color.first << std::endl;
-			// std::cout << "second color: " << color.second << std::endl;
-			// std::cout << "pair.first: " << pair.first <<  ", pair.second: " << pair.second <<std::endl;
-			// std::cout << "color.first: " << color.first << ", color.second: " << color.second <<std::endl;
-			return true;
-		}
-	}
-	// return middleColor.find(color) != middleColor.end();
-	return false;
+//     std::pair<char, char> color = edgesBaseColours[edgeIndex];
+// 	for (std::pair<char, char> pair : middleColor) {
+// 		// if (pair == color)  {
+// 		if ((pair.first == color.first && pair.second == color.second) ||
+// 				(pair.first == color.second && pair.second == color.first) )  {
+// 			// std::cout << "first color: " << color.first << std::endl;
+// 			// std::cout << "second color: " << color.second << std::endl;
+// 			// std::cout << "pair.first: " << pair.first <<  ", pair.second: " << pair.second <<std::endl;
+// 			// std::cout << "color.first: " << color.first << ", color.second: " << color.second <<std::endl;
+// 			return true;
+// 		}
+// 	}
+// 	// return middleColor.find(color) != middleColor.end();
+// 	return false;
+// }
+
+bool RubiksCube::isEdgeInESliceG1(int edgeIndex) const {
+    const std::set<std::pair<char, char>> validMiddleSliceColors = {
+        {'B', 'R'}, {'R', 'B'},
+        {'B', 'O'}, {'O', 'B'},
+        {'G', 'R'}, {'R', 'G'},
+        {'G', 'O'}, {'O', 'G'}
+    };
+
+    char color1 = state[edgeIndices[edgeIndex][0]];
+    char color2 = state[edgeIndices[edgeIndex][1]];
+
+    std::pair<char, char> edgeColors = {color1, color2};
+    std::pair<char, char> edgeColorsReversed = {color2, color1};
+
+    return validMiddleSliceColors.find(edgeColors) != validMiddleSliceColors.end() ||
+           validMiddleSliceColors.find(edgeColorsReversed) != validMiddleSliceColors.end();
 }
+
 
 int RubiksCube::encodeCornerOrientationsG1(const RubiksCube& cube) {
     int index = 0;
@@ -467,8 +486,8 @@ int RubiksCube::encodeEdgeSlicePositionsG1(const RubiksCube& cube) {
 
 	for (int i = 0; i < 12; i++) {
         if (cube.isEdgeInESliceG1(i)) {
-			// std::cout << "this edge is in the middle: " << i << std::endl;
-            positions.push_back(i);
+			// std::cout << "middle edge is at position: " << i << std::endl;
+            positions.push_back(i); 
         }
     }
 	// positions.push_back(6);

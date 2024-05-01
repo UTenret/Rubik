@@ -424,28 +424,26 @@ int RubiksCube::getCornerOrientationG1(int cornerIndex) const {
     return -1; // Error case if something unexpected
 }
 
-// bool RubiksCube::isEdgeInESliceG1(int edgeIndex) const {
-// 	std::vector<std::pair<char, char>> middleColor;
-// 	middleColor.push_back({state[5], state[12]});
-// 	middleColor.push_back({state[3], state[32]});
-// 	middleColor.push_back({state[21], state[14]});
-// 	middleColor.push_back({state[23], state[30]});
+int RubiksCube::getCornerTetradPosG2(int cornerIndex) const {
+    const auto& indices = cornerIndices[cornerIndex];
+    char colorL = state[indices[1]]; // left part
+    char colorR = state[indices[2]]; // right part
 
-//     std::pair<char, char> color = edgesBaseColours[edgeIndex];
-// 	for (std::pair<char, char> pair : middleColor) {
-// 		// if (pair == color)  {
-// 		if ((pair.first == color.first && pair.second == color.second) ||
-// 				(pair.first == color.second && pair.second == color.first) )  {
-// 			// std::cout << "first color: " << color.first << std::endl;
-// 			// std::cout << "second color: " << color.second << std::endl;
-// 			// std::cout << "pair.first: " << pair.first <<  ", pair.second: " << pair.second <<std::endl;
-// 			// std::cout << "color.first: " << color.first << ", color.second: " << color.second <<std::endl;
-// 			return true;
-// 		}
-// 	}
-// 	// return middleColor.find(color) != middleColor.end();
-// 	return false;
-// }
+	// std::cout << "colorL: " << colorL << std::endl;
+	// std::cout << "colorR: " << colorR << std::endl;
+	// std::cout << "colorU: " << colorU << std::endl;
+
+	const std::set<std::pair<char, char>> validCornerColors = {
+        {'B', 'O'},
+        {'G', 'R'},
+        {'G', 'O'},
+        {'B', 'R'},
+    };
+
+    std::pair<char, char> edgeColors = {colorL, colorR};
+
+    return validCornerColors.find(edgeColors) != validCornerColors.end();
+}
 
 bool RubiksCube::isEdgeInESliceG1(int edgeIndex) const {
     const std::set<std::pair<char, char>> validMiddleSliceColors = {
@@ -508,6 +506,68 @@ int RubiksCube::encodeEdgeSlicePositionsG1(const RubiksCube& cube) {
 	return index;
 }
 
+bool RubiksCube::isEdgeBlueOrGreenG2(int edgeIndex) const {
+	const std::set<char> validSliceColors = {'G', 'B'};
+
+    // char color1 = state[edgeIndices[edgeIndex][0]];
+    char color = state[edgeIndices[edgeIndex][1]];
+
+    return validSliceColors.find(color) != validSliceColors.end();
+}
+
+int RubiksCube::encodeEdgeSlicePositionsG2(const RubiksCube& cube) {
+    std::vector<int> positions;
+
+	for (int i = 0; i < 8; i++) {
+        if (cube.isEdgeBlueOrGreenG2(i)) {
+			// std::cout << "green or blue edge is at position: " << i << std::endl;
+            positions.push_back(i); 
+        }
+    }
+	// positions.push_back(6);
+	// positions.push_back(9);
+	// positions.push_back(10);
+	// positions.push_back(11);
+	int index = 0, k = 4;
+    for (unsigned long i = 0; i < positions.size(); ++i) {
+		// std::cout << "bc: " << bc << std::endl;
+		// std::cout << "k: " << k << std::endl;
+		// std::cout << "positions[i]: " << positions[i] << std::endl;
+		int bc = binomialCoefficient(7 - positions[i], k);
+        index += bc;
+		k--;
+	}
+	// std::cout << "index: " << index << std::endl;
+	// exit(1);
+	return index;
+}
+
+int RubiksCube::encodeCornerTetradG2(const RubiksCube& cube) {
+    std::vector<int> positions;
+
+	for (int i = 0; i < 8; i++) {
+        if (cube.getCornerTetradPosG2(i)) {
+			// std::cout << "green or blue edge is at position: " << i << std::endl;
+            positions.push_back(i); 
+        }
+    }
+	// positions.push_back(6);
+	// positions.push_back(9);
+	// positions.push_back(10);
+	// positions.push_back(11);
+	int index = 0, k = 4;
+    for (unsigned long i = 0; i < positions.size(); ++i) {
+		// std::cout << "bc: " << bc << std::endl;
+		// std::cout << "k: " << k << std::endl;
+		// std::cout << "positions[i]: " << positions[i] << std::endl;
+		int bc = binomialCoefficient(7 - positions[i], k);
+        index += bc;
+		k--;
+	}
+	// std::cout << "index: " << index << std::endl;
+	// exit(1);
+	return index;
+}
 
 int RubiksCube::calculateStateIndexG1(const RubiksCube& cube) {
     int cornerIndex = encodeCornerOrientationsG1(cube);
@@ -521,6 +581,68 @@ int RubiksCube::calculateStateIndexG1(const RubiksCube& cube) {
     // return cornerIndex;
 	// if (cornerIndex * 495 + edgeIndex == 5)
 	// 	std::cout << "hello im " << cornerIndex * 495 + edgeIndex << std::endl;
-    return cornerIndex * 495 + edgeIndex;
+    return cornerIndex * 495 + edgeIndex; // forgot why 495 and not 494 and would like to know why
     // return edgeIndex;
+}
+
+int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
+    int cornerIndex = encodeCornerTetradG2(cube);
+    int edgeIndex = encodeEdgeSlicePositionsG2(cube);
+
+	// std::cout << "corner index = " << cornerIndex << std::endl;
+	// std::cout << "edgeIndex = " << edgeIndex << std::endl;
+	// std::cout << "cornerIndex * 495 + edgeIndex = " << cornerIndex * 495 + edgeIndex << std::endl;
+	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
+	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
+    // return cornerIndex;
+	// if (cornerIndex * 495 + edgeIndex == 5)
+	// 	std::cout << "hello im " << cornerIndex * 495 + edgeIndex << std::endl;
+    return cornerIndex * 70 + edgeIndex;
+    // return edgeIndex;
+}
+
+void RubiksCube::calculateCornerTetradIndex() const {
+	// const std::vector<std::vector<int>> tetrads = {
+    //     {1, 3, 5, 7},  // Tetrad 1
+    //     {0, 2, 4, 6}   // Tetrad 2
+    // };
+	const std::vector<std::set<char>> firstTetradColors = {
+		{'Y', 'G', 'R'}, {'Y', 'B', 'O'}, {'W', 'B', 'R'}, {'W', 'G', 'O'}
+	};
+	const std::vector<std::set<char>> secondTetradColors = {
+		{'Y', 'O', 'G'}, {'Y', 'R', 'B'}, {'W', 'O', 'B'}, {'W', 'R', 'G'}
+	};
+	for (int i = 0; i < CORNER_COUNT; i++) {
+        char color1 = state[cornerIndices[i][0]];
+        char color2 = state[cornerIndices[i][1]];
+        char color3 = state[cornerIndices[i][2]];
+
+		std::set<char> cornerColors = {color1, color2, color3};
+
+		for (auto& firstTetrad : firstTetradColors) {
+			if (firstTetrad == cornerColors) {
+				std::cout << "Corner " << i << " is in T1";
+				if (i % 2 != 0) {
+                        std::cout << "\x1B[32m (good)\x1B[0m" << std::endl;
+                    } else {
+                        std::cout << "\x1B[31m (bad)\x1B[0m" << std::endl;
+                    }
+			}
+		}
+		for (auto& secondTetrad : secondTetradColors) {
+			if (secondTetrad == cornerColors) {
+				std::cout << "Corner " << i << " is in T2";
+				if (i % 2 == 0) {
+                    std::cout << "\x1B[32m (good)\x1B[0m" << std::endl;
+                } else {
+                    std::cout << "\x1B[31m (bad)\x1B[0m" << std::endl;
+                }
+				break;
+			}
+		}
+    }
+}
+
+void RubiksCube::IsCornerInCorrectTetrad(const RubiksCube& cube) {
+	cube.calculateCornerTetradIndex();
 }

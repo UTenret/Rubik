@@ -65,14 +65,15 @@ const std::vector<std::pair<char, char>> edgesBaseColours = {
 
 
 const int cornerIndices[CORNER_COUNT][3] = {
-    {36, 27, 20},		// YOG || ULB
-    {38, 18, 11},		// YGR || UBR
-    {44, 9, 2},			// YRB || URF
-    {42, 0, 29},		// YBO || UFL
-    {45, 35, 6},		// WOB || DLF
-    {47, 8, 15},		// WBR || DFR
-    {53, 17, 24},		// WRG || DRB
-    {51, 26, 33},		// WGO || DBL
+    {36, 27, 20},		// YOG || ULB			//T 2
+    {38, 18, 11},		// YGR || UBR			//T 1
+    {44, 9, 2},			// YRB || URF			//T 2
+    {42, 0, 29},		// YBO || UFL			//T 1
+
+    {45, 35, 6},		// WOB || DLF			//T 2
+    {47, 8, 15},		// WBR || DFR			//T 1
+    {53, 17, 24},		// WRG || DRB			//T 2
+    {51, 26, 33},		// WGO || DBL			//T 1
 };
 
 #define MAX_DEPTH 14
@@ -102,6 +103,12 @@ class RubiksCube {
     static int encodeEdgeSlicePositionsG1(const RubiksCube& cube);
     static int calculateStateIndexG1(const RubiksCube& cube);
 
+	static int calculateStateIndexG2(const RubiksCube& cube);
+	static int encodeCornerTetradG2(const RubiksCube& cube);
+	static int encodeEdgeSlicePositionsG2(const RubiksCube& cube);
+	bool isEdgeBlueOrGreenG2(int edgeIndex) const;
+	int getCornerTetradPosG2(int cornerIndex) const;
+
 	int getCornerOrientationG1(int cornerIndex) const;
 	bool isEdgeInESliceG1(int edgeIndex) const;
 
@@ -116,6 +123,9 @@ class RubiksCube {
     void printCube() const;
     void printState() const;
     void scramble(const std::string& moves);
+
+	void calculateCornerTetradIndex() const;
+	static void IsCornerInCorrectTetrad(const RubiksCube& cube);
 
 	private:
 

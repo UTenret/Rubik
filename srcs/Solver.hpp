@@ -30,6 +30,13 @@ public:
     const std::vector<std::string>& moves,
     std::vector<std::string>& solution
 	);
+
+	void iterativeSolveG2(
+    const std::vector<int>& lut,
+    const std::vector<std::string>& moves,
+    std::vector<std::string>& solution
+	);
+
 	void solveGroup(std::function<bool()> groupSolveCondition, const std::vector<std::string>& moves,
 	 std::vector<std::string> solution);
 

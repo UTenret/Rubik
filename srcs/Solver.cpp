@@ -76,6 +76,8 @@ void Solver::solveCube() {
 	table.setLUT(1, table.loadLUT("G1.txt", 1082565));
 	iterativeSolveG1(table.getLUT(1), group1Moves, solution);
 
+    std::cout << "AFTER G1->G2" << std::endl;
+	cube.printCube();
 
 	std::vector<std::string> group2Moves = { // no F, F', B, B', L, L', R, R'
 		{"U"},
@@ -87,10 +89,25 @@ void Solver::solveCube() {
 		{"F2"},
 		{"B2"},
     };
-    std::cout << "AFTER G1->G2" << std::endl;
+	
+	solution.clear();
+	table.setLUT(2, table.loadLUT("G2.txt", 4900));
+	iterativeSolveG2(table.getLUT(2), group2Moves, solution);
+
+    std::cout << "AFTER G2->G3" << std::endl;
 	cube.printCube();
 
-    solveGroup([this]() { return cube.isSolved(); }, group2Moves, solution);
+	std::vector<std::string> group3Moves = { // no F, F', B, B', L, L', R, R' U OR D
+		{"U2"},
+		{"D2"},
+		{"L2"},
+		{"R2"},
+		{"F2"},
+		{"B2"},
+    };
+
+	solution.clear();
+    solveGroup([this]() { return cube.isSolved(); }, group3Moves, solution);
 }
 
 bool Solver::isMovePrunable(const std::string& lastMove, const std::string& currentMove) {
@@ -232,5 +249,69 @@ void Solver::iterativeSolveG1(
 
     if (!progress && solution.empty() && lut[RubiksCube::calculateStateIndexG1(cube)] != 0) {
         std::cout << "No solution found with the given LUT and moves for G1-G2." << std::endl;
+    }
+}
+
+
+void Solver::iterativeSolveG2(
+    const std::vector<int>& lut,
+    const std::vector<std::string>& moves,
+    std::vector<std::string>& solution
+) {
+    bool progress = true;
+
+    while (progress) {
+        progress = false;
+        int currentStateIndex = RubiksCube::calculateStateIndexG2(cube);
+		// std::cout << "currentStateIndex: " << currentStateIndex << std::endl;
+        int currentDistance = lut[currentStateIndex];
+		// std::cout << "currentDistance: " << currentDistance << std::endl;
+		// std::cout << "|||||||||||||||OUTER LOOP STATE||||||||||\n";
+		// cube.printState();
+        if (currentDistance == 0) {
+            if (solution.empty()) {
+                std::cout << "Cube is already solved for G2-G3 transition." << std::endl;
+                break;
+            }
+			// std::cout << "currentStateIndex: " << currentStateIndex << std::endl;
+            std::cout << "Solution found for G2-G3 transition: ";
+            for (const auto& move : solution) std::cout << move << " ";
+            std::cout << "\n";
+            break;
+        }
+
+        for (const auto& move : moves) {
+            cube.applyMove(move);
+			// std::cout << "applied move: " << move << std::endl;
+			// cube.printState();
+            int newStateIndex = RubiksCube::calculateStateIndexG2(cube);
+			// std::cout << "inner loop newStateIndex: " << newStateIndex << std::endl;
+			// std::cout << "distance: " << lut[newStateIndex] << std::endl;
+			// std::cout << "inner loop currentDistance: " << currentDistance << std::endl;
+            if (lut[newStateIndex] < currentDistance && lut[newStateIndex] != -1) {
+                solution.push_back(move);
+				// std::cout << "added move to solution: " << move << std::endl;
+				// std::cout << "lut[newStateIndex]: " << lut[newStateIndex] << std::endl;
+				// std::cout << "indexo: " << RubiksCube::calculateStateIndexG2(cube) << std::endl;
+				// std::cout << "currentDistance: " << currentDistance << std::endl;
+                progress = true;
+                break;  // Stop after finding the first productive move
+            } else {
+				// std::cout << "removed move: " << move << std::endl;
+                cube.applyInverseMove(move);  // Undo the move if it doesn't reduce distance
+            }
+        }
+    }
+	for (std::string moves : solution) {
+		std::cout << "moves: " << moves;
+	}
+	std::cout << std::endl;
+	std::cout << "index fail: " << RubiksCube::calculateStateIndexG2(cube) << std::endl;
+	// cube.printCube();
+	// cube.applyMove("R");
+	// cube.printState();
+
+    if (!progress && solution.empty() && lut[RubiksCube::calculateStateIndexG2(cube)] != 0) {
+        std::cout << "No solution found with the given LUT and moves for G2-G3." << std::endl;
     }
 }

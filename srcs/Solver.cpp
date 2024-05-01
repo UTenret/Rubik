@@ -107,6 +107,7 @@ void Solver::solveCube() {
     };
 
 	solution.clear();
+	cube.CalculateCycles();
     solveGroup([this]() { return cube.isSolved(); }, group3Moves, solution);
 }
 

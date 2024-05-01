@@ -646,3 +646,78 @@ void RubiksCube::calculateCornerTetradIndex() const {
 void RubiksCube::IsCornerInCorrectTetrad(const RubiksCube& cube) {
 	cube.calculateCornerTetradIndex();
 }
+
+// void RubiksCube::CalculateCycles() {
+// 	for (int i = 0; i < 11; i++) {
+// 		char color1 = state[edgeIndices[i][0]];
+//     	char color2 = state[edgeIndices[i][1]];
+// 		std::pair colors = {color1, color2};
+// 		auto it = std::find(edgesBaseColours.begin(), edgesBaseColours.end(), colors);
+//         if (it != edgesBaseColours.end()) {
+//             int intendedIndex = std::distance(edgesBaseColours.begin(), it);
+// 			i = in
+//             std::cout << "Edge number: " << i << " wants to go to edge position: " << intendedIndex << std::endl;
+//         } else {
+//             std::cout << "Edge number: " << i << " does not have a matching base color in edgesBaseColours." << std::endl;
+//         }
+// 	}
+// }
+
+void RubiksCube::CalculateCycles() {
+        std::map<std::pair<char, char>, std::string> edgeNames = {
+            {{'W', 'B'}, "WB"}, {{'W', 'G'}, "WG"},
+            {{'Y', 'G'}, "YG"}, {{'Y', 'R'}, "YR"},
+            {{'Y', 'B'}, "YB"}, {{'Y', 'O'}, "YO"},
+            {{'W', 'R'}, "WR"}, {{'W', 'O'}, "WO"},
+            {{'B', 'R'}, "BR"}, {{'B', 'O'}, "BO"},
+            {{'G', 'R'}, "GR"}, {{'G', 'O'}, "GO"}
+        };
+
+        std::vector<bool> visited(12, false); // Track visited edges
+        std::vector<int> cycle;
+        int cycleCount = 1;
+
+        for (int i = 0; i < 12; i++) {
+            if (!visited[i]) {
+                cycle.clear();
+                int current = i;
+
+                // Follow the cycle starting from the current edge
+                while (!visited[current]) {
+                    visited[current] = true;
+                    cycle.push_back(current);
+
+                    char color1 = state[edgeIndices[current][0]];
+                    char color2 = state[edgeIndices[current][1]];
+                    std::pair<char, char> colors = {color1, color2};
+
+                    // Find this pair in the base colors list to determine its intended position
+                    auto it = std::find(edgesBaseColours.begin(), edgesBaseColours.end(), colors);
+                    if (it != edgesBaseColours.end()) {
+                        current = std::distance(edgesBaseColours.begin(), it);
+                    } else {
+                        std::cerr << "Edge number: " << current << " does not have a matching base color." << std::endl;
+                        break;
+                    }
+                }
+
+                // Output the cycle
+                if (!cycle.empty()) {
+                    std::cout << "Cycle " << cycleCount << ": ";
+                    for (size_t idx = 0; idx < cycle.size(); ++idx) {
+                        int pos = cycle[idx];
+                        char color1 = state[edgeIndices[pos][0]];
+                        char color2 = state[edgeIndices[pos][1]];
+                        std::pair<char, char> colors = {color1, color2};
+
+                        std::cout << edgeNames[colors];
+                        if (idx < cycle.size() - 1) {
+                            std::cout << " wants to go to ";
+                        }
+                    }
+                    std::cout << "." << std::endl;
+                    cycleCount++;
+                }
+            }
+        }
+    }

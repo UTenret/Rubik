@@ -11,6 +11,7 @@
 #include <sstream>
 #include <algorithm>
 #include <tuple>
+#include <map>
 
 enum EdgePositions {
 	UB, UR, UF, UL,
@@ -126,6 +127,9 @@ class RubiksCube {
 
 	void calculateCornerTetradIndex() const;
 	static void IsCornerInCorrectTetrad(const RubiksCube& cube);
+
+	void CalculateCycles();
+
 
 	private:
 

@@ -61,6 +61,7 @@ int main(int argc, char* argv[]) {
 	// std::cout << "index: " << RubiksCube::encodeEdgeSlicePositionsG1(cube) << std::endl;
 	// exit(1);
 
+	// RubiksCube::calculateStateIndexG2(cube);
 	Solver			solver(cube, table);
 	solver.solveCube();
 

@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <tuple>
 #include <map>
+#include <array>
 
 enum EdgePositions {
 	UB, UR, UF, UL,
@@ -109,6 +110,9 @@ class RubiksCube {
 	static int encodeEdgeSlicePositionsG2(const RubiksCube& cube);
 	bool isEdgeBlueOrGreenG2(int edgeIndex) const;
 	int getCornerTetradPosG2(int cornerIndex) const;
+	int calculateParityG2(const std::vector<int>& permutation) const;
+	std::vector<int> getCornerPermutationG2() const;
+	std::vector<int> getEdgePermutationG2() const;
 
 	int getCornerOrientationG1(int cornerIndex) const;
 	bool isEdgeInESliceG1(int edgeIndex) const;

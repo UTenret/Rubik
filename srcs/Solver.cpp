@@ -91,7 +91,7 @@ void Solver::solveCube() {
     };
 	
 	solution.clear();
-	table.setLUT(2, table.loadLUT("G2.txt", 4900));
+	table.setLUT(2, table.loadLUT("G2.txt", 9800));
 	iterativeSolveG2(table.getLUT(2), group2Moves, solution);
 
     std::cout << "AFTER G2->G3" << std::endl;
@@ -107,7 +107,7 @@ void Solver::solveCube() {
     };
 
 	solution.clear();
-	cube.CalculateCycles();
+	// cube.CalculateCycles();
     solveGroup([this]() { return cube.isSolved(); }, group3Moves, solution);
 }
 

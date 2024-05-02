@@ -99,7 +99,7 @@ void PruningTable::bfsGenerateLUTG2() {
     std::queue<std::pair<RubiksCube, int>> q;
     std::set<int> visitedIndices;
     RubiksCube initialCube = cube;
-	luts[2].resize(4900, -1);
+	luts[2].resize(9800, -1);
     int initialIndex = RubiksCube::calculateStateIndexG2(initialCube);
     q.push({initialCube, 0});
     visitedIndices.insert(initialIndex);
@@ -145,10 +145,10 @@ void PruningTable::bfsGenerateLUTG2() {
 
 void PruningTable::generateLUT() {
     bfsGenerateLUTG0();
-    bfsGenerateLUTG1();
+    // bfsGenerateLUTG1();
     bfsGenerateLUTG2();
     std::ofstream file("G0.txt");
-    std::ofstream file2("G1.txt");
+    // std::ofstream file2("G1.txt");
     std::ofstream file3("G2.txt");
     if (!file ) {
         std::cerr << "Error: file could not be opened";
@@ -157,9 +157,9 @@ void PruningTable::generateLUT() {
     for (int value : luts[0]) {
         file << value << std::endl;
     }
-	for (int value : luts[1]) {
-		file2 << value << std::endl;
-	}
+	// for (int value : luts[1]) {
+	// 	file2 << value << std::endl;
+	// }
 	for (int value : luts[2]) {
 		file3 << value << std::endl;
 	}

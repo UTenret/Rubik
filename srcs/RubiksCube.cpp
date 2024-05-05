@@ -683,7 +683,7 @@ int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
 		std::cout << "edgeIndex: " << edgeIndex << std::endl;
 		cube.printCube();
 	}
-	if (offset + (cornerIndex * 70 + edgeIndex) == 8400) {
+	if (offset + (cornerIndex * 70 + edgeIndex) == 8500) {
 		std::cout << "Hello you IM ODD PARITY BITCH" << std::endl;
 		std::cout << "cornerIndex: " << cornerIndex << std::endl;
 		std::cout << "edgeIndex: " << edgeIndex << std::endl;

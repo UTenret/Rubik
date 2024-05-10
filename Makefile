@@ -49,7 +49,7 @@ all : $(NAME)
 
 $(NAME): $(OBJS)
 	@$(CC) $(CFLAGS) $(OBJS) -o $@ 
-	@echo "\033[1;35m======= RubiksCube has been created =======\033[0m"
+	@echo "\033[1;35m=======  compilation complete  =======\033[0m"
 
 $(OBJS): $(PATH_OBJS)/%.o: %.cpp $(HEADER)
 	@mkdir -p $(PATH_OBJS)
@@ -57,13 +57,12 @@ $(OBJS): $(PATH_OBJS)/%.o: %.cpp $(HEADER)
 
 clean:
 	@$(RM) -R $(PATH_OBJS)
-	@echo "\033[1;36m======= RubiksCube object files have been removed =======\033[0m"
+	@echo "\033[1;36m=======    cleaning complete   =======\033[0m"
 
 fclean: clean
 	@$(RM) $(NAME)
-	@echo "\033[1;36m======= RubiksCube has been removed =======\033[0m"
+	@echo "\033[1;36m======= full cleaning complete =======\033[0m"
 
-re: fclean
-	@$(SMAKE)
+re: fclean all
 
 .PHONY: all clean fclean re

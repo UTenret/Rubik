@@ -1,5 +1,8 @@
+.vscode
 a.out
 Rubik.cpp
 objs/
 RubiksCube
 G*.txt
+visualizer/cube
+visualizer/objs

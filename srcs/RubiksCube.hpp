@@ -78,7 +78,7 @@ const int cornerIndices[CORNER_COUNT][3] = {
     {51, 26, 33},		// WGO || DBL			//T 1
 };
 
-#define MAX_DEPTH 15
+#define MAX_DEPTH 16
 // #define MAX_DEPTH 3
 #define G0_N_SOLUTIONS 2048
 #define G1_N_SOLUTIONS 1082565
@@ -113,6 +113,7 @@ class RubiksCube {
 	int calculateParityG2(const std::vector<int>& permutation) const;
 	std::vector<int> getCornerPermutationG2() const;
 	std::vector<int> getEdgePermutationG2() const;
+	int rank() const;
 
 	int getCornerOrientationG1(int cornerIndex) const;
 	bool isEdgeInESliceG1(int edgeIndex) const;

@@ -96,50 +96,101 @@ void PruningTable::bfsGenerateLUTG1() {
 }
 
 void PruningTable::bfsGenerateLUTG2() {
-    std::queue<std::pair<RubiksCube, int>> q;
+    std::queue<std::tuple<RubiksCube, int, std::vector<std::string>>> q;
     std::set<int> visitedIndices;
     RubiksCube initialCube = cube;
-	luts[2].resize(9800, -1);
+    luts[2].resize(352800, -1);
     int initialIndex = RubiksCube::calculateStateIndexG2(initialCube);
-    q.push({initialCube, 0});
+    q.push(std::make_tuple(initialCube, 0, std::vector<std::string>()));
     visitedIndices.insert(initialIndex);
 
     std::vector<std::string> moves = {"U", "U'", "D", "D'", "R2", "L2", "F2", "B2"};
 
-		// cube.printCube();
     while (!q.empty()) {
-        auto [currentCube, dist] = q.front();
+        auto [currentCube, dist, path] = q.front();
         q.pop();
 
         int currentIndex = RubiksCube::calculateStateIndexG2(currentCube);
-        // if (luts[1][currentIndex] == -1 || luts[1][currentIndex] > dist) {
+
         if (luts[2][currentIndex] == -1 || luts[2][currentIndex] < dist) {
-			// std::cout << "added index: " << currentIndex << " with dist: " << dist << std::endl;
             luts[2][currentIndex] = dist;
         }
 
-        if (dist >= MAX_DEPTH)  {
-			std::cout << "dist: "<< dist << std::endl;
-			continue;
-		}
+        if (dist >= MAX_DEPTH) {
+            std::cout << "Reached max depth at index: " << currentIndex << " with distance: " << dist << std::endl;
+            continue;
+        }
 
         for (const auto& move : moves) {
             RubiksCube newStateCube = currentCube;
             newStateCube.applyMove(move);
 
             int newIndex = RubiksCube::calculateStateIndexG2(newStateCube);
-
-			// std::cout << "dist: " << dist << ", move: " << move << ", state: " << newIndex << std::endl;
-			// std::cout << "move: " << move << std::endl;
-			// std::cout << "state: " << newIndex << std::endl;
+            std::vector<std::string> newPath = path;
+            newPath.push_back(move);
 
             if (visitedIndices.insert(newIndex).second) {
-				// std::cout << "added state: " << newIndex << " to visited\n";
-                q.push({newStateCube, dist + 1});
+                q.push(std::make_tuple(newStateCube, dist + 1, newPath));
+
+                // Check if the newIndex is one of the indices of interest
+                if (newIndex == 3600 || newIndex == 3601) {
+                    std::cout << "Reached target index " << newIndex << " with moves: ";
+                    for (const auto& m : newPath) {
+                        std::cout << m << " ";
+                    }
+                    std::cout << std::endl;
+                    // Optionally, you can save this path somewhere if needed
+                }
             }
         }
     }
 }
+
+// void PruningTable::bfsGenerateLUTG2() {
+//     std::queue<std::pair<RubiksCube, int>> q;
+//     std::set<int> visitedIndices;
+//     RubiksCube initialCube = cube;
+// 	luts[2].resize(352800, -1);
+//     int initialIndex = RubiksCube::calculateStateIndexG2(initialCube);
+//     q.push({initialCube, 0});
+//     visitedIndices.insert(initialIndex);
+
+//     std::vector<std::string> moves = {"U", "U'", "D", "D'", "R2", "L2", "F2", "B2"};
+
+// 		// cube.printCube();
+//     while (!q.empty()) {
+//         auto [currentCube, dist] = q.front();
+//         q.pop();
+
+//         int currentIndex = RubiksCube::calculateStateIndexG2(currentCube);
+//         // if (luts[1][currentIndex] == -1 || luts[1][currentIndex] > dist) {
+//         if (luts[2][currentIndex] == -1 || luts[2][currentIndex] < dist) {
+// 			// std::cout << "added index: " << currentIndex << " with dist: " << dist << std::endl;
+//             luts[2][currentIndex] = dist;
+//         }
+
+//         if (dist >= MAX_DEPTH)  {
+// 			std::cout << "dist: "<< dist << std::endl;
+// 			continue;
+// 		}
+
+//         for (const auto& move : moves) {
+//             RubiksCube newStateCube = currentCube;
+//             newStateCube.applyMove(move);
+
+//             int newIndex = RubiksCube::calculateStateIndexG2(newStateCube);
+
+// 			// std::cout << "dist: " << dist << ", move: " << move << ", state: " << newIndex << std::endl;
+// 			// std::cout << "move: " << move << std::endl;
+// 			// std::cout << "state: " << newIndex << std::endl;
+
+//             if (visitedIndices.insert(newIndex).second) {
+// 				// std::cout << "added state: " << newIndex << " to visited\n";
+//                 q.push({newStateCube, dist + 1});
+//             }
+//         }
+//     }
+// }
 
 // No F, F', B, B' for G1->G2
 

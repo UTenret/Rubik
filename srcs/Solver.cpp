@@ -307,7 +307,9 @@ void Solver::iterativeSolveG2(
 		std::cout << "moves: " << moves;
 	}
 	std::cout << std::endl;
-	std::cout << "index fail: " << RubiksCube::calculateStateIndexG2(cube) << std::endl;
+	int indexFail = RubiksCube::calculateStateIndexG2(cube);
+	std::cout << "index fail: " << indexFail << std::endl;
+	cube.printCube();
 	// cube.printCube();
 	// cube.applyMove("R");
 	// cube.printState();

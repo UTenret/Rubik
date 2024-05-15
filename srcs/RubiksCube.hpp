@@ -64,8 +64,6 @@ const std::vector<std::pair<char, char>> edgesBaseColours = {
 //	Green-Red			10
 //	Green-Orange		11
 
-
-
 const int cornerIndices[CORNER_COUNT][3] = {
     {36, 27, 20},		// YOG || ULB			//T 2
     {38, 18, 11},		// YGR || UBR			//T 1
@@ -108,9 +106,11 @@ class RubiksCube {
 	static int calculateStateIndexG2(const RubiksCube& cube);
 	static int encodeCornerTetradG2(const RubiksCube& cube);
 	static int encodeEdgeSlicePositionsG2(const RubiksCube& cube);
+	static int encodeEdgeSlicePositionsG2Debug(const RubiksCube& cube);
 	bool isEdgeBlueOrGreenG2(int edgeIndex) const;
 	int getCornerTetradPosG2(int cornerIndex) const;
 	int calculateParityG2(const std::vector<int>& permutation) const;
+	int calculateParityG2Debug(const std::vector<int>& permutation) const;
 	std::vector<int> getCornerPermutationG2() const;
 	std::vector<int> getEdgePermutationG2() const;
 	int rank() const;

@@ -133,11 +133,13 @@ void PruningTable::bfsGenerateLUTG2() {
                 q.push(std::make_tuple(newStateCube, dist + 1, newPath));
 
                 // Check if the newIndex is one of the indices of interest
-                if (newIndex == 3600 || newIndex == 3601) {
+                if (newIndex == 7216) {
                     std::cout << "Reached target index " << newIndex << " with moves: ";
+					RubiksCube::encodeEdgeSlicePositionsG2Debug(newStateCube);
                     for (const auto& m : newPath) {
                         std::cout << m << " ";
                     }
+					newStateCube.printCube();
                     std::cout << std::endl;
                     // Optionally, you can save this path somewhere if needed
                 }

@@ -108,7 +108,7 @@ int main(int argc, char* argv[]) {
             std::cout << std::endl;
         }
     }
-	std::cout << "SIze: " << UniqueEdgeIndex.size() <<  std::endl;
+	std::cout << "SIze: " << cornerToEdgeIndexMap.size() <<  std::endl;
 	exit(1);
 	Solver			solver(cube, table);
 	solver.solveCube();

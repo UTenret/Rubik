@@ -798,14 +798,14 @@ bool areDistinct(const std::pair<std::pair<char, char>, std::pair<char, char>>& 
            (pair1.first != pair2.second && pair1.second != pair2.first);
 }
 
-int RubiksCube::rankEdge(const array<uint8_t, 4> comb) const {
-	std::array<std::array<uint32_t, 4+1>, 8+1> choices;
+int RubiksCube::rankEdge(const std::array<int, 4> comb) const {
+	std::array<std::array<int, 4+1>, 8+1> choices;
 	for (unsigned n = 0; n <= 8; ++n)
     {
     	for (unsigned k = 0; k <= 4; ++k)
-          choices[8][4] = choose(8, 4);
+          choices[n][k] = choose(n, k);
     }
-	uint32_t rank = choices[8][4];
+	int rank = choices[8][4];
 
     for (unsigned i = 0; i < 4; ++i)
     	rank -= choices[8 - (comb[i] + 1)][4 - i];
@@ -1033,31 +1033,59 @@ int RubiksCube::rank() const {
 int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
     int cornerIndex = cube.rank();
     // int cornerIndex = encodeCornerTetradG2(cube);
-    int edgeIndex = encodeEdgeSlicePositionsG2(cube);
-    std::vector<int> edgePermutation = cube.getEdgePermutationG2();
+    // int edgeIndex = encodeEdgeSlicePositionsG2(cube);
+    std::array<int, 12> edgeMap;
+    edgeMap[0] = 0;  // UB
+    edgeMap[1] = 1;  // UR
+    edgeMap[2] = 2;  // UF
+    edgeMap[3] = 3;  // UL
+    edgeMap[4] = 4;  // DR
+    edgeMap[5] = 5;  // DF
+    edgeMap[6] = 6;  // DL
+    edgeMap[7] = 7;  // DB
+    edgeMap[8] = -1; // FR
+    edgeMap[9] = -1; // FL
+    edgeMap[10] = -1; // BR
+    edgeMap[11] = -1; // BL
+
+    std::array<int, 4> edgeCombo;
+    unsigned edgeComboInd = 0;
+
+    for (int i = 0; i < 8 && edgeComboInd < 4; ++i) {
+        if (cube.isEdgeBlueOrGreenG2(i)) {
+            edgeCombo[edgeComboInd++] = edgeMap[i];
+			// std::cout << "edgeCombo[edgeComboInd]: " << edgeCombo[edgeComboInd] << std::endl;
+			// std::cout << "edgeMap[i]: " << edgeMap[i] << std::endl;
+			// std::cout << "i: " << i << std::endl;
+        }
+    }
+
+    int edgeIndex = cube.rankEdge(edgeCombo);
+	// std::cout << "edgeIndex: " << edgeIndex << std::endl;
+	    std::vector<int> edgePermutation = cube.getEdgePermutationG2();
     int parity = cube.calculateParityG2(edgePermutation);  // Calculate parity from edge permutation
 
 	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
 	// std::cout << "edgeIndex: " << edgeIndex << std::endl;
 	// std::cout << "parity: " << parity << std::endl;
 	// if ((edgeIndex * 2520 + cornerIndex) * 2 + parity == 43 || (edgeIndex * 2520 + cornerIndex) * 2 + parity == 7217) {
-	if ((edgeIndex * 2520 + cornerIndex) * 2 + parity == 41) {
-		std::cout << "cornerIndex: " << cornerIndex << std::endl;
-		std::cout << "edgeIndex: " << edgeIndex << std::endl;
-		std::cout << "(edgeIndex * 2520 + cornerIndex): " << (edgeIndex * 2520 + cornerIndex) << std::endl;
-		std::cout << "(edgeIndex * 2520 + cornerIndex) * 2: " << (edgeIndex * 2520 + cornerIndex) * 2 << std::endl;
-		std::cout << "(edgeIndex * 2520 + cornerIndex) * 2 + parity: " << (edgeIndex * 2520 + cornerIndex) * 2 + parity << std::endl;
-		std::cout << "parity: " << parity << std::endl;
-		cube.calculateParityG2Debug(edgePermutation);
-		cube.printCube();
-		RubiksCube::encodeEdgeSlicePositionsG2Debug(cube);
-	}
-	if (cornerIndex == 21) {
-		std::cout << "cornerIndex is 21" << std::endl;
-		std::cout << "edgeIndex is " << edgeIndex << std::endl;
-		UniqueEdgeIndex.insert(edgeIndex);
-		cube.printCube();
-	}
+	// if ((edgeIndex * 2520 + cornerIndex) * 2 + parity == 41) {
+	// 	std::cout << "cornerIndex: " << cornerIndex << std::endl;
+	// 	std::cout << "edgeIndex: " << edgeIndex << std::endl;
+	// 	std::cout << "(edgeIndex * 2520 + cornerIndex): " << (edgeIndex * 2520 + cornerIndex) << std::endl;
+	// 	std::cout << "(edgeIndex * 2520 + cornerIndex) * 2: " << (edgeIndex * 2520 + cornerIndex) * 2 << std::endl;
+	// 	std::cout << "(edgeIndex * 2520 + cornerIndex) * 2 + parity: " << (edgeIndex * 2520 + cornerIndex) * 2 + parity << std::endl;
+	// 	std::cout << "parity: " << parity << std::endl;
+	// 	cube.calculateParityG2Debug(edgePermutation);
+	// 	cube.printCube();
+	// 	RubiksCube::encodeEdgeSlicePositionsG2Debug(cube);
+	// }
+	// if (cornerIndex == 21) {
+	// 	std::cout << "cornerIndex is 21" << std::endl;
+	// 	std::cout << "edgeIndex is " << edgeIndex << std::endl;
+	// 	UniqueEdgeIndex.insert(edgeIndex);
+	// 	cube.printCube();
+	// }
 	cornerEdgeToParityMap[{cornerIndex, edgeIndex}].insert(parity);
 	cornerToEdgeIndexMap[cornerIndex].insert(edgeIndex);
 	edgeToCornerIndexMap[edgeIndex].insert(cornerIndex);

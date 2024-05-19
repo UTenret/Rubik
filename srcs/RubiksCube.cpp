@@ -1,5 +1,10 @@
 #include "RubiksCube.hpp"
 
+std::set<int> UniqueEdgeIndex;
+std::map<int, std::set<int>> cornerToEdgeIndexMap;
+std::map<int, std::set<int>> edgeToCornerIndexMap;
+std::map<std::pair<int, int>, std::set<int>> cornerEdgeToParityMap;
+
 RubiksCube::RubiksCube(const std::string& initialState) : state(initialState) {}
 
 RubiksCube::RubiksCube(const RubiksCube& other) : state(other.state) {}
@@ -879,7 +884,7 @@ int RubiksCube::rank() const {
 
             // if (sPair == rPair) {
             if ((sPair.first == rPair.first && sPair.second == rPair.second) ||
-					sPair.first == rPair.second && sPair.second == rPair.first) {
+					(sPair.first == rPair.second && sPair.second == rPair.first)) {
                 rank += r * bases[n];
 				// std::cout << "rank: " << rank << std::endl;
 				// std::cout << "r: " << r << std::endl;
@@ -1020,8 +1025,8 @@ int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
 	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
 	// std::cout << "edgeIndex: " << edgeIndex << std::endl;
 	// std::cout << "parity: " << parity << std::endl;
-	// if ((edgeIndex * 2520 + cornerIndex) * 2 + parity == 7216 || (edgeIndex * 2520 + cornerIndex) * 2 + parity == 7217) {
-	if ((edgeIndex * 2520 + cornerIndex) * 2 + parity == 7216) {
+	// if ((edgeIndex * 2520 + cornerIndex) * 2 + parity == 43 || (edgeIndex * 2520 + cornerIndex) * 2 + parity == 7217) {
+	if ((edgeIndex * 2520 + cornerIndex) * 2 + parity == 41) {
 		std::cout << "cornerIndex: " << cornerIndex << std::endl;
 		std::cout << "edgeIndex: " << edgeIndex << std::endl;
 		std::cout << "(edgeIndex * 2520 + cornerIndex): " << (edgeIndex * 2520 + cornerIndex) << std::endl;
@@ -1032,6 +1037,15 @@ int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
 		cube.printCube();
 		RubiksCube::encodeEdgeSlicePositionsG2Debug(cube);
 	}
+	if (cornerIndex == 21) {
+		std::cout << "cornerIndex is 21" << std::endl;
+		std::cout << "edgeIndex is " << edgeIndex << std::endl;
+		UniqueEdgeIndex.insert(edgeIndex);
+		cube.printCube();
+	}
+	cornerEdgeToParityMap[{cornerIndex, edgeIndex}].insert(parity);
+	cornerToEdgeIndexMap[cornerIndex].insert(edgeIndex);
+	edgeToCornerIndexMap[edgeIndex].insert(cornerIndex);
 	return (edgeIndex * 2520 + cornerIndex) * 2 + parity;
     // return stateIndex;
 }

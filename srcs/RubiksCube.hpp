@@ -114,6 +114,7 @@ class RubiksCube {
 	std::vector<int> getCornerPermutationG2() const;
 	std::vector<int> getEdgePermutationG2() const;
 	int rank() const;
+	int rankEdge(const std::array<uint8_t, 4> comb) const;
 
 	int getCornerOrientationG1(int cornerIndex) const;
 	bool isEdgeInESliceG1(int edgeIndex) const;

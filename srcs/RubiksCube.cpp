@@ -798,6 +798,21 @@ bool areDistinct(const std::pair<std::pair<char, char>, std::pair<char, char>>& 
            (pair1.first != pair2.second && pair1.second != pair2.first);
 }
 
+int RubiksCube::rankEdge(const array<uint8_t, 4> comb) const {
+	std::array<std::array<uint32_t, 4+1>, 8+1> choices;
+	for (unsigned n = 0; n <= 8; ++n)
+    {
+    	for (unsigned k = 0; k <= 4; ++k)
+          choices[8][4] = choose(8, 4);
+    }
+	uint32_t rank = choices[8][4];
+
+    for (unsigned i = 0; i < 4; ++i)
+    	rank -= choices[8 - (comb[i] + 1)][4 - i];
+
+    return rank - 1;
+}
+
 int RubiksCube::rank() const {
 	int rank = 0;
 	

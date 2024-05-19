@@ -623,7 +623,7 @@ std::vector<int> RubiksCube::getCornerPermutationG2() const {
 }
 
 std::vector<int> RubiksCube::getEdgePermutationG2() const {
-    std::vector<int> edgePermutation(EDGE_COUNT, -1);
+    std::vector<int> edgePermutation(8, -1);
     std::vector<std::pair<char, char>> targetEdgeColors = {
         {'Y', 'G'}, {'Y', 'R'}, {'Y', 'B'}, {'Y', 'O'},
         {'W', 'R'}, {'W', 'B'}, {'W', 'O'}, {'W', 'G'},
@@ -632,8 +632,8 @@ std::vector<int> RubiksCube::getEdgePermutationG2() const {
 
     // Extract current edge colors from cube state
 	// printState();
-    std::vector<std::pair<char, char>> currentEdgeColors(EDGE_COUNT);
-    for (int i = 0; i < EDGE_COUNT; i++) {
+    std::vector<std::pair<char, char>> currentEdgeColors(8);
+    for (int i = 0; i < 8; i++) {
         currentEdgeColors[i] = {state[edgeIndices[i][0]], state[edgeIndices[i][1]]};
 		// std::cout << "currentEdgeColors[i].first: " << currentEdgeColors[i].first << std::endl;
 		// std::cout << "currentEdgeColors[i].second: " << currentEdgeColors[i].second << std::endl;
@@ -645,8 +645,8 @@ std::vector<int> RubiksCube::getEdgePermutationG2() const {
     }
 
     // Match current edges against target configuration
-    for (int i = 0; i < EDGE_COUNT; i++) {
-        for (int j = 0; j < EDGE_COUNT; j++) {
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
             if ((currentEdgeColors[i] == targetEdgeColors[j]) ||
                 (std::make_pair(currentEdgeColors[i].second, currentEdgeColors[i].first) == targetEdgeColors[j])) {
                 edgePermutation[i] = j;
@@ -664,6 +664,49 @@ std::vector<int> RubiksCube::getEdgePermutationG2() const {
 
     return edgePermutation;
 }
+
+// std::vector<int> RubiksCube::getEdgePermutationG2() const {
+//     std::vector<int> edgePermutation(EDGE_COUNT, -1);
+//     std::vector<std::pair<char, char>> targetEdgeColors = {
+//         {'Y', 'G'}, {'Y', 'R'}, {'Y', 'B'}, {'Y', 'O'},
+//         {'W', 'R'}, {'W', 'B'}, {'W', 'O'}, {'W', 'G'},
+//         {'B', 'R'}, {'B', 'O'}, {'G', 'R'}, {'G', 'O'}
+//     };
+
+//     // Extract current edge colors from cube state
+// 	// printState();
+//     std::vector<std::pair<char, char>> currentEdgeColors(EDGE_COUNT);
+//     for (int i = 0; i < EDGE_COUNT; i++) {
+//         currentEdgeColors[i] = {state[edgeIndices[i][0]], state[edgeIndices[i][1]]};
+// 		// std::cout << "currentEdgeColors[i].first: " << currentEdgeColors[i].first << std::endl;
+// 		// std::cout << "currentEdgeColors[i].second: " << currentEdgeColors[i].second << std::endl;
+// 		// std::cout << "edgeIndices[i][0]: " << edgeIndices[i][0] << std::endl;
+// 		// std::cout << "edgeIndices[i][1]: " << edgeIndices[i][1] << std::endl;
+// 		// std::cout << "state[edgeIndices[i][0]]: " << state[edgeIndices[i][0]] << std::endl;
+// 		// std::cout << "state[edgeIndices[i][1]]: " << state[edgeIndices[i][1]] << std::endl;
+// 		// std::cout << "i: " << i << std::endl;
+//     }
+
+//     // Match current edges against target configuration
+//     for (int i = 0; i < EDGE_COUNT; i++) {
+//         for (int j = 0; j < EDGE_COUNT; j++) {
+//             if ((currentEdgeColors[i] == targetEdgeColors[j]) ||
+//                 (std::make_pair(currentEdgeColors[i].second, currentEdgeColors[i].first) == targetEdgeColors[j])) {
+//                 edgePermutation[i] = j;
+//                 break;
+//             }
+//         }
+//     }
+
+//     // Debug print the computed edge permutation
+//     // std::cout << "Computed Edge Permutation: ";
+//     // for (int perm : edgePermutation) {
+//     //     std::cout << perm << " ";
+//     // }
+//     // std::cout << std::endl;
+
+//     return edgePermutation;
+// }
 
 int RubiksCube::calculateParityG2(const std::vector<int>& permutation) const {
     int parity = 0;

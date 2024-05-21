@@ -110,6 +110,7 @@ class RubiksCube {
 	bool isEdgeBlueOrGreenG2(int edgeIndex) const;
 	int getCornerTetradPosG2(int cornerIndex) const;
 	int calculateParityG2(const std::vector<int>& permutation) const;
+	int calculateParityG2Original(const std::vector<int>& permutation) const;
 	int calculateParityG2Debug(const std::vector<int>& permutation) const;
 	std::vector<int> getCornerPermutationG2() const;
 	std::vector<int> getEdgePermutationG2() const;

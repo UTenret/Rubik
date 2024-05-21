@@ -617,15 +617,15 @@ int RubiksCube::calculateStateIndexG1(const RubiksCube& cube) {
     // return edgeIndex;
 }
 
-std::vector<int> RubiksCube::getCornerPermutationG2() const {
-    std::vector<int> permutation(CORNER_COUNT);
-    for (int i = 0; i < CORNER_COUNT; i++) {
-        // Decode the corner position from the state vector
-        // Assuming state stores corner positions in the range [12, 19]
-        permutation[i] = std::find(cornerIndices[i], cornerIndices[i] + 3, state[12 + i]) - cornerIndices[i];
-    }
-    return permutation;
-}
+// std::vector<int> RubiksCube::getCornerPermutationG2() const {
+//     std::vector<int> permutation(CORNER_COUNT);
+//     for (int i = 0; i < CORNER_COUNT; i++) {
+//         // Decode the corner position from the state vector
+//         // Assuming state stores corner positions in the range [12, 19]
+//         permutation[i] = std::find(cornerIndices[i], cornerIndices[i] + 3, state[12 + i]) - cornerIndices[i];
+//     }
+//     return permutation;
+// }
 
 std::vector<int> RubiksCube::getEdgePermutationG2() const {
     std::vector<int> edgePermutation(8, -1);
@@ -714,6 +714,16 @@ std::vector<int> RubiksCube::getEdgePermutationG2() const {
 // }
 
 int RubiksCube::calculateParityG2(const std::vector<int>& permutation) const {
+	int parity = 0;
+	for (int i = 0; i < permutation.size(); ++i) {
+		for (int j = i + 1; j < permutation.size(); ++j) {
+			parity ^= permutation[i] < permutation[j];
+		}
+	}
+	return parity;
+}
+
+int RubiksCube::calculateParityG2Original(const std::vector<int>& permutation) const {
     int parity = 0;
     std::vector<bool> visited(permutation.size(), false);
     for (int start = 0; start < permutation.size(); start++) {
@@ -1030,10 +1040,35 @@ int RubiksCube::rank() const {
 // 	return rank;
 // }
 
+std::vector<int> RubiksCube::getCornerPermutationG2() const {
+	std::vector<int> cornerPermutation(CORNER_COUNT);
+	for (int i = 0; i < CORNER_COUNT; ++i) {
+		for (int j = 0; j < CORNER_COUNT; ++j) {
+			if (state[cornerIndices[j][0]] == edgesBaseColours[i].first && 
+				state[cornerIndices[j][1]] == edgesBaseColours[i].second) {
+				cornerPermutation[i] = j;
+				break;
+			}
+		}
+	}
+	return cornerPermutation;
+}
+
+    // Calculate parity of the corner permutation
+// int RubiksCube::calculateParityG2(const std::vector<int>& permutation) const {
+// 	uint8_t parity = 0;
+// 	for (uint8_t i = 0; i < permutation.size(); ++i) {
+// 		for (uint8_t j = i + 1; j < permutation.size(); ++j) {
+// 			parity ^= permutation[i] < permutation[j];
+// 		}
+// 	}
+// 	return parity;
+// }
+
 int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
     int cornerIndex = cube.rank();
     // int cornerIndex = encodeCornerTetradG2(cube);
-    // int edgeIndex = encodeEdgeSlicePositionsG2(cube);
+    int edgeIndex = encodeEdgeSlicePositionsG2(cube);
     std::array<int, 12> edgeMap;
     edgeMap[0] = 0;  // UB
     edgeMap[1] = 1;  // UR
@@ -1060,11 +1095,24 @@ int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
         }
     }
 
-    int edgeIndex = cube.rankEdge(edgeCombo);
+    // int edgeIndex = cube.rankEdge(edgeCombo);
+	if (edgeIndex != encodeEdgeSlicePositionsG2(cube)) {
+		std::cout << "FATALLY ERRORED" << std::endl;
+		exit(1);
+	}
 	// std::cout << "edgeIndex: " << edgeIndex << std::endl;
-	    std::vector<int> edgePermutation = cube.getEdgePermutationG2();
-    int parity = cube.calculateParityG2(edgePermutation);  // Calculate parity from edge permutation
+	std::vector<int> edgePermutation = cube.getEdgePermutationG2();
+    // int parity = cube.calculateParityG2(edgePermutation);  // Calculate parity from edge permutation
+    std::vector<int> cornerPermutation = cube.getCornerPermutationG2();
+    int parity = cube.calculateParityG2(cornerPermutation);  // Calculate parity from corner permutation
+	if (parity != cube.calculateParityG2Original(cornerPermutation)) {
+		std::cout << "parity: " << parity << std::endl;
+		std::cout << "og parity: " << cube.calculateParityG2Original(cornerPermutation) << std::endl;
+		std::cout << "edgeIndex: " << edgeIndex << std::endl;
+		std::cout << "cornerIndex: " << cornerIndex << std::endl;
+		std::cout << "(edgeIndex * 2520 + cornerIndex) * 2 + parity" << (edgeIndex * 2520 + cornerIndex) * 2 + parity << std::endl;
 
+	}
 	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
 	// std::cout << "edgeIndex: " << edgeIndex << std::endl;
 	// std::cout << "parity: " << parity << std::endl;

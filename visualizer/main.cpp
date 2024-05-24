@@ -48,7 +48,7 @@ void rotationF(int delay) {
         glutTimerFunc((16 * delay), rotationF, 0);
         return;
     }
-    rotationAngle -= 1.0f;
+    rotationAngle -= 1.5f;
     animationActive = F;
     if (rotationAngle <= -90.0f) {
         rotationAngle = 0.0f;
@@ -66,7 +66,7 @@ void rotationFP(int value) {
         glutTimerFunc(16, rotationFP, 0);
         return;
     }
-    rotationAngle += 1.0f;
+    rotationAngle += 1.5f;
     animationActive = F_PRIME;
     if (rotationAngle >= 90.0f) {
         rotationAngle = 0.0f;
@@ -81,12 +81,11 @@ void rotationFP(int value) {
 
 
 void rotationB(int delay) {
-    // std::cout << "delay is " << delay << std::endl;
     if (animationActive != NONE && animationActive != B) {
         glutTimerFunc((16 * delay), rotationB, 0);
         return;
     }
-    rotationAngle += 1.0f;
+    rotationAngle += 1.5f;
     animationActive = B;
     if (rotationAngle >= 90.0f) {
         rotationAngle = 0.0f;
@@ -104,7 +103,7 @@ void rotationBP(int value) {
         glutTimerFunc(16, rotationBP, 0);
         return;
     }
-    rotationAngle -= 1.0f;
+    rotationAngle -= 1.5f;
     animationActive = B_PRIME;
     if (rotationAngle <= -90.0f) {
         rotationAngle = 0.0f;
@@ -122,7 +121,7 @@ void rotationU(int value) {
         glutTimerFunc(16, rotationU, 0);
         return;
     }
-    rotationAngle -= 1.0f;
+    rotationAngle -= 1.5f;
     animationActive = U;
     if (rotationAngle <= -90.0f) {
         rotationAngle = 0.0f;
@@ -140,7 +139,7 @@ void rotationUP(int value) {
         glutTimerFunc(16, rotationUP, 0);
         return;
     }
-    rotationAngle += 1.0f;
+    rotationAngle += 1.5f;
     animationActive = U_PRIME;
     if (rotationAngle >= 90.0f) {
         rotationAngle = 0.0f;
@@ -158,7 +157,7 @@ void rotationD(int value) {
         glutTimerFunc(16, rotationD, 0);
         return;
     }
-    rotationAngle += 1.0f;
+    rotationAngle += 1.5f;
     animationActive = D;
     if (rotationAngle >= 90.0f) {
         rotationAngle = 0.0f;
@@ -176,7 +175,7 @@ void rotationDP(int value) {
         glutTimerFunc(16, rotationDP, 0);
         return;
     }
-    rotationAngle -= 1.0f;
+    rotationAngle -= 1.5f;
     animationActive = D_PRIME;
     if (rotationAngle <= -90.0f) {
         rotationAngle = 0.0f;
@@ -194,7 +193,7 @@ void rotationL(int value) {
         glutTimerFunc(16, rotationL, 0);
         return;
     }
-    rotationAngle += 1.0f;
+    rotationAngle += 1.5f;
     animationActive = L;
     if (rotationAngle >= 90.0f) {
         rotationAngle = 0.0f;
@@ -212,7 +211,7 @@ void rotationLP(int value) {
         glutTimerFunc(16, rotationLP, 0);
         return;
     }
-    rotationAngle -= 1.0f;
+    rotationAngle -= 1.5f;
     animationActive = L_PRIME;
     if (rotationAngle <= -90.0f) {
         rotationAngle = 0.0f;
@@ -230,7 +229,7 @@ void rotationR(int value) {
         glutTimerFunc(16, rotationR, 0);
         return;
     }
-    rotationAngle -= 1.0f;
+    rotationAngle -= 1.5f;
     animationActive = R;
     if (rotationAngle <= -90.0f) {
         rotationAngle = 0.0f;
@@ -248,7 +247,7 @@ void rotationRP(int value) {
         glutTimerFunc(16, rotationRP, 0);
         return;
     }
-    rotationAngle += 1.0f;
+    rotationAngle += 1.5f;
     animationActive = R_PRIME;
     if (rotationAngle >= 90.0f) {
         rotationAngle = 0.0f;
@@ -269,7 +268,7 @@ void delay(float secs)
 
 void    parsing(char *moves) {
     int i = 0;
-    int delay = 2000;
+    int delay = 1400;
     int moveNum = 0;
     while (moves[i] != '\0') {
         if (moves[i] == ' ') {
@@ -384,7 +383,7 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(800, 600);
-    glutCreateWindow("Rubik-Huiubik");
+    glutCreateWindow("Rubik's visualizer");
     glEnable(GL_DEPTH_TEST);
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);

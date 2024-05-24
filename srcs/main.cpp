@@ -65,50 +65,54 @@ int main(int argc, char* argv[]) {
 	// 	std::cout << " Number: " << x;
 	// }
 	// std::cout << std::endl;
-	 for (const auto& [cornerIndex, edgeIndices] : cornerToEdgeIndexMap) {
-        // std::cout << "Corner index " << cornerIndex << " has edge indices: ";
-        // for (const auto& edgeIndex : edgeIndices) {
-        //     std::cout << edgeIndex << " ";
-        // }
-        // std::cout << std::endl;
+	// std::cout << "UniqueCornerIndex: " << UniqueCornerIndex.size() <<  std::endl;
+	// std::cout << "UniqueEdgeIndex: " << UniqueEdgeIndex.size() <<  std::endl;
+	// exit(1);
 
-        // Check for missing edge indices
-        for (int i = 0; i < 70; ++i) {
-            if (edgeIndices.find(i) == edgeIndices.end()) {
-        		std::cout << "Missing edge indices for corner index " << cornerIndex << ": ";
-                std::cout << i << " " << std::endl;
-            }
-        }
-    }
-	for (const auto& [edgeIndex, cornerIndices] : edgeToCornerIndexMap) {
-        // std::cout << "Corner index " << cornerIndex << " has edge indices: ";
-        // for (const auto& edgeIndex : edgeIndices) {
-        //     std::cout << edgeIndex << " ";
-        // }
-        // std::cout << std::endl;
+	//  for (const auto& [cornerIndex, edgeIndices] : cornerToEdgeIndexMap) {
+    //     // std::cout << "Corner index " << cornerIndex << " has edge indices: ";
+    //     // for (const auto& edgeIndex : edgeIndices) {
+    //     //     std::cout << edgeIndex << " ";
+    //     // }
+    //     // std::cout << std::endl;
 
-        // Check for missing edge indices
-        for (int i = 0; i < 2520; ++i) {
-            if (cornerIndices.find(i) == cornerIndices.end()) {
-        		std::cout << "Missing corner indices for edge index " << edgeIndex << ": ";
-                std::cout << i << ", rank without parity: " << (edgeIndex * 2520 + i) * 2 << std::endl;
-            }
-        }
-    }
-	for (const auto& [cornerEdgePair, parities] : cornerEdgeToParityMap) {
-        auto [cornerIndex, edgeIndex] = cornerEdgePair;
-        if (parities.size() < 2) {
-            std::cout << "Missing parity for corner index " << cornerIndex << " and edge index " << edgeIndex << ": ";
-            if (parities.find(0) == parities.end()) {
-                std::cout << "0 ";
-            }
-            if (parities.find(1) == parities.end()) {
-                std::cout << "1 ";
-            }
-            std::cout << std::endl;
-        }
-    }
-	std::cout << "SIze: " << cornerToEdgeIndexMap.size() <<  std::endl;
+    //     // Check for missing edge indices
+    //     for (int i = 0; i < 70; ++i) {
+    //         if (edgeIndices.find(i) == edgeIndices.end()) {
+    //     		std::cout << "Missing edge indices for corner index " << cornerIndex << ": ";
+    //             std::cout << i << " " << std::endl;
+    //         }
+    //     }
+    // }
+	// for (const auto& [edgeIndex, cornerIndices] : edgeToCornerIndexMap) {
+    //     // std::cout << "Corner index " << cornerIndex << " has edge indices: ";
+    //     // for (const auto& edgeIndex : edgeIndices) {
+    //     //     std::cout << edgeIndex << " ";
+    //     // }
+    //     // std::cout << std::endl;
+
+    //     // Check for missing edge indices
+    //     for (int i = 0; i < 2520; ++i) {
+    //         if (cornerIndices.find(i) == cornerIndices.end()) {
+    //     		std::cout << "Missing corner indices for edge index " << edgeIndex << ": ";
+    //             std::cout << i << ", rank without parity: " << (edgeIndex * 2520 + i) * 2 << std::endl;
+    //         }
+    //     }
+    // }
+	// for (const auto& [cornerEdgePair, parities] : cornerEdgeToParityMap) {
+    //     auto [cornerIndex, edgeIndex] = cornerEdgePair;
+    //     if (parities.size() < 2) {
+    //         std::cout << "Missing parity for corner index " << cornerIndex << " and edge index " << edgeIndex << ": ";
+    //         if (parities.find(0) == parities.end()) {
+    //             std::cout << "0 ";
+    //         }
+    //         if (parities.find(1) == parities.end()) {
+    //             std::cout << "1 ";
+    //         }
+    //         std::cout << std::endl;
+    //     }
+    // }
+	// std::cout << "SIze: " << cornerToEdgeIndexMap.size() <<  std::endl;
 	// exit(1);
 	Solver			solver(cube, table);
 	solver.solveCube();

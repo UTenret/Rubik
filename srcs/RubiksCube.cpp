@@ -1,6 +1,7 @@
 #include "RubiksCube.hpp"
 
 std::set<int> UniqueEdgeIndex;
+std::set<int> UniqueCornerIndex;
 std::map<int, std::set<int>> cornerToEdgeIndexMap;
 std::map<int, std::set<int>> edgeToCornerIndexMap;
 std::map<std::pair<int, int>, std::set<int>> cornerEdgeToParityMap;
@@ -826,65 +827,103 @@ int RubiksCube::rankEdge(const std::array<int, 4> comb) const {
 int RubiksCube::rank() const {
 	int rank = 0;
 	
-	// std::vector<std::pair<std::pair<char, char>, std::pair<char, char>>> cornerPairs = {
-    //     // CornerPair0 - ULB/URF
-    //     {{'O', 'G'}, {'R', 'B'}},
-    //     // CornerPair1 - DLF/DRB
-    //     {{'O', 'B'}, {'R', 'G'}},
-    //     // CornerPair2 - URB/ULF
-    //     {{'G', 'R'}, {'B', 'O'}},
-    //     // CornerPair3 - DLB/DRF
-    //     {{'G', 'O'}, {'B', 'R'}}
-    // };
-
 	std::vector<std::pair<std::pair<char, char>, std::pair<char, char>>> cornerPairs = {
         // CornerPair0 - ULB/URF
-		{{state[27], state[20]}, {state[9], state[2]}},
+        {{'O', 'G'}, {'R', 'B'}},
         // CornerPair1 - DLF/DRB
-		{{state[35], state[6]}, {state[17], state[24]}},
-        // CornerPair2 - UBR/UFL
-		{{state[18], state[11]}, {state[0], state[29]}},
+        {{'O', 'B'}, {'R', 'G'}},
+        // CornerPair2 - URB/ULF
+        {{'G', 'R'}, {'B', 'O'}},
         // CornerPair3 - DLB/DRF
-		{{state[8], state[15]}, {state[26], state[33]}},
+        {{'G', 'O'}, {'B', 'R'}}
     };
+
+	// std::vector<std::pair<std::pair<char, char>, std::pair<char, char>>> cornerPairs = {
+    //     // CornerPair0 - ULB/URF
+	// 	{{state[27], state[20]}, {state[9], state[2]}},
+    //     // CornerPair1 - DLF/DRB
+	// 	{{state[35], state[6]}, {state[17], state[24]}},
+    //     // CornerPair2 - UBR/UFL
+	// 	{{state[18], state[11]}, {state[0], state[29]}},
+    //     // CornerPair3 - DLB/DRF
+	// 	{{state[8], state[15]}, {state[26], state[33]}},
+    // };
 	//
 	// Rank among this many pairs.  For 8=8, 8C2->6C2->4C2->2C2 (28->15->6->1).
+	// std::vector<std::pair<std::pair<char, char>, std::pair<char, char>>> remaining = {
+    //     {{'O', 'G'}, {'R', 'B'}},	
+    //     {{'O', 'G'}, {'O', 'B'}},  
+    //     {{'O', 'G'}, {'R', 'G'}}, // second 1
+    //     {{'O', 'G'}, {'G', 'R'}},	
+    //     {{'O', 'G'}, {'B', 'O'}},	
+    //     {{'O', 'G'}, {'G', 'O'}},	
+    //     {{'O', 'G'}, {'B', 'R'}},	
+
+    //     {{'R', 'B'}, {'O', 'B'}}, 
+    //     {{'R', 'B'}, {'R', 'G'}}, 
+    //     {{'R', 'B'}, {'G', 'R'}}, 
+    //     {{'R', 'B'}, {'B', 'O'}},
+    //     {{'R', 'B'}, {'G', 'O'}}, 
+    //     {{'R', 'B'}, {'B', 'R'}},	//first 12
+	// 	// 12 | 1 | 2
+    //     {{'O', 'B'}, {'R', 'G'}},
+    //     {{'O', 'B'}, {'G', 'R'}},
+    //     {{'O', 'B'}, {'B', 'O'}},		
+    //     {{'O', 'B'}, {'G', 'O'}},	
+    //     {{'O', 'B'}, {'B', 'R'}},
+
+    //     {{'R', 'G'}, {'G', 'R'}},
+    //     {{'R', 'G'}, {'B', 'O'}},
+    //     {{'R', 'G'}, {'G', 'O'}},
+    //     {{'R', 'G'}, {'B', 'R'}},
+
+    //     {{'G', 'R'}, {'B', 'O'}},
+    //     {{'G', 'R'}, {'G', 'O'}},
+    //     {{'G', 'R'}, {'B', 'R'}},
+
+    //     {{'B', 'O'}, {'G', 'O'}},
+    //     {{'B', 'O'}, {'B', 'R'}},
+
+    //     {{'G', 'O'}, {'B', 'R'}},
+    // };
+
 	std::vector<std::pair<std::pair<char, char>, std::pair<char, char>>> remaining = {
-        {{'O', 'G'}, {'R', 'B'}},	
-        {{'O', 'G'}, {'O', 'B'}},  
-        {{'O', 'G'}, {'R', 'G'}}, // second 1
-        {{'O', 'G'}, {'G', 'R'}},	
-        {{'O', 'G'}, {'B', 'O'}},	
-        {{'O', 'G'}, {'G', 'O'}},	
-        {{'O', 'G'}, {'B', 'R'}},	
+		{{state[27], state[20]}, {state[9], state[2]}},    // {'O', 'G'}, {'R', 'B'}
+		{{state[27], state[20]}, {state[35], state[6]}},   // {'O', 'G'}, {'O', 'B'}
+		{{state[27], state[20]}, {state[17], state[24]}},  // {'O', 'G'}, {'R', 'G'}
+		{{state[27], state[20]}, {state[18], state[11]}},  // {'O', 'G'}, {'G', 'R'}
+		{{state[27], state[20]}, {state[8], state[15]}},   // {'O', 'G'}, {'B', 'O'}
+		{{state[27], state[20]}, {state[26], state[33]}},  // {'O', 'G'}, {'G', 'O'}
+		{{state[27], state[20]}, {state[0], state[29]}},   // {'O', 'G'}, {'B', 'R'}
 
-        {{'R', 'B'}, {'O', 'B'}}, 
-        {{'R', 'B'}, {'R', 'G'}}, 
-        {{'R', 'B'}, {'G', 'R'}}, 
-        {{'R', 'B'}, {'B', 'O'}},
-        {{'R', 'B'}, {'G', 'O'}}, 
-        {{'R', 'B'}, {'B', 'R'}},	//first 12
-		// 12 | 1 | 2
-        {{'O', 'B'}, {'R', 'G'}},
-        {{'O', 'B'}, {'G', 'R'}},
-        {{'O', 'B'}, {'B', 'O'}},		
-        {{'O', 'B'}, {'G', 'O'}},	
-        {{'O', 'B'}, {'B', 'R'}},
+		{{state[9], state[2]}, {state[35], state[6]}},     // {'R', 'B'}, {'O', 'B'}
+		{{state[9], state[2]}, {state[17], state[24]}},    // {'R', 'B'}, {'R', 'G'}
+		{{state[9], state[2]}, {state[18], state[11]}},    // {'R', 'B'}, {'G', 'R'}
+		{{state[9], state[2]}, {state[8], state[15]}},     // {'R', 'B'}, {'B', 'O'}
+		{{state[9], state[2]}, {state[26], state[33]}},    // {'R', 'B'}, {'G', 'O'}
+		{{state[9], state[2]}, {state[0], state[29]}},     // {'R', 'B'}, {'B', 'R'}
 
-        {{'R', 'G'}, {'G', 'R'}},
-        {{'R', 'G'}, {'B', 'O'}},
-        {{'R', 'G'}, {'G', 'O'}},
-        {{'R', 'G'}, {'B', 'R'}},
+		{{state[35], state[6]}, {state[17], state[24]}},   // {'O', 'B'}, {'R', 'G'}
+		{{state[35], state[6]}, {state[18], state[11]}},   // {'O', 'B'}, {'G', 'R'}
+		{{state[35], state[6]}, {state[8], state[15]}},    // {'O', 'B'}, {'B', 'O'}
+		{{state[35], state[6]}, {state[26], state[33]}},   // {'O', 'B'}, {'G', 'O'}
+		{{state[35], state[6]}, {state[0], state[29]}},    // {'O', 'B'}, {'B', 'R'}
 
-        {{'G', 'R'}, {'B', 'O'}},
-        {{'G', 'R'}, {'G', 'O'}},
-        {{'G', 'R'}, {'B', 'R'}},
+		{{state[17], state[24]}, {state[18], state[11]}},  // {'R', 'G'}, {'G', 'R'}
+		{{state[17], state[24]}, {state[8], state[15]}},   // {'R', 'G'}, {'B', 'O'}
+		{{state[17], state[24]}, {state[26], state[33]}},  // {'R', 'G'}, {'G', 'O'}
+		{{state[17], state[24]}, {state[0], state[29]}},   // {'R', 'G'}, {'B', 'R'}
 
-        {{'B', 'O'}, {'G', 'O'}},
-        {{'B', 'O'}, {'B', 'R'}},
+		{{state[18], state[11]}, {state[8], state[15]}},   // {'G', 'R'}, {'B', 'O'}
+		{{state[18], state[11]}, {state[26], state[33]}},  // {'G', 'R'}, {'G', 'O'}
+		{{state[18], state[11]}, {state[0], state[29]}},   // {'G', 'R'}, {'B', 'R'}
 
-        {{'G', 'O'}, {'B', 'R'}},
-    };
+		{{state[8], state[15]}, {state[26], state[33]}},   // {'B', 'O'}, {'G', 'O'}
+		{{state[8], state[15]}, {state[0], state[29]}},    // {'B', 'O'}, {'B', 'R'}
+
+		{{state[26], state[33]}, {state[0], state[29]}}    // {'G', 'O'}, {'B', 'R'}
+	};
+
 
 	int bases[3];
 	bases[2] = 1; // 2C2.
@@ -1137,7 +1176,10 @@ int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
 	cornerEdgeToParityMap[{cornerIndex, edgeIndex}].insert(parity);
 	cornerToEdgeIndexMap[cornerIndex].insert(edgeIndex);
 	edgeToCornerIndexMap[edgeIndex].insert(cornerIndex);
+	UniqueCornerIndex.insert(cornerIndex);
+	UniqueEdgeIndex.insert(edgeIndex);
 	return (edgeIndex * 2520 + cornerIndex) * 2 + parity;
+	// return (edgeIndex);
     // return stateIndex;
 }
 

@@ -165,6 +165,7 @@ class RubiksCube {
 };
 
 extern std::set<int> UniqueEdgeIndex;
+extern std::set<int> UniqueCornerIndex;
 extern std::map<int, std::set<int>> cornerToEdgeIndexMap;
 extern std::map<int, std::set<int>> edgeToCornerIndexMap;
 extern std::map<std::pair<int, int>, std::set<int>> cornerEdgeToParityMap;

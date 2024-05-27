@@ -24,4 +24,5 @@ private:
     void bfsGenerateLUTG0();
     void bfsGenerateLUTG1();
 	void bfsGenerateLUTG2();
+	void bfsGenerateLUTG3();
 };

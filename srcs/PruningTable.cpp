@@ -148,52 +148,6 @@ void PruningTable::bfsGenerateLUTG2() {
     }
 }
 
-// void PruningTable::bfsGenerateLUTG2() {
-//     std::queue<std::pair<RubiksCube, int>> q;
-//     std::set<int> visitedIndices;
-//     RubiksCube initialCube = cube;
-// 	luts[2].resize(352800, -1);
-//     int initialIndex = RubiksCube::calculateStateIndexG2(initialCube);
-//     q.push({initialCube, 0});
-//     visitedIndices.insert(initialIndex);
-
-//     std::vector<std::string> moves = {"U", "U'", "D", "D'", "R2", "L2", "F2", "B2"};
-
-// 		// cube.printCube();
-//     while (!q.empty()) {
-//         auto [currentCube, dist] = q.front();
-//         q.pop();
-
-//         int currentIndex = RubiksCube::calculateStateIndexG2(currentCube);
-//         // if (luts[1][currentIndex] == -1 || luts[1][currentIndex] > dist) {
-//         if (luts[2][currentIndex] == -1 || luts[2][currentIndex] < dist) {
-// 			// std::cout << "added index: " << currentIndex << " with dist: " << dist << std::endl;
-//             luts[2][currentIndex] = dist;
-//         }
-
-//         if (dist >= MAX_DEPTH)  {
-// 			std::cout << "dist: "<< dist << std::endl;
-// 			continue;
-// 		}
-
-//         for (const auto& move : moves) {
-//             RubiksCube newStateCube = currentCube;
-//             newStateCube.applyMove(move);
-
-//             int newIndex = RubiksCube::calculateStateIndexG2(newStateCube);
-
-// 			// std::cout << "dist: " << dist << ", move: " << move << ", state: " << newIndex << std::endl;
-// 			// std::cout << "move: " << move << std::endl;
-// 			// std::cout << "state: " << newIndex << std::endl;
-
-//             if (visitedIndices.insert(newIndex).second) {
-// 				// std::cout << "added state: " << newIndex << " to visited\n";
-//                 q.push({newStateCube, dist + 1});
-//             }
-//         }
-//     }
-// }
-
 // No F, F', B, B' for G1->G2
 
 void PruningTable::generateLUT() {

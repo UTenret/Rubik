@@ -742,9 +742,9 @@ int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
     // return stateIndex;
 }
 
-// int	RubiksCube::calculateStateIndexG3(const RubiksCube& cube) {
-
-// }
+int	RubiksCube::calculateStateIndexG3(const RubiksCube& cube) {
+	return -1;
+}
 
 void RubiksCube::calculateCornerTetradIndex() const {
 	// const std::vector<std::vector<int>> tetrads = {

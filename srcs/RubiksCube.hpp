@@ -80,6 +80,8 @@ const int cornerIndices[CORNER_COUNT][3] = {
 // #define MAX_DEPTH 3
 #define G0_N_SOLUTIONS 2048
 #define G1_N_SOLUTIONS 1082565
+#define G2_N_SOLUTIONS 352800
+#define G3_N_SOLUTIONS 663552
 
 class RubiksCube {
 	public:
@@ -105,13 +107,16 @@ class RubiksCube {
 
 	static int calculateStateIndexG2(const RubiksCube& cube);
 	static int encodeEdgeSlicePositionsG2(const RubiksCube& cube);
+	
+	static int calculateStateIndexG3(const RubiksCube& cube);
+
 	bool isEdgeBlueOrGreenG2(int edgeIndex) const;
 	int calculateParityG2(const std::vector<int>& permutation) const;
 	std::vector<int> getCornerPermutationG2() const;
 	int calculateCornerIndexG2() const;
 
-	int getCornerOrientationG1(int cornerIndex) const;
 	bool isEdgeInESliceG1(int edgeIndex) const;
+	int getCornerOrientationG1(int cornerIndex) const;
 
 	explicit RubiksCube(const std::string& initialState);
 	RubiksCube(const RubiksCube& other);

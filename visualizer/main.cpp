@@ -4,9 +4,9 @@
 
 float rotationAngle = 0.0f;
 int animationActive = NONE;
-float cameraX = 5.0f;
-float cameraY = 5.0f;
-float cameraZ = 10.0f;
+float cameraX = 7.0f;
+float cameraY = 7.0f;
+float cameraZ = 7.0f;
 
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
@@ -357,27 +357,48 @@ void    parsing(char *moves) {
 }
 
 void keyboard(unsigned char key, int x, int y) {
-    if (key == 'a' || key == 'A') {
-        cameraX--;
-    }
-    else if (key == 'd' || key == 'D') {
-        cameraX++;
-    }
-    else if (key == 'w' || key == 'W') {
-        cameraY++;
-    }
-    else if (key == 's' || key == 'S') {
-        cameraY--;
-    }
-    else if (key == 'q' || key == 'Q') {
-        cameraZ++;
-    }
-    else if (key == 'e' || key == 'E') {
-        cameraZ--;
-    }
+    const float X_LIMIT = 7.0f;
+    const float Y_LIMIT = 7.0f;
+    const float Z_LIMIT = 7.0f;
 
+    if (key == 'a' || key == 'A') {
+        if (cameraX > -X_LIMIT) {
+            cameraX--;
+        } else if (cameraZ > -Z_LIMIT) {
+            cameraZ--;
+        }
+    } else if (key == 'd' || key == 'D') {
+        if (cameraX < X_LIMIT) {
+            cameraX++;
+        } else if (cameraZ < Z_LIMIT) {
+            cameraZ++;
+        }
+    } else if (key == 'w' || key == 'W') {
+        if (cameraY < Y_LIMIT) {
+            cameraY++;
+            if (cameraY < 0) {
+                cameraX += -(cameraY - 1) / 20;
+                cameraZ += -(cameraY - 1) / 20;
+            } else if (cameraY > 1) {
+                cameraX -= cameraY / 20;
+                cameraZ -= cameraY / 20;
+            }
+        }
+    } else if (key == 's' || key == 'S') {
+        if (cameraY > -Y_LIMIT) {
+            cameraY--;
+            if (cameraY < -1) {
+                cameraX -= -cameraY / 20;
+                cameraZ -= -cameraY / 20;
+            } else if (cameraY > 0) {
+                cameraX += (cameraY + 1) / 20;
+                cameraZ += (cameraY + 1) / 20;
+            }
+        }
+    }
     glutPostRedisplay();
 }
+
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);

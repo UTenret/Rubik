@@ -377,25 +377,52 @@ void keyboard(unsigned char key, int x, int y) {
         if (cameraY < Y_LIMIT) {
             cameraY++;
             if (cameraY < 0) {
-                cameraX += -(cameraY - 1) / 20;
-                cameraZ += -(cameraY - 1) / 20;
+                if (cameraX > 0)
+                    cameraX += -(cameraY - 1) / 20;
+                else
+                    cameraX -= -(cameraY - 1) / 20;
+                if (cameraZ > 0)
+                    cameraZ += -(cameraY - 1) / 20;
+                else
+                    cameraZ -= -(cameraY - 1) / 20;
             } else if (cameraY > 1) {
-                cameraX -= cameraY / 20;
-                cameraZ -= cameraY / 20;
+                if (cameraX > 0)
+                    cameraX -= cameraY / 20;
+                else
+                    cameraX += cameraY / 20;
+                if (cameraZ > 0)
+                    cameraZ -= cameraY / 20;
+                else
+                    cameraZ += cameraY / 20;
             }
         }
     } else if (key == 's' || key == 'S') {
         if (cameraY > -Y_LIMIT) {
             cameraY--;
             if (cameraY < -1) {
-                cameraX -= -cameraY / 20;
-                cameraZ -= -cameraY / 20;
+                if (cameraX > 0)
+                    cameraX -= -cameraY / 20;
+                else
+                    cameraX += -cameraY / 20;
+                if (cameraZ > 0)
+                    cameraZ -= -cameraY / 20;
+                else
+                    cameraZ += -cameraY / 20;
             } else if (cameraY > 0) {
-                cameraX += (cameraY + 1) / 20;
-                cameraZ += (cameraY + 1) / 20;
+                if (cameraX > 0)
+                    cameraX += (cameraY + 1) / 20;
+                else
+                    cameraX -= (cameraY + 1) / 20;
+                if (cameraZ > 0)
+                    cameraZ += (cameraY + 1) / 20;
+                else
+                    cameraZ -= (cameraY + 1) / 20;
             }
         }
     }
+    std::cout << "x is: " << cameraX << std::endl;
+    std::cout << "y is: " << cameraY << std::endl;
+    std::cout << "z is: " << cameraZ << std::endl;
     glutPostRedisplay();
 }
 

@@ -618,16 +618,6 @@ int RubiksCube::calculateStateIndexG1(const RubiksCube& cube) {
     // return edgeIndex;
 }
 
-// std::vector<int> RubiksCube::getCornerPermutationG2() const {
-//     std::vector<int> permutation(CORNER_COUNT);
-//     for (int i = 0; i < CORNER_COUNT; i++) {
-//         // Decode the corner position from the state vector
-//         // Assuming state stores corner positions in the range [12, 19]
-//         permutation[i] = std::find(cornerIndices[i], cornerIndices[i] + 3, state[12 + i]) - cornerIndices[i];
-//     }
-//     return permutation;
-// }
-
 std::vector<int> RubiksCube::getEdgePermutationG2() const {
     std::vector<int> edgePermutation(8, -1);
     std::vector<std::pair<char, char>> targetEdgeColors = {
@@ -670,49 +660,6 @@ std::vector<int> RubiksCube::getEdgePermutationG2() const {
 
     return edgePermutation;
 }
-
-// std::vector<int> RubiksCube::getEdgePermutationG2() const {
-//     std::vector<int> edgePermutation(EDGE_COUNT, -1);
-//     std::vector<std::pair<char, char>> targetEdgeColors = {
-//         {'Y', 'G'}, {'Y', 'R'}, {'Y', 'B'}, {'Y', 'O'},
-//         {'W', 'R'}, {'W', 'B'}, {'W', 'O'}, {'W', 'G'},
-//         {'B', 'R'}, {'B', 'O'}, {'G', 'R'}, {'G', 'O'}
-//     };
-
-//     // Extract current edge colors from cube state
-// 	// printState();
-//     std::vector<std::pair<char, char>> currentEdgeColors(EDGE_COUNT);
-//     for (int i = 0; i < EDGE_COUNT; i++) {
-//         currentEdgeColors[i] = {state[edgeIndices[i][0]], state[edgeIndices[i][1]]};
-// 		// std::cout << "currentEdgeColors[i].first: " << currentEdgeColors[i].first << std::endl;
-// 		// std::cout << "currentEdgeColors[i].second: " << currentEdgeColors[i].second << std::endl;
-// 		// std::cout << "edgeIndices[i][0]: " << edgeIndices[i][0] << std::endl;
-// 		// std::cout << "edgeIndices[i][1]: " << edgeIndices[i][1] << std::endl;
-// 		// std::cout << "state[edgeIndices[i][0]]: " << state[edgeIndices[i][0]] << std::endl;
-// 		// std::cout << "state[edgeIndices[i][1]]: " << state[edgeIndices[i][1]] << std::endl;
-// 		// std::cout << "i: " << i << std::endl;
-//     }
-
-//     // Match current edges against target configuration
-//     for (int i = 0; i < EDGE_COUNT; i++) {
-//         for (int j = 0; j < EDGE_COUNT; j++) {
-//             if ((currentEdgeColors[i] == targetEdgeColors[j]) ||
-//                 (std::make_pair(currentEdgeColors[i].second, currentEdgeColors[i].first) == targetEdgeColors[j])) {
-//                 edgePermutation[i] = j;
-//                 break;
-//             }
-//         }
-//     }
-
-//     // Debug print the computed edge permutation
-//     // std::cout << "Computed Edge Permutation: ";
-//     // for (int perm : edgePermutation) {
-//     //     std::cout << perm << " ";
-//     // }
-//     // std::cout << std::endl;
-
-//     return edgePermutation;
-// }
 
 int RubiksCube::calculateParityG2(const std::vector<int>& permutation) const {
 	int parity = 0;
@@ -975,110 +922,6 @@ int RubiksCube::rank() const {
 	return rank;
 }
 
-// int RubiksCube::rank() const {
-// 	int rank = 0;
-	
-// 	// std::vector<std::pair<std::pair<char, char>, std::pair<char, char>>> cornerPairs = {
-//     //     // CornerPair0 - ULB/URF
-//     //     {{'O', 'G'}, {'R', 'B'}},
-//     //     // CornerPair1 - DLF/DRB
-//     //     {{'O', 'B'}, {'R', 'G'}},
-//     //     // CornerPair2 - URB/ULF
-//     //     {{'G', 'R'}, {'B', 'O'}},
-//     //     // CornerPair3 - DLB/DRF
-//     //     {{'G', 'O'}, {'B', 'R'}}
-//     // };
-
-// 	std::vector<std::pair<std::pair<char, char>, std::pair<char, char>>> cornerPairs = {
-//         // CornerPair0 - ULB/URF
-// 		{{state[27], state[20]}, {state[9], state[2]}},
-//         // CornerPair1 - DLF/DRB
-// 		{{state[35], state[6]}, {state[17], state[24]}},
-//         // CornerPair2 - UBR/UFL
-// 		{{state[18], state[11]}, {state[0], state[29]}},
-//         // CornerPair3 - DLB/DRF
-// 		{{state[8], state[15]}, {state[26], state[33]}},
-//     };
-
-// 	// Rank among this many pairs.  For 8=8, 8C2->6C2->4C2->2C2 (28->15->6->1).
-// 	std::vector<std::pair<std::pair<char, char>, std::pair<char, char>>> remaining = {
-//         {{'O', 'G'}, {'R', 'B'}},
-//         {{'O', 'G'}, {'O', 'B'}},
-//         {{'O', 'G'}, {'R', 'G'}},
-//         {{'O', 'G'}, {'G', 'R'}},
-//         {{'O', 'G'}, {'B', 'O'}},
-//         {{'O', 'G'}, {'G', 'O'}},
-//         {{'O', 'G'}, {'B', 'R'}},
-
-//         {{'R', 'B'}, {'O', 'B'}},
-//         {{'R', 'B'}, {'R', 'G'}},
-//         {{'R', 'B'}, {'G', 'R'}},
-//         {{'R', 'B'}, {'B', 'O'}},
-//         {{'R', 'B'}, {'G', 'O'}},
-//         {{'R', 'B'}, {'B', 'R'}},
-
-//         {{'O', 'B'}, {'R', 'G'}},
-//         {{'O', 'B'}, {'G', 'R'}},
-//         {{'O', 'B'}, {'B', 'O'}},
-//         {{'O', 'B'}, {'G', 'O'}},
-//         {{'O', 'B'}, {'B', 'R'}},
-
-//         {{'R', 'G'}, {'G', 'R'}},
-//         {{'R', 'G'}, {'B', 'O'}},
-//         {{'R', 'G'}, {'G', 'O'}},
-//         {{'R', 'G'}, {'B', 'R'}},
-
-//         {{'G', 'R'}, {'B', 'O'}},
-//         {{'G', 'R'}, {'G', 'O'}},
-//         {{'G', 'R'}, {'B', 'R'}},
-
-//         {{'B', 'O'}, {'G', 'O'}},
-//         {{'B', 'O'}, {'B', 'R'}},
-
-//         {{'G', 'O'}, {'B', 'R'}},
-//     };
-
-// 	int bases[3];
-// 	bases[2] = 1; // 2C2.
-
-//     for (int i = 1; i >= 0; --i) bases[i] = bases[i + 1] * choose((6) - 2*i, 2);
-
-// 	unsigned numRemaining = 28;
-// 	// std::cerr << "here\n";
-
-// 	for (unsigned n = 0; n < 3; ++n)
-// 	{
-// 		unsigned remainingInd = 0;
-// 		std::pair<std::pair<char, char>, std::pair<char, char>> sPair = cornerPairs[n];
-// 		// std::cerr << "here2\n";
-// 		// std::cerr << "numRemaining: " << numRemaining << std::endl;
-// 		// std::cerr << "n: " << n << std::endl;
-
-// 		for (unsigned r = 0; r < numRemaining; ++r)
-// 		{
-// 			std::pair<std::pair<char, char>, std::pair<char, char>> rPair = remaining[r];
-
-// 			// std::cerr << "here33\n";
-// 			if (sPair == rPair)
-// 			{
-// 				// Found the pair: rank it relative to the remaining pairs, and multiply
-// 				// it by the base for digit n.
-// 				rank += r * bases[n];
-// 			}
-//     		else if (areDistinct(sPair, rPair)) {
-// 			// std::cerr << "here3\n";
-// 			// The pair excludes the numbers in set[n], so keep it in the
-// 			// list of remaining pairs for the next digit's rank.
-// 				remaining[remainingInd++] = rPair;
-// 			}
-// 		}
-// 		// Number of remaining pairs.
-// 		numRemaining = remainingInd;
-// 	}
-
-// 	return rank;
-// }
-
 std::vector<int> RubiksCube::getCornerPermutationG2() const {
 	std::vector<int> cornerPermutation(CORNER_COUNT);
 	for (int i = 0; i < CORNER_COUNT; ++i) {
@@ -1092,17 +935,6 @@ std::vector<int> RubiksCube::getCornerPermutationG2() const {
 	}
 	return cornerPermutation;
 }
-
-    // Calculate parity of the corner permutation
-// int RubiksCube::calculateParityG2(const std::vector<int>& permutation) const {
-// 	uint8_t parity = 0;
-// 	for (uint8_t i = 0; i < permutation.size(); ++i) {
-// 		for (uint8_t j = i + 1; j < permutation.size(); ++j) {
-// 			parity ^= permutation[i] < permutation[j];
-// 		}
-// 	}
-// 	return parity;
-// }
 
 int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
     int cornerIndex = cube.rank();
@@ -1183,24 +1015,6 @@ int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
     // return stateIndex;
 }
 
-// int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
-//     int cornerIndex = encodeCornerTetradG2(cube);
-//     int edgeIndex = encodeEdgeSlicePositionsG2(cube);
-//     // int parity = cube.calculateParityG2(cube.getCornerPermutationG2());
-// 	// std::cout << "corner index = " << cornerIndex << std::endl;
-// 	// std::cout << "edgeIndex = " << edgeIndex << std::endl;
-// 	// std::cout << "cornerIndex * 495 + edgeIndex = " << cornerIndex * 495 + edgeIndex << std::endl;
-// 	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
-// 	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
-//     // return cornerIndex;
-// 	// if (cornerIndex * 495 + edgeIndex == 5)
-// 	// 	std::cout << "hello im " << cornerIndex * 495 + edgeIndex << std::endl;
-// 	// int offset = (parity == 1) ? 352800 : 0;
-//     return cornerIndex * 70 + edgeIndex;
-// 	// return offset + (cornerIndex * 70 + edgeIndex);
-//     // return edgeIndex;
-// }
-
 void RubiksCube::calculateCornerTetradIndex() const {
 	// const std::vector<std::vector<int>> tetrads = {
     //     {1, 3, 5, 7},  // Tetrad 1
@@ -1246,22 +1060,6 @@ void RubiksCube::calculateCornerTetradIndex() const {
 void RubiksCube::IsCornerInCorrectTetrad(const RubiksCube& cube) {
 	cube.calculateCornerTetradIndex();
 }
-
-// void RubiksCube::CalculateCycles() {
-// 	for (int i = 0; i < 11; i++) {
-// 		char color1 = state[edgeIndices[i][0]];
-//     	char color2 = state[edgeIndices[i][1]];
-// 		std::pair colors = {color1, color2};
-// 		auto it = std::find(edgesBaseColours.begin(), edgesBaseColours.end(), colors);
-//         if (it != edgesBaseColours.end()) {
-//             int intendedIndex = std::distance(edgesBaseColours.begin(), it);
-// 			i = in
-//             std::cout << "Edge number: " << i << " wants to go to edge position: " << intendedIndex << std::endl;
-//         } else {
-//             std::cout << "Edge number: " << i << " does not have a matching base color in edgesBaseColours." << std::endl;
-//         }
-// 	}
-// }
 
 void RubiksCube::CalculateCycles() {
         std::map<std::pair<char, char>, std::string> edgeNames = {

@@ -198,11 +198,11 @@ void PruningTable::bfsGenerateLUTG2() {
 
 void PruningTable::generateLUT() {
     bfsGenerateLUTG0();
-    // bfsGenerateLUTG1();
-    bfsGenerateLUTG2();
+    bfsGenerateLUTG1();
+    // bfsGenerateLUTG2();
     std::ofstream file("G0.txt");
-    // std::ofstream file2("G1.txt");
-    std::ofstream file3("G2.txt");
+    std::ofstream file2("G1.txt");
+    // std::ofstream file3("G2.txt");
     if (!file ) {
         std::cerr << "Error: file could not be opened";
         exit(1);
@@ -210,12 +210,12 @@ void PruningTable::generateLUT() {
     for (int value : luts[0]) {
         file << value << std::endl;
     }
-	// for (int value : luts[1]) {
-	// 	file2 << value << std::endl;
-	// }
-	for (int value : luts[2]) {
-		file3 << value << std::endl;
+	for (int value : luts[1]) {
+		file2 << value << std::endl;
 	}
+	// for (int value : luts[2]) {
+	// 	file3 << value << std::endl;
+	// }
 }
 
 std::vector<int> PruningTable::loadLUT(const std::string& filename, int size) {

@@ -104,18 +104,11 @@ class RubiksCube {
     static int calculateStateIndexG1(const RubiksCube& cube);
 
 	static int calculateStateIndexG2(const RubiksCube& cube);
-	static int encodeCornerTetradG2(const RubiksCube& cube);
 	static int encodeEdgeSlicePositionsG2(const RubiksCube& cube);
-	static int encodeEdgeSlicePositionsG2Debug(const RubiksCube& cube);
 	bool isEdgeBlueOrGreenG2(int edgeIndex) const;
-	int getCornerTetradPosG2(int cornerIndex) const;
 	int calculateParityG2(const std::vector<int>& permutation) const;
-	int calculateParityG2Original(const std::vector<int>& permutation) const;
-	int calculateParityG2Debug(const std::vector<int>& permutation) const;
 	std::vector<int> getCornerPermutationG2() const;
-	std::vector<int> getEdgePermutationG2() const;
-	int rank() const;
-	int rankEdge(const std::array<int, 4> comb) const;
+	int calculateCornerIndexG2() const;
 
 	int getCornerOrientationG1(int cornerIndex) const;
 	bool isEdgeInESliceG1(int edgeIndex) const;

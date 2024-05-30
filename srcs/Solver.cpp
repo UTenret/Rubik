@@ -44,7 +44,6 @@ void Solver::solveCube() {
 	table.setLUT(0, table.loadLUT("G0.txt", G0_N_SOLUTIONS));
 	iterativeSolve(table.getLUT(0),
 					group0Moves,
-					 RubiksCube::encodeEdgeOrientationsG0,
 					  RubiksCube::calculateStateIndexG0,
 					   solution);
     std::cout << "AFTER G0->G1" << std::endl;
@@ -122,7 +121,6 @@ void Solver::solveGroup(std::function<bool()> groupSolveCondition, const std::ve
 void Solver::iterativeSolve(
     const std::vector<int>& lut,
     const std::vector<std::string>& moves,
-    EncodeStateFunc encodeState,
     CalculateIndexFunc calculateIndex,
     std::vector<std::string>& solution
 ) {
@@ -130,21 +128,14 @@ void Solver::iterativeSolve(
 
     while (progress) {
         progress = false;
-        std::string currentStateEncoded = encodeState(cube.getState());
-		// std::cout << "cube.getState(): " << cube.getState() << std::endl;
-		// std::cout << "currentStateEncoded: " << currentStateEncoded << std::endl;
-		// std::cout << "cube.getState(): " << cube.getState() << std::endl;
-        int currentDistance = lut[calculateIndex(currentStateEncoded)];
-		// std::cout << "calculateIndex(currentStateEncoded) : " << calculateIndex(currentStateEncoded) << std::endl;
-		// std::cout << "calculateIndex(currentStateEncoded) : " << calculateIndex(currentStateEncoded) << std::endl;
-		// std::cout << "currentDistance: " << currentDistance << std::endl;
-		// cube.printCube();
+        int currentStateIndex = calculateIndex(cube);
+        int currentDistance = lut[currentStateIndex];
 
         if (currentDistance == 0) {
 			if (solution.empty()) {
 				std::cout << "Cube is already solved for G0-G1 transition." << std::endl;
 				break;
-			}
+			}	
             std::cout << "Solution found for G0-G1 transition.: ";
             for (const auto& move : solution) std::cout << move << " ";
             std::cout << "\n";
@@ -152,11 +143,9 @@ void Solver::iterativeSolve(
         }
         for (const auto& move : moves) {
             cube.applyMove(move);
-            std::string newStateEncoded = encodeState(cube.getState());
-            int newIndex = calculateIndex(newStateEncoded);
-            if (lut[newIndex] < currentDistance) {
+            int newStateIndex = calculateIndex(cube);
+            if (lut[newStateIndex] < currentDistance) {
                 solution.push_back(move);
-				std::cout << "newIndex: " << newIndex << std::endl;
                 progress = true;
                 break;
             } else {
@@ -165,14 +154,10 @@ void Solver::iterativeSolve(
         }
     }
 
-    if (!progress && solution.empty() && lut[calculateIndex(encodeState(cube.getState()))] != 0) {
+    if (!progress && solution.empty() && lut[calculateIndex(cube)] != 0) {
         std::cout << "No solution found with the given LUT and moves.\n";
     }
 }
-
-
-// corner index * 495 + edgeIndex
-// 
 
 void Solver::iterativeSolveG1(
     const std::vector<int>& lut,

@@ -6,8 +6,7 @@
 
 class Solver {
 public:
-	typedef std::string (*EncodeStateFunc)(const std::string&);
-	typedef int (*CalculateIndexFunc)(const std::string&);
+	typedef int (*CalculateIndexFunc)(const RubiksCube&);
 
 	explicit Solver(const RubiksCube& cube, const PruningTable& table) : cube(cube), table(table) {}
 
@@ -20,7 +19,6 @@ public:
 	void iterativeSolve(
 		const std::vector<int>& lut,
 		const std::vector<std::string>& moves,
-		EncodeStateFunc encodeState,
 		CalculateIndexFunc calculateIndex,
 		std::vector<std::string>& solution
 	);

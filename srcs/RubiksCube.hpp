@@ -127,8 +127,8 @@ class RubiksCube {
 		char right;
 	};
 
-	static std::string encodeEdgeOrientationsG0(const std::string& cubeState);
-	static int calculateStateIndexG0(const std::string& edgeOrientation);
+	std::string encodeEdgeOrientationsG0() const;
+	static int calculateStateIndexG0(const RubiksCube& cube);
 	static bool isEdgeFlippedG0(std::pair<char, char> colors);
 
 	static int encodeCornerOrientationsG1(const RubiksCube& cube);

@@ -88,7 +88,7 @@ void Solver::solveCube() {
 
 	solution.clear();
 	table.setLUT(3, table.loadLUT("G3.txt", G3_N_SOLUTIONS));
-	iterativeSolveG3(table.getLUT(3), group2Moves, solution);
+	iterativeSolveG3(table.getLUT(3), group3Moves, solution);
 
 	solution.clear();
 	// cube.CalculateCycles();
@@ -357,13 +357,13 @@ void Solver::iterativeSolveG3(
 	}
 	std::cout << std::endl;
 	int indexFail = RubiksCube::calculateStateIndexG3(cube);
-	std::cout << "index fail: " << indexFail << std::endl;
-	cube.printCube();
+	std::cout << "index fail for G3-G4: " << indexFail << std::endl;
+	// cube.printCube();
 	// cube.printCube();
 	// cube.applyMove("R");
 	// cube.printState();
 
     if (!progress && solution.empty() && lut[RubiksCube::calculateStateIndexG3(cube)] != 0) {
-        std::cout << "No solution found with the given LUT and moves for G2-G3." << std::endl;
+        std::cout << "No solution found with the given LUT and moves for G3-G4." << std::endl;
     }
 }

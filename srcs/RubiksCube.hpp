@@ -13,6 +13,7 @@
 #include <tuple>
 #include <map>
 #include <array>
+#include <bitset>
 
 enum EdgePositions {
 	UB, UR, UF, UL,
@@ -42,6 +43,35 @@ const int edgeIndices[EDGE_COUNT][2] = {
 	{3,  32},	// FL || BO
 	{21, 14},	// BR || GR
 	{23, 30},	// BL || GO
+};
+
+const int edgeIndicesG3[EDGE_COUNT][2] = {
+	{37, 19},	// UB || YG
+	{43, 1},	// UF || YB
+	{46, 7},	// DF || WB
+	{52, 25},	// DB || WG
+	
+	{41, 10},	// UR || YR
+	{39, 28},	// UL || YO
+	{48, 34},	// DL || WO
+	{50, 16},	// DR || WR
+
+	{5,  12},	// FR || BR
+	{3,  32},	// FL || BO
+	{21, 14},	// BR || GR
+	{23, 30},	// BL || GO
+};
+
+const int cornerIndicesG3[CORNER_COUNT][3] = {
+    {36, 27, 20},		// YOG || ULB			//T 2
+    {44, 9, 2},			// YRB || URF			//T 2
+    {45, 35, 6},		// WOB || DLF			//T 2
+    {53, 17, 24},		// WRG || DRB			//T 2
+
+    {38, 18, 11},		// YGR || UBR			//T 1
+    {42, 0, 29},		// YBO || UFL			//T 1
+    {51, 26, 33},		// WGO || DBL			//T 1
+    {47, 8, 15},		// WBR || DFR			//T 1
 };
 
 const std::vector<std::pair<char, char>> edgesBaseColours = {
@@ -109,6 +139,12 @@ class RubiksCube {
 	static int encodeEdgeSlicePositionsG2(const RubiksCube& cube);
 	
 	static int calculateStateIndexG3(const RubiksCube& cube);
+
+	int	partialPermIndexer(std::array<uint8_t, 2>& perm) const;
+	int	permIndexer(std::array<uint8_t, 4>& perm) const;
+	int calculateCornerIndexG3() const;
+	int calculateEdgeIndexG3() const;
+
 
 	bool isEdgeBlueOrGreenG2(int edgeIndex) const;
 	int calculateParityG2(const std::vector<int>& permutation) const;

@@ -348,12 +348,12 @@ bool RubiksCube::isSolved() const {
 	return true;
 }
 
-std::string RubiksCube::encodeEdgeOrientationsG0(const std::string& cubeState) {
+std::string RubiksCube::encodeEdgeOrientationsG0() const {
     std::string orientation;
     orientation.reserve(EDGE_COUNT);
     
     for (int i = 0; i < EDGE_COUNT; ++i) {
-        std::pair<char, char> edgeColors = {cubeState[edgeIndices[i][0]], cubeState[edgeIndices[i][1]]};
+        std::pair<char, char> edgeColors = {state[edgeIndices[i][0]], state[edgeIndices[i][1]]};
         bool flipped = isEdgeFlippedG0(edgeColors);
         
         // // Debugging output
@@ -373,7 +373,9 @@ std::string RubiksCube::encodeEdgeOrientationsG0(const std::string& cubeState) {
     return orientation;
 }
 
-int RubiksCube::calculateStateIndexG0(const std::string& edgeOrientation) {
+// int RubiksCube::calculateStateIndexG0(const std::string& edgeOrientation) {
+int RubiksCube::calculateStateIndexG0(const RubiksCube& cube) {
+	std::string edgeOrientation = cube.encodeEdgeOrientationsG0();
     int index = 0;
     for (size_t i = 0; i < edgeOrientation.size() - 1; ++i) {
         if (edgeOrientation[i] == '1') {

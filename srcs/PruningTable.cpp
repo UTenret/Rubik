@@ -11,14 +11,13 @@ visited holds the edges orientations because we dont care about anything else fo
 
 void PruningTable::bfsGenerateLUTG0() {
     std::queue<std::pair<RubiksCube, int>> q;
-    std::set<std::string> visited;
+	std::set<int> visited;
     RubiksCube initialCube = cube;
-    std::string initialEdgeOrientation = RubiksCube::encodeEdgeOrientationsG0(initialCube.getState());
+    int initialIndex = RubiksCube::calculateStateIndexG0(initialCube);
     q.push({initialCube, 0});
-    visited.insert(initialEdgeOrientation);
+    visited.insert(initialIndex);
 	luts[0].resize(G0_N_SOLUTIONS, -1);  //change that, init somewhere else
 
-    // std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F", "F'", "B", "B'", "U2", "D2", "R2", "L2", "F2", "B2"};
 	const std::vector<std::string> moves = {
     	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'",
 	};
@@ -26,8 +25,7 @@ void PruningTable::bfsGenerateLUTG0() {
         auto [currentCube, dist] = q.front();
         q.pop();
 
-        std::string currentEdgeOrientation = RubiksCube::encodeEdgeOrientationsG0(currentCube.getState());
-        int index = RubiksCube::calculateStateIndexG0(currentEdgeOrientation);
+        int index = RubiksCube::calculateStateIndexG0(currentCube);
 
         if (luts[0][index] == -1 || luts[0][index] > dist) {
             luts[0][index] = dist;
@@ -39,8 +37,9 @@ void PruningTable::bfsGenerateLUTG0() {
             RubiksCube newStateCube = currentCube;
             newStateCube.applyMove(move);
 
-            std::string newEdgeOrientation = RubiksCube::encodeEdgeOrientationsG0(newStateCube.getState());
-            if (visited.insert(newEdgeOrientation).second) {
+	        int newIndex = RubiksCube::calculateStateIndexG0(newStateCube);
+
+            if (visited.insert(newIndex).second) {
                 q.push({newStateCube, dist + 1});
             }
         }
@@ -183,30 +182,30 @@ void PruningTable::bfsGenerateLUTG3() {
 // No F, F', B, B' for G1->G2
 
 void PruningTable::generateLUT() {
-    // bfsGenerateLUTG0();
+    bfsGenerateLUTG0();
     // bfsGenerateLUTG1();
     // bfsGenerateLUTG2();
-    bfsGenerateLUTG3();
-    // std::ofstream file0("G0.txt");
+    // bfsGenerateLUTG3();
+    std::ofstream file0("G0.txt");
     // std::ofstream file1("G1.txt");
     // std::ofstream file2("G2.txt");
-    std::ofstream file3("G3.txt");
+    // std::ofstream file3("G3.txt");
     // if (!file0 ) {
     //     std::cerr << "Error: file could not be opened";
     //     exit(1);
     // }
-    // for (int value : luts[0]) {
-    //     file0 << value << std::endl;
-    // }
+    for (int value : luts[0]) {
+        file0 << value << std::endl;
+    }
 	// for (int value : luts[1]) {
 	// 	file1 << value << std::endl;
 	// }
 	// for (int value : luts[2]) {
 	// 	file2 << value << std::endl;
 	// }
-	for (int value : luts[3]) {
-		file3 << value << std::endl;
-	}
+	// for (int value : luts[3]) {
+	// 	file3 << value << std::endl;
+	// }
 }
 
 std::vector<int> PruningTable::loadLUT(const std::string& filename, int size) {

@@ -350,11 +350,6 @@ std::string RubiksCube::encodeEdgeOrientationsG0() const {
         std::pair<char, char> edgeColors = {state[edgeIndices[i][0]], state[edgeIndices[i][1]]};
         bool flipped = isEdgeFlippedG0(edgeColors);
         
-        // // Debugging output
-        // std::cout << "Edge " << i << ": [" << edgeIndices[i][0] << ", " << edgeIndices[i][1] << "] "
-        //           << "(" << edgeColors.first << ", " << edgeColors.second << ") "
-        //           << "Flipped: " << (flipped ? "Yes" : "No") << "\n";
-
         if (flipped) {
             orientation.push_back('1'); // Edge is flipped
         } else {
@@ -362,12 +357,9 @@ std::string RubiksCube::encodeEdgeOrientationsG0() const {
         }
     }
     
-    // std::cout << "Encoded Orientation: " << orientation << "\n";
-    
     return orientation;
 }
 
-// int RubiksCube::calculateStateIndexG0(const std::string& edgeOrientation) {
 int RubiksCube::calculateStateIndexG0(const RubiksCube& cube) {
 	std::string edgeOrientation = cube.encodeEdgeOrientationsG0();
     int index = 0;
@@ -376,7 +368,6 @@ int RubiksCube::calculateStateIndexG0(const RubiksCube& cube) {
             index += (1 << i);
         }
     }
-	// std::cout << "index: " << index << std::endl;
     return index;
 }
 
@@ -395,24 +386,12 @@ bool RubiksCube::isEdgeFlippedG0(std::pair<char, char> colors) {
 				colors.first == 'O' || colors.first == 'R');
 }
 
-int binomialCoefficient(int n, int k) {
-    if (k > n) return 0;
-    if (k == 0 || k == n) return 1;
-    int num = 1, denom = 1;
-    for (int i = 0; i < k; ++i) {
-        num *= (n - i);
-        denom *= (i + 1);
-    }
-    return num / denom;
-}
-
 int RubiksCube::getCornerOrientationG1(int cornerIndex) const {
     const auto& indices = cornerIndices[cornerIndex];
     char colorU = state[indices[0]]; // top part
     char colorL = state[indices[1]]; // left part
     char colorR = state[indices[2]]; // right part
 
-    // Assuming 'W' and 'Y' are up and down colors, respectively
     if (colorU == 'W' || colorU == 'Y') {
         return 0; // No rotation needed
     } else if (colorL == 'W' || colorL == 'Y') {
@@ -420,10 +399,7 @@ int RubiksCube::getCornerOrientationG1(int cornerIndex) const {
     } else if (colorR == 'W' || colorR == 'Y') {
         return 2; // 240 degrees rotation
     }
-	std::cout << "colorL: " << colorL << std::endl;
-	std::cout << "colorR: " << colorR << std::endl;
-	std::cout << "colorU: " << colorU << std::endl;
-    return -1; // Error case if something unexpected
+    return -1;
 }
 
 bool RubiksCube::isEdgeInESliceG1(int edgeIndex) const {
@@ -444,19 +420,17 @@ bool RubiksCube::isEdgeInESliceG1(int edgeIndex) const {
            validMiddleSliceColors.find(edgeColorsReversed) != validMiddleSliceColors.end();
 }
 
-
+/*last corner's orientation is implicitly determined*/
 int RubiksCube::encodeCornerOrientationsG1(const RubiksCube& cube) {
     int index = 0;
     int multiplier = 1;
-    for (int i = 0; i < 7; i++) {  // Assuming the last corner's orientation is implicitly determined
-		// std::cout << "i: " << i << std::endl;
-		// std::cout << "multiplier: " << multiplier << std::endl;
+
+    for (int i = 0; i < 7; i++) {
         int orientation = cube.getCornerOrientationG1(i);
-		// std::cout << "orientation: " << orientation << std::endl;
         index += orientation * multiplier;
-		// std::cout << "index: " << index << std::endl;
         multiplier *= 3;
     }
+
     return index;
 }
 
@@ -465,32 +439,21 @@ int RubiksCube::encodeEdgeSlicePositionsG1(const RubiksCube& cube) {
 
 	for (int i = 0; i < 12; i++) {
         if (cube.isEdgeInESliceG1(i)) {
-			// std::cout << "middle edge is at position: " << i << std::endl;
             positions.push_back(i); 
         }
     }
-	// positions.push_back(6);
-	// positions.push_back(9);
-	// positions.push_back(10);
-	// positions.push_back(11);
 	int index = 0, k = 4;
     for (unsigned long i = 0; i < positions.size(); ++i) {
-		// std::cout << "bc: " << bc << std::endl;
-		// std::cout << "k: " << k << std::endl;
-		// std::cout << "positions[i]: " << positions[i] << std::endl;
 		int bc = binomialCoefficient(11 - positions[i], k);
         index += bc;
 		k--;
 	}
-	// std::cout << "index: " << index << std::endl;
-	// exit(1);
 	return index;
 }
 
 bool RubiksCube::isEdgeBlueOrGreenG2(int edgeIndex) const {
 	const std::set<char> validSliceColors = {'G', 'B'};
 
-    // char color1 = state[edgeIndices[edgeIndex][0]];
     char color = state[edgeIndices[edgeIndex][1]];
 
     return validSliceColors.find(color) != validSliceColors.end();
@@ -501,25 +464,15 @@ int RubiksCube::encodeEdgeSlicePositionsG2(const RubiksCube& cube) {
 
 	for (int i = 0; i < 8; i++) {
         if (cube.isEdgeBlueOrGreenG2(i)) {
-			// std::cout << "green or blue edge is at position: " << i << std::endl;
             positions.push_back(i); 
         }
     }
-	// positions.push_back(6);
-	// positions.push_back(9);
-	// positions.push_back(10);
-	// positions.push_back(11);
 	int index = 0, k = 4;
     for (unsigned long i = 0; i < positions.size(); ++i) {
-		// std::cout << "bc: " << bc << std::endl;
-		// std::cout << "k: " << k << std::endl;
-		// std::cout << "positions[i]: " << positions[i] << std::endl;
 		int bc = binomialCoefficient(7 - positions[i], k);
         index += bc;
 		k--;
 	}
-	// std::cout << "index: " << index << std::endl;
-	// exit(1);
 	return index;
 }
 
@@ -527,16 +480,7 @@ int RubiksCube::calculateStateIndexG1(const RubiksCube& cube) {
     int cornerIndex = encodeCornerOrientationsG1(cube);
     int edgeIndex = encodeEdgeSlicePositionsG1(cube);
 
-	// std::cout << "corner index = " << cornerIndex << std::endl;
-	// std::cout << "edgeIndex = " << edgeIndex << std::endl;
-	// std::cout << "cornerIndex * 495 + edgeIndex = " << cornerIndex * 495 + edgeIndex << std::endl;
-	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
-	// std::cout << "cornerIndex: " << cornerIndex << std::endl;
-    // return cornerIndex;
-	// if (cornerIndex * 495 + edgeIndex == 5)
-	// 	std::cout << "hello im " << cornerIndex * 495 + edgeIndex << std::endl;
     return cornerIndex * 495 + edgeIndex; // forgot why 495 and not 494 and would like to know why
-    // return edgeIndex;
 }
 
 int RubiksCube::calculateParityG2(const std::vector<int>& permutation) const {
@@ -612,27 +556,17 @@ int RubiksCube::calculateCornerIndexG2() const {
     for (int i = 1; i >= 0; --i) bases[i] = bases[i + 1] * choose((6) - 2*i, 2);
 
 	unsigned numRemaining = 28;
-	// std::cerr << "here\n";
 
 	for (unsigned n = 0; n < 3; ++n) {
-		// std::cerr << "gogo67\n";
 		unsigned remainingInd = 0;
-		// std::cerr << "gogo6\n";
 		const auto& sPair = cornerPairs[n];
-		// std::cerr << "gogo7\n";
-		// std::cerr << "here2\n";
-		// std::cerr << "numRemaining: " << numRemaining << std::endl;
-		// std::cerr << "n: " << n << std::endl;
 
 		for (unsigned r = 0; r < numRemaining; ++r) {
             const auto& rPair = remaining[r];
 
-            // if (sPair == rPair) {
             if ((sPair.first == rPair.first && sPair.second == rPair.second) ||
 					(sPair.first == rPair.second && sPair.second == rPair.first)) {
                 rank += r * bases[n];
-				// std::cout << "rank: " << rank << std::endl;
-				// std::cout << "r: " << r << std::endl;
                 break; // Found the match, stop searching
             }
         }
@@ -640,17 +574,11 @@ int RubiksCube::calculateCornerIndexG2() const {
         std::vector<std::pair<std::pair<char, char>, std::pair<char, char>>> newRemaining;
         for (unsigned r = 0; r < numRemaining; ++r) {
             if (areDistinct(sPair, remaining[r])) {
-				// std::cerr << "gogo1" << std::endl;
-				// std::cerr << ""
                 newRemaining.push_back(remaining[r]);
-				// std::cerr << "gogo2" << std::endl;
             }
         }
-		// std::cerr << "gogo3" << std::endl;
         remaining = newRemaining;
-		// std::cerr << "gogo4" << std::endl;
         numRemaining = remaining.size();
-		// std::cerr << "gogo5" << std::endl;
 	}
 
 	return rank;
@@ -673,34 +601,19 @@ std::vector<int> RubiksCube::getCornerPermutationG2() const {
 int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
     int cornerIndex = cube.calculateCornerIndexG2();
     int edgeIndex = encodeEdgeSlicePositionsG2(cube);
-    std::array<int, 12> edgeMap;
-    edgeMap[0] = 0;  // UB
-    edgeMap[1] = 1;  // UR
-    edgeMap[2] = 2;  // UF
-    edgeMap[3] = 3;  // UL
-    edgeMap[4] = 4;  // DR
-    edgeMap[5] = 5;  // DF
-    edgeMap[6] = 6;  // DL
-    edgeMap[7] = 7;  // DB
-    edgeMap[8] = -1; // FR
-    edgeMap[9] = -1; // FL
-    edgeMap[10] = -1; // BR
-    edgeMap[11] = -1; // BL
 
     std::array<int, 4> edgeCombo;
     unsigned edgeComboInd = 0;
 
     for (int i = 0; i < 8 && edgeComboInd < 4; ++i) {
         if (cube.isEdgeBlueOrGreenG2(i)) {
-            edgeCombo[edgeComboInd++] = edgeMap[i];
+            edgeCombo[edgeComboInd++] = i;
         }
     }
 
     std::vector<int> cornerPermutation = cube.getCornerPermutationG2();
     int parity = cube.calculateParityG2(cornerPermutation);  // Calculate parity from corner permutation
 	return (edgeIndex * 2520 + cornerIndex) * 2 + parity;
-	// return (edgeIndex);
-    // return stateIndex;
 }
 
 int getEdgeIndexFromColors(std::pair<char, char> edge) {
@@ -811,6 +724,7 @@ int RubiksCube::calculateEdgeIndexG3() const {
 	std::array<uint8_t, 4> m;
 	std::array<uint8_t, 4> s;
 	std::array<uint8_t, 2> e;
+
 	for (int i = 0; i < 10; i++) {
 		std::pair <char, char> colorPair = {state[edgeIndicesG3[i][0]], state[edgeIndicesG3[i][1]]};
 		int color = getEdgeIndexFromColors(colorPair);
@@ -818,13 +732,8 @@ int RubiksCube::calculateEdgeIndexG3() const {
 		else if (i < 8) s[i - 4] = color;
 		else e[i - 8] = color;
 	}
-	// return permIndexer(m) + permIndexer(s) + partialPermIndexer(e);
-	if (permIndexer(m) * 288 + permIndexer(s) * 12 + partialPermIndexer(e) > 6912) {
-		std::cout << "giga bonkers error: " << permIndexer(m) * 288 + permIndexer(s) * 12 + partialPermIndexer(e) << std::endl;
-		// exit(1);
-	}
+
 	return permIndexer(m) * 288 + permIndexer(s) * 12 + partialPermIndexer(e);
-	// uint32_t edgeRank = mRank * 288 + sRank * 12 + eRank;
 }
 
 int getCornerIndexFromColors(std::pair<char, char> corner) {
@@ -855,10 +764,6 @@ int RubiksCube::calculateCornerIndexG3() const {
 	std::pair <char, char> urbColors = {state[cornerIndicesG3[4][1]], state[cornerIndicesG3[4][2]]};
 
 	int tetradRank = permIndexer(tetrad1);
-	// if (tetradRank == 0) {
-	// 	std::cout << "hello" << std::endl;
-	// 	exit(1);
-	// }
 	return tetradRank * 4 + getCornerIndexFromColors(urbColors);
 }
 

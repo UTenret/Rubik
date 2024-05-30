@@ -1,10 +1,9 @@
 #pragma once
 
-#include <GL/glut.h>
-#include <string>
-#include <iostream>
-#include <ostream>
 #include "draw.hpp"
+
+#define UP true
+#define DOWN false
 
 enum AnimationState {
     NONE,
@@ -19,9 +18,6 @@ enum AnimationState {
     CAM_W,
     CAM_S
 };
-
-#define UP true
-#define DOWN false
 
 void    updateState(int move);
 

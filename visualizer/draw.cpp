@@ -151,7 +151,6 @@ bool    inRightFace(int i) {
     i == 37 || i == 38 || i == 45 || i == 46 || i == 47);
 }
 
-//update this shit
 void drawCube(int animat, const std::string& CubeState) {
     for (int i = 0; i < 54; ++i) {
         if (((animat == F || animat == F_PRIME) && inFrontFace(i)) ||
@@ -165,7 +164,6 @@ void drawCube(int animat, const std::string& CubeState) {
     }
 }
 
-//update this shit
 void drawFace(int animation, const std::string& CubeState) {
     if (animation == NONE)
         return;

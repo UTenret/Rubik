@@ -69,14 +69,14 @@ void PruningTable::generateLUT() {
 	bfsGenerateLUT(luts[1], RubiksCube::calculateStateIndexG1, group1Moves);
 	bfsGenerateLUT(luts[2], RubiksCube::calculateStateIndexG2, group2Moves);
 	bfsGenerateLUT(luts[3], RubiksCube::calculateStateIndexG3, group3Moves);
-	
+
 	saveLUTToFile(luts[0], "Database/Thistlewaite/G0.txt");
     saveLUTToFile(luts[1], "Database/Thistlewaite/G1.txt");
     saveLUTToFile(luts[2], "Database/Thistlewaite/G2.txt");
     saveLUTToFile(luts[3], "Database/Thistlewaite/G3.txt");
 }
 
-std::vector<int> PruningTable::loadLUT(const std::string& filename, int size) {
+std::vector<int> PruningTable::loadLUTFromFile(const std::string& filename, int size) {
     std::ifstream file(filename);
     int distance;
     std::vector<int> loadedLUT(size, -1);

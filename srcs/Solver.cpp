@@ -54,10 +54,10 @@ void Solver::solveCube() {
 		"U2", "D2", "L2", "R2", "F2", "B2"
     };
 
-	table.setLUT(0, table.loadLUT("Database/Thistlewaite/G0.txt", G0_N_SOLUTIONS));
-	table.setLUT(1, table.loadLUT("Database/Thistlewaite/G1.txt", G1_N_SOLUTIONS));
-	table.setLUT(2, table.loadLUT("Database/Thistlewaite/G2.txt", G2_N_SOLUTIONS));
-	table.setLUT(3, table.loadLUT("Database/Thistlewaite/G3.txt", G3_N_SOLUTIONS));
+	table.setLUT(0, table.loadLUTFromFile("Database/Thistlewaite/G0.txt", G0_N_SOLUTIONS));
+	table.setLUT(1, table.loadLUTFromFile("Database/Thistlewaite/G1.txt", G1_N_SOLUTIONS));
+	table.setLUT(2, table.loadLUTFromFile("Database/Thistlewaite/G2.txt", G2_N_SOLUTIONS));
+	table.setLUT(3, table.loadLUTFromFile("Database/Thistlewaite/G3.txt", G3_N_SOLUTIONS));
 
 	iterativeSolve(table.getLUT(0),
 					group0Moves,

@@ -1,11 +1,5 @@
 #include "RubiksCube.hpp"
 
-std::set<int> UniqueEdgeIndex;
-std::set<int> UniqueCornerIndex;
-std::map<int, std::set<int>> cornerToEdgeIndexMap;
-std::map<int, std::set<int>> edgeToCornerIndexMap;
-std::map<std::pair<int, int>, std::set<int>> cornerEdgeToParityMap;
-
 RubiksCube::RubiksCube(const std::string& initialState) : state(initialState) {}
 
 RubiksCube::RubiksCube(const RubiksCube& other) : state(other.state) {}
@@ -555,42 +549,7 @@ int RubiksCube::calculateParityG2(const std::vector<int>& permutation) const {
 	return parity;
 }
 
-uint32_t factorial(uint32_t n)
-{
-  return n <= 1 ? 1 : n * factorial(n - 1);
-}
-
-uint32_t choose(uint32_t n, uint32_t k)
-{
-  return (n < k)
-    ? 0
-    : factorial(n) / (factorial(n - k) * factorial(k));
-}
-
-uint32_t pick(uint32_t n, uint32_t k)
-  {
-    return factorial(n) / factorial(n - k);
-  }
-
 bool areDistinct(const std::pair<std::pair<char, char>, std::pair<char, char>>& pair1, const std::pair<std::pair<char, char>, std::pair<char, char>>& pair2) {
-    // Check if any corner in pair1 is the same as any corner in pair2
-	// std::cerr << "pair1.first: " << pair1.first.first << std::endl;
-	// std::cerr << "pair1.first: " << pair1.first.second << std::endl;
-	// std::cerr << "pair1.second: " << pair1.second.first << std::endl;
-	// std::cerr << "pair1.second: " << pair1.second.second << std::endl;
-
-	// std::cerr << "pair2.first: " << pair2.first.first << std::endl;
-	// std::cerr << "pair2.first: " << pair2.first.second << std::endl;
-	// std::cerr << "pair2.second: " << pair2.second.first << std::endl;
-	// std::cerr << "pair2.second: " << pair2.second.second << std::endl;
-	// if (pair1.first != pair2.first && pair1.first != pair2.second &&
-    //        pair1.second != pair2.first && pair1.second != pair2.second) {
-	// 		std::cerr << "herehreer\n";
-	// 		exit(1);
-	// 	   }
-
-    // return pair1.first != pair2.first && pair1.first != pair2.second &&
-        //    pair1.second != pair2.first && pair1.second != pair2.second;
 	return (pair1.first != pair2.first && pair1.second != pair2.second) &&
            (pair1.first != pair2.second && pair1.second != pair2.first);
 }
@@ -739,11 +698,6 @@ int RubiksCube::calculateStateIndexG2(const RubiksCube& cube) {
 
     std::vector<int> cornerPermutation = cube.getCornerPermutationG2();
     int parity = cube.calculateParityG2(cornerPermutation);  // Calculate parity from corner permutation
-	cornerEdgeToParityMap[{cornerIndex, edgeIndex}].insert(parity);
-	cornerToEdgeIndexMap[cornerIndex].insert(edgeIndex);
-	edgeToCornerIndexMap[edgeIndex].insert(cornerIndex);
-	UniqueCornerIndex.insert(cornerIndex);
-	UniqueEdgeIndex.insert(edgeIndex);
 	return (edgeIndex * 2520 + cornerIndex) * 2 + parity;
 	// return (edgeIndex);
     // return stateIndex;

@@ -20,13 +20,12 @@ public:
 						const std::vector<std::string>& moves);
 
     void generateLUT();
-    std::vector<int> loadLUT(const std::string& filename, int size);
+	void saveLUTToFile(const std::vector<int>& lut, const std::string& filename);
+    std::vector<int> loadLUTFromFile(const std::string& filename, int size);
 	const std::vector<int>& getLUT(int lutNumber) const;
 	void setLUT(int lutNumber, const std::vector<int>& lutData);
-	void saveLUTToFile(const std::vector<int>& lut, const std::string& filename);
 
 private:
 	RubiksCube cube;
 	std::vector<std::vector<int>> luts;
-
 };

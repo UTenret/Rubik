@@ -31,6 +31,7 @@ OBJS			= $(patsubst %.cpp, $(PATH_OBJS)/%.o, $(SRCS))
 HEADER			+= RubiksCube.hpp
 HEADER			+= PruningTable.hpp
 HEADER			+= Solver.hpp
+HEADER			+= math.hpp
 
 ###########################################################
 #### COMPILATION

@@ -14,6 +14,7 @@
 #include <map>
 #include <array>
 #include <bitset>
+#include "math.hpp"
 
 enum EdgePositions {
 	UB, UR, UF, UL,
@@ -197,9 +198,3 @@ class RubiksCube {
 
 	std::string colorize(const char color) const;
 };
-
-extern std::set<int> UniqueEdgeIndex;
-extern std::set<int> UniqueCornerIndex;
-extern std::map<int, std::set<int>> cornerToEdgeIndexMap;
-extern std::map<int, std::set<int>> edgeToCornerIndexMap;
-extern std::map<std::pair<int, int>, std::set<int>> cornerEdgeToParityMap;

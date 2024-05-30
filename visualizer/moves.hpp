@@ -6,19 +6,22 @@
 #include <ostream>
 #include "draw.hpp"
 
-#define NONE 0
-#define F 1
-#define F_PRIME 2
-#define B 3
-#define B_PRIME 4
-#define R 5
-#define R_PRIME 6
-#define L 7
-#define L_PRIME 8
-#define U 9
-#define U_PRIME 10
-#define D 11
-#define D_PRIME 12
+enum AnimationState {
+    NONE,
+    F, F_PRIME,
+    B, B_PRIME,
+    R, R_PRIME,
+    L, L_PRIME,
+    U, U_PRIME,
+    D, D_PRIME,
+    CAM_A,
+    CAM_D,
+    CAM_W,
+    CAM_S
+};
+
+#define UP true
+#define DOWN false
 
 void    updateState(int move);
 

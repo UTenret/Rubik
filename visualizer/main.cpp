@@ -7,6 +7,7 @@ int animationActive = NONE;
 float cameraX = 7.0f;
 float cameraY = 7.0f;
 float cameraZ = 7.0f;
+bool side = UP;
 
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
@@ -360,158 +361,148 @@ const float X_LIMIT = 7.0f;
 const float Y_LIMIT = 7.0f;
 const float Z_LIMIT = 7.0f;
 
-void keyboard(unsigned char key, int x, int y) {
-    if (key == 'a' || key == 'A') {
-        if (cameraX > -X_LIMIT) {
-            cameraX--;
-            if (cameraX < 1 && cameraX > -1)
-                cameraX = 0;
-            if (cameraX < -1) {
-                if (cameraY > 0)
-                    cameraY -= -cameraX / 20;
-                else
-                    cameraY += -cameraX / 20;
-                if (cameraZ > 0)
-                    cameraZ -= -cameraX / 20;
-                else
-                    cameraZ += -cameraX / 20;
-            } else if (cameraX > 0) {
-                if (cameraY > 0)
-                    cameraY += (cameraX + 1) / 20;
-                else
-                    cameraY -= (cameraX + 1) / 20;
-                if (cameraZ > 0)
-                    cameraZ += (cameraX + 1) / 20;
-                else
-                    cameraZ -= (cameraX + 1) / 20;
-            }
-        } else if (cameraZ > -Z_LIMIT) {
-            cameraZ--;
-            if (cameraZ < 1 && cameraZ > -1)
-                cameraZ = 0;
-            if (cameraZ >= 1) {
-                if (cameraY > 0)
-                    cameraY -= -(cameraZ + 1) / 20;
-                else
-                    cameraY += -(cameraZ + 1) / 20;
-                if (cameraX > 0)
-                    cameraX -= -(cameraZ + 1) / 20;
-                else
-                    cameraX += -(cameraZ + 1) / 20;
-            } else if (cameraZ < -1) {
-                if (cameraY > 0)
-                    cameraY -= -cameraZ / 20;
-                else
-                    cameraY += -cameraZ / 20;
-                if (cameraX > 0)
-                    cameraX -= -cameraZ / 20;
-                else
-                    cameraX += -cameraZ / 20;
-            }
-        }
-    } else if (key == 'd' || key == 'D') {
-        if (cameraX < X_LIMIT) {
-            cameraX++;
-            if (cameraX < 1 && cameraX > -1)
-                cameraX = 0;
-            if (cameraX < 0) {
-                if (cameraY > 0)
-                    cameraY += -(cameraX - 1) / 20;
-                else
-                    cameraY -= -(cameraX - 1) / 20;
-                if (cameraZ > 0)
-                    cameraZ += -(cameraX - 1) / 20;
-                else
-                    cameraZ -= -(cameraX - 1) / 20;
-            } else if (cameraX > 1) {
-                if (cameraY > 0)
-                    cameraY -= cameraX / 20;
-                else
-                    cameraY += cameraX / 20;
-                if (cameraZ > 0)
-                    cameraZ -= cameraX / 20;
-                else
-                    cameraZ += cameraX / 20;
-            }
-        } else if (cameraZ < Z_LIMIT) {
-            cameraZ++;
-            if (cameraZ < 1 && cameraZ > -1)
-                cameraZ = 0;
-            if (cameraZ > 1) {
-                if (cameraY < 0)
-                    cameraY -= -cameraZ / 20;
-                else
-                    cameraY += -cameraZ / 20;
-                if (cameraX > 0)
-                    cameraX += -cameraZ / 20;
-                else
-                    cameraX -= -cameraZ / 20;
-            } else if (cameraZ < -1) {
-                if (cameraY > 0)
-                    cameraY += -(cameraZ - 1) / 20;
-                else
-                    cameraY -= -(cameraZ - 1) / 20;
-                if (cameraX > 0)
-                    cameraX += -(cameraZ - 1) / 20;
-                else
-                    cameraX -= -(cameraZ - 1) / 20;
-            }
-        }
-    } else if (key == 'w' || key == 'W') {
-        if (cameraY < Y_LIMIT) {
-            cameraY++;
-            if (cameraY < 1 && cameraY > -1)
-                cameraY = 0;
-            if (cameraY < 0) {
-                if (cameraX > 0)
-                    cameraX += -(cameraY - 1) / 20;
-                else
-                    cameraX -= -(cameraY - 1) / 20;
-                if (cameraZ > 0)
-                    cameraZ += -(cameraY - 1) / 20;
-                else
-                    cameraZ -= -(cameraY - 1) / 20;
-            } else if (cameraY > 1) {
-                if (cameraX > 0)
-                    cameraX -= cameraY / 20;
-                else
-                    cameraX += cameraY / 20;
-                if (cameraZ > 0)
-                    cameraZ -= cameraY / 20;
-                else
-                    cameraZ += cameraY / 20;
-            }
-        }
-    } else if (key == 's' || key == 'S') {
-        if (cameraY > -Y_LIMIT) {
-            cameraY--;
-            if (cameraY < 1 && cameraY > -1)
-                cameraY = 0;
-            if (cameraY < -1) {
-                if (cameraX > 0)
-                    cameraX -= -cameraY / 20;
-                else
-                    cameraX += -cameraY / 20;
-                if (cameraZ > 0)
-                    cameraZ -= -cameraY / 20;
-                else
-                    cameraZ += -cameraY / 20;
-            } else if (cameraY > 0) {
-                if (cameraX > 0)
-                    cameraX += (cameraY + 1) / 20;
-                else
-                    cameraX -= (cameraY + 1) / 20;
-                if (cameraZ > 0)
-                    cameraZ += (cameraY + 1) / 20;
-                else
-                    cameraZ -= (cameraY + 1) / 20;
-            }
-        }
+void rotateCameraA(int value) {
+    static float angle = 0.0f;
+    const float increment = 2.0f;
+    const float targetAngle = 90.0f;
+    
+    if (animationActive != NONE && animationActive != CAM_A) {
+        glutTimerFunc(16, rotateCameraA, 0);
+        return;
     }
-    // std::cout << "x is: " << cameraX << std::endl;
-    // std::cout << "y is: " << cameraY << std::endl;
-    // std::cout << "z is: " << cameraZ << std::endl;
-    // std::cout << CubeState << std::endl;
+
+    angle += increment;
+    animationActive = CAM_A;
+    if (angle >= targetAngle) {
+        angle = targetAngle;
+        animationActive = NONE;
+        glutPostRedisplay();
+        angle = 0.0f;
+        return;
+    }
+    
+    float radians = (increment * M_PI) / 180.0f;
+    float newCameraX = cameraX * cos(radians) - cameraZ * sin(radians);
+    float newCameraZ = cameraX * sin(radians) + cameraZ * cos(radians);
+    cameraX = newCameraX;
+    cameraZ = newCameraZ;
+
+    glutPostRedisplay();
+    glutTimerFunc(16, rotateCameraA, 0);
+}
+
+void rotateCameraD(int value) {
+    static float angle = 0.0f;
+    const float increment = 2.0f;
+    const float targetAngle = 90.0f;
+
+    if (animationActive != NONE && animationActive != CAM_D) {
+        glutTimerFunc(16, rotateCameraD, 0);
+        return;
+    }
+
+    angle += increment;
+    animationActive = CAM_D;
+    if (angle >= targetAngle) {
+        angle = targetAngle;
+        animationActive = NONE;
+        glutPostRedisplay();
+        angle = 0.0f;
+        return;
+    }
+
+    float radians = (-increment * M_PI) / 180.0f;
+    float newCameraX = cameraX * cos(radians) - cameraZ * sin(radians);
+    float newCameraZ = cameraX * sin(radians) + cameraZ * cos(radians);
+    cameraX = newCameraX;
+    cameraZ = newCameraZ;
+
+    glutPostRedisplay();
+    glutTimerFunc(16, rotateCameraD, 0);
+}
+
+void rotateCameraS(int value) {
+    static float currentAngle = 0.0f;
+    const float increment = 2.0f;
+    const float targetAngle = 90.0f;
+
+    if (animationActive != NONE && animationActive != CAM_W) {
+        glutTimerFunc(16, rotateCameraS, 0);
+        return;
+    }
+
+    currentAngle += increment;
+    animationActive = CAM_W;
+    if (currentAngle >= targetAngle) {
+        side = DOWN;
+        currentAngle = targetAngle;
+        animationActive = NONE;
+        glutPostRedisplay();
+        currentAngle = 0.0f;
+        return;
+    }
+
+    float radians = (increment * M_PI) / 180.0f;
+    float newCameraY = cameraY * cos(radians) - cameraZ * sin(radians);
+    float newCameraZ = cameraY * sin(radians) + cameraZ * cos(radians);
+    cameraY = newCameraY;
+    cameraZ = newCameraZ;
+
+    // float newCameraY = cameraY * cos(radians) - cameraX * sin(radians);
+    // float newCameraX = cameraY * sin(radians) + cameraX * cos(radians);
+    // cameraY = newCameraY;
+    // cameraX = newCameraX;
+
+    glutPostRedisplay();
+    glutTimerFunc(16, rotateCameraS, 0);
+}
+
+void rotateCameraW(int value) {
+    static float currentAngle = 0.0f;
+    const float increment = 2.0f;
+    const float targetAngle = 90.0f;
+
+    if (animationActive != NONE && animationActive != CAM_S) {
+        glutTimerFunc(16, rotateCameraW, 0);
+        return;
+    }
+
+    currentAngle += increment;
+    animationActive = CAM_S;
+    if (currentAngle >= targetAngle) {
+        side = UP;
+        currentAngle = targetAngle;
+        animationActive = NONE;
+        glutPostRedisplay();
+        currentAngle = 0.0f;
+        return;
+    }
+
+    float radians = (-increment * M_PI) / 180.0f;
+    float newCameraY = cameraY * cos(radians) - cameraZ * sin(radians);
+    float newCameraZ = cameraY * sin(radians) + cameraZ * cos(radians);
+    cameraY = newCameraY;
+    cameraZ = newCameraZ;
+
+    // float newCameraY = cameraY * cos(radians) - cameraX * sin(radians);
+    // float newCameraX = cameraY * sin(radians) + cameraX * cos(radians);
+    // cameraY = newCameraY;
+    // cameraX = newCameraX;
+
+    glutPostRedisplay();
+    glutTimerFunc(16, rotateCameraW, 0);
+}
+
+
+void keyboard(unsigned char key, int x, int y) {
+    if (key == 'a' || key == 'A')
+        glutTimerFunc(0, rotateCameraA, 0);
+    else if (key == 'd' || key == 'D')
+        glutTimerFunc(0, rotateCameraD, 0);
+    else if ((key == 'w' || key == 'W') && side == DOWN)
+        glutTimerFunc(0, rotateCameraW, 0);
+    else if ((key == 's' || key == 'S') && side == UP)
+        glutTimerFunc(0, rotateCameraS, 0 );
     glutPostRedisplay();
 }
 

@@ -1,7 +1,14 @@
 #include "PruningTable.hpp"
 
 // PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts[0](2048, -1), luts[1](1082565, -1) {}
-PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts(4) {}
+// PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts(4) {}
+PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts{
+          std::vector<int>(G0_N_SOLUTIONS, -1),
+          std::vector<int>(G1_N_SOLUTIONS, -1),
+          std::vector<int>(G2_N_SOLUTIONS, -1),
+          std::vector<int>(G3_N_SOLUTIONS, -1)
+      }
+														{}
 
 /*
 the queue holds cube state as a string and the distance to solved
@@ -9,27 +16,25 @@ visited holds the edges orientations because we dont care about anything else fo
 
 */
 
-void PruningTable::bfsGenerateLUTG0() {
-    std::queue<std::pair<RubiksCube, int>> q;
+void PruningTable::bfsGenerateLUT(std::vector<int>& lut,
+									CalculateIndexFunc calculateIndex,
+									const std::vector<std::string>& moves) {
+	std::queue<std::pair<RubiksCube, int>> q;
 	std::set<int> visited;
-    RubiksCube initialCube = cube;
-    int initialIndex = RubiksCube::calculateStateIndexG0(initialCube);
-    q.push({initialCube, 0});
-    visited.insert(initialIndex);
-	luts[0].resize(G0_N_SOLUTIONS, -1);  //change that, init somewhere else
+	RubiksCube initialCube = cube;
+    int initialIndex = calculateIndex(initialCube);
+	q.push({initialCube, 0});
+	visited.insert(initialIndex);
 
-	const std::vector<std::string> moves = {
-    	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'",
-	};
-    while (!q.empty()) {
+	while (!q.empty()) {
         auto [currentCube, dist] = q.front();
         q.pop();
 
-        int index = RubiksCube::calculateStateIndexG0(currentCube);
+        int currentIndex = calculateIndex(currentCube);
 
-        if (luts[0][index] == -1 || luts[0][index] > dist) {
-            luts[0][index] = dist;
-        }
+        if (lut[currentIndex] == -1 || lut[currentIndex] < dist) {
+			lut[currentIndex] = dist;
+		}
 
         if (dist >= MAX_DEPTH) continue;
 
@@ -37,7 +42,7 @@ void PruningTable::bfsGenerateLUTG0() {
             RubiksCube newStateCube = currentCube;
             newStateCube.applyMove(move);
 
-	        int newIndex = RubiksCube::calculateStateIndexG0(newStateCube);
+			int newIndex = calculateIndex(newStateCube);
 
             if (visited.insert(newIndex).second) {
                 q.push({newStateCube, dist + 1});
@@ -46,169 +51,32 @@ void PruningTable::bfsGenerateLUTG0() {
     }
 }
 
-void PruningTable::bfsGenerateLUTG1() {
-    std::queue<std::pair<RubiksCube, int>> q;
-    std::set<int> visitedIndices;
-    RubiksCube initialCube = cube;
-	luts[1].resize(G1_N_SOLUTIONS, -1);
-    int initialIndex = RubiksCube::calculateStateIndexG1(initialCube);
-    q.push({initialCube, 0});
-    visitedIndices.insert(initialIndex);
-
-    std::vector<std::string> moves = {"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"};
-    // std::vector<std::string> moves = {"U", "L", "R"};
-
-		// cube.printCube();
-    while (!q.empty()) {
-        auto [currentCube, dist] = q.front();
-        q.pop();
-
-        int currentIndex = RubiksCube::calculateStateIndexG1(currentCube);
-        // if (luts[1][currentIndex] == -1 || luts[1][currentIndex] > dist) {
-        if (luts[1][currentIndex] == -1 || luts[1][currentIndex] < dist) {
-			// std::cout << "added index: " << currentIndex << " with dist: " << dist << std::endl;
-            luts[1][currentIndex] = dist;
-        }
-
-        if (dist >= MAX_DEPTH)  {
-			std::cout << "dist: "<< dist << std::endl;
-			continue;
-		}
-
-        for (const auto& move : moves) {
-            RubiksCube newStateCube = currentCube;
-            newStateCube.applyMove(move);
-
-            int newIndex = RubiksCube::calculateStateIndexG1(newStateCube);
-
-			// std::cout << "dist: " << dist << ", move: " << move << ", state: " << newIndex << std::endl;
-			// std::cout << "move: " << move << std::endl;
-			// std::cout << "state: " << newIndex << std::endl;
-
-            if (visitedIndices.insert(newIndex).second) {
-				// std::cout << "added state: " << newIndex << " to visited\n";
-                q.push({newStateCube, dist + 1});
-            }
-        }
-    }
-}
-
-void PruningTable::bfsGenerateLUTG2() {
-    std::queue<std::tuple<RubiksCube, int, std::vector<std::string>>> q;
-    std::set<int> visitedIndices;
-    RubiksCube initialCube = cube;
-    luts[2].resize(G2_N_SOLUTIONS, -1);
-    int initialIndex = RubiksCube::calculateStateIndexG2(initialCube);
-    q.push(std::make_tuple(initialCube, 0, std::vector<std::string>()));
-    visitedIndices.insert(initialIndex);
-
-    std::vector<std::string> moves = {"U", "U'", "D", "D'", "R2", "L2", "F2", "B2"};
-
-    while (!q.empty()) {
-        auto [currentCube, dist, path] = q.front();
-        q.pop();
-
-        int currentIndex = RubiksCube::calculateStateIndexG2(currentCube);
-
-        if (luts[2][currentIndex] == -1 || luts[2][currentIndex] < dist) {
-            luts[2][currentIndex] = dist;
-        }
-
-        if (dist >= MAX_DEPTH) {
-            std::cout << "Reached max depth at index: " << currentIndex << " with distance: " << dist << std::endl;
-            continue;
-        }
-
-        for (const auto& move : moves) {
-            RubiksCube newStateCube = currentCube;
-            newStateCube.applyMove(move);
-
-            int newIndex = RubiksCube::calculateStateIndexG2(newStateCube);
-            std::vector<std::string> newPath = path;
-            newPath.push_back(move);
-
-            if (visitedIndices.insert(newIndex).second) {
-                q.push(std::make_tuple(newStateCube, dist + 1, newPath));
-            }
-        }
-    }
-}
-
-void PruningTable::bfsGenerateLUTG3() {
-    std::queue<std::pair<RubiksCube, int>> q;
-    std::set<int> visitedIndices;
-    RubiksCube initialCube = cube;
-	luts[3].resize(663552, -1);
-    int initialIndex = RubiksCube::calculateStateIndexG3(initialCube);
-    q.push({initialCube, 0});
-    visitedIndices.insert(initialIndex);
-
-    std::vector<std::string> moves = {"U2", "D2", "R2", "L2", "F2", "B2"};
-
-    while (!q.empty()) {
-        auto [currentCube, dist] = q.front();
-        q.pop();
-
-        int currentIndex = RubiksCube::calculateStateIndexG3(currentCube);
-        // if (luts[1][currentIndex] == -1 || luts[1][currentIndex] > dist) {
-        if (luts[3][currentIndex] == -1 || luts[3][currentIndex] < dist) {
-			// std::cout << "added index: " << currentIndex << " with dist: " << dist << std::endl;
-            luts[3][currentIndex] = dist;
-        }
-
-        if (dist >= MAX_DEPTH)  {
-			std::cout << "dist: "<< dist << std::endl;
-			continue;
-		}
-
-        for (const auto& move : moves) {
-            RubiksCube newStateCube = currentCube;
-            newStateCube.applyMove(move);
-
-            int newIndex = RubiksCube::calculateStateIndexG3(newStateCube);
-
-			// std::cout << "dist: " << dist << ", move: " << move << ", state: " << newIndex << std::endl;
-			// std::cout << "move: " << move << std::endl;
-			// std::cout << "state: " << newIndex << std::endl;
-
-            if (visitedIndices.insert(newIndex).second) {
-				// std::cout << "added state: " << newIndex << " to visited\n";
-                q.push({newStateCube, dist + 1});
-            }
-        }
-    }
-}
-
-// No F, F', B, B' for G1->G2
-
 void PruningTable::generateLUT() {
-    bfsGenerateLUTG0();
-    // bfsGenerateLUTG1();
-    // bfsGenerateLUTG2();
-    // bfsGenerateLUTG3();
-    std::ofstream file0("G0.txt");
-    // std::ofstream file1("G1.txt");
-    // std::ofstream file2("G2.txt");
-    // std::ofstream file3("G3.txt");
-    // if (!file0 ) {
-    //     std::cerr << "Error: file could not be opened";
-    //     exit(1);
-    // }
-    for (int value : luts[0]) {
-        file0 << value << std::endl;
-    }
-	// for (int value : luts[1]) {
-	// 	file1 << value << std::endl;
-	// }
-	// for (int value : luts[2]) {
-	// 	file2 << value << std::endl;
-	// }
-	// for (int value : luts[3]) {
-	// 	file3 << value << std::endl;
-	// }
+	const std::vector<std::string> group0Moves = {
+    	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'"
+	};
+	const std::vector<std::string> group1Moves = {
+		"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"
+	};
+	const std::vector<std::string> group2Moves = {
+		"U", "U'", "D", "D'", "R2", "L2", "F2", "B2"
+	};
+	const std::vector<std::string> group3Moves = {
+		"U2", "D2", "R2", "L2", "F2", "B2"
+	};
+
+	bfsGenerateLUT(luts[0], RubiksCube::calculateStateIndexG0, group0Moves);
+	bfsGenerateLUT(luts[1], RubiksCube::calculateStateIndexG1, group1Moves);
+	bfsGenerateLUT(luts[2], RubiksCube::calculateStateIndexG2, group2Moves);
+	bfsGenerateLUT(luts[3], RubiksCube::calculateStateIndexG3, group3Moves);
+
+	saveLUTToFile(luts[0], "Database/Thistlewaite/G0.txt");
+    saveLUTToFile(luts[1], "Database/Thistlewaite/G1.txt");
+    saveLUTToFile(luts[2], "Database/Thistlewaite/G2.txt");
+    saveLUTToFile(luts[3], "Database/Thistlewaite/G3.txt");
 }
 
-std::vector<int> PruningTable::loadLUT(const std::string& filename, int size) {
+std::vector<int> PruningTable::loadLUTFromFile(const std::string& filename, int size) {
     std::ifstream file(filename);
     int distance;
     std::vector<int> loadedLUT(size, -1);
@@ -251,4 +119,15 @@ void PruningTable::setLUT(int lutNumber, const std::vector<int>& lutData) {
         luts.resize(lutNumber + 1);
     }
     luts[lutNumber] = lutData;
+}
+
+void PruningTable::saveLUTToFile(const std::vector<int>& lut, const std::string& filename) {
+    std::ofstream file(filename);
+    if (!file) {
+        std::cerr << "Error: file " << filename << " could not be opened" << std::endl;
+        exit(1);
+    }
+    for (int value : lut) {
+        file << value << std::endl;
+    }
 }

@@ -69,26 +69,11 @@ void PruningTable::generateLUT() {
 	bfsGenerateLUT(luts[1], RubiksCube::calculateStateIndexG1, group1Moves);
 	bfsGenerateLUT(luts[2], RubiksCube::calculateStateIndexG2, group2Moves);
 	bfsGenerateLUT(luts[3], RubiksCube::calculateStateIndexG3, group3Moves);
-    std::ofstream file0("G0.txt");
-    std::ofstream file1("G1.txt");
-    std::ofstream file2("G2.txt");
-    std::ofstream file3("G3.txt");
-    if (!file0 || !file1 || !file2 || !file3 ) {
-        std::cerr << "Error: file could not be opened";
-        exit(1);
-    }
-    for (int value : luts[0]) {
-        file0 << value << std::endl;
-    }
-	for (int value : luts[1]) {
-		file1 << value << std::endl;
-	}
-	for (int value : luts[2]) {
-		file2 << value << std::endl;
-	}
-	for (int value : luts[3]) {
-		file3 << value << std::endl;
-	}
+	
+	saveLUTToFile(luts[0], "Database/Thistlewaite/G0.txt");
+    saveLUTToFile(luts[1], "Database/Thistlewaite/G1.txt");
+    saveLUTToFile(luts[2], "Database/Thistlewaite/G2.txt");
+    saveLUTToFile(luts[3], "Database/Thistlewaite/G3.txt");
 }
 
 std::vector<int> PruningTable::loadLUT(const std::string& filename, int size) {
@@ -134,4 +119,15 @@ void PruningTable::setLUT(int lutNumber, const std::vector<int>& lutData) {
         luts.resize(lutNumber + 1);
     }
     luts[lutNumber] = lutData;
+}
+
+void PruningTable::saveLUTToFile(const std::vector<int>& lut, const std::string& filename) {
+    std::ofstream file(filename);
+    if (!file) {
+        std::cerr << "Error: file " << filename << " could not be opened" << std::endl;
+        exit(1);
+    }
+    for (int value : lut) {
+        file << value << std::endl;
+    }
 }

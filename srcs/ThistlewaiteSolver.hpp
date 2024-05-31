@@ -11,10 +11,6 @@ public:
 
 	explicit ThistlewaiteSolver(const RubiksCube& cube, const PruningTable& table) : cube(cube), table(table) {}
 
-	bool iddfs(int depth, int maxDepth, std::vector<std::string>& solution, 
-           std::function<bool ()> isSolved,
-           const std::vector<std::string>& allowedMoves);
-
 	void solveCube();
 	
 	void iterativeSolve(
@@ -23,9 +19,6 @@ public:
 		CalculateIndexFunc calculateIndex,
 		std::vector<std::string>& solution
 	);
-
-	void solveGroup(std::function<bool()> groupSolveCondition, const std::vector<std::string>& moves,
-	 std::vector<std::string> solution);
 
 	bool isMovePrunable(const std::string& lastMove, const std::string& currentMove);
 

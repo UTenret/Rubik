@@ -52,7 +52,6 @@ void ThistlewaiteSolver::solveCube() {
 	std::cout << std::endl << "Number of moves: " << totalMoves << std::endl;
 	// WE NEED TO PRUNE MOVES !!! R L L2 R2 is prunable into R' L'
 	cube.printCube();
-    // solveGroup([this]() { return cube.isSolved(); }, group3Moves, solution);
 }
 
 bool ThistlewaiteSolver::isMovePrunable(const std::string& lastMove, const std::string& currentMove) {

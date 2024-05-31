@@ -4,11 +4,13 @@
 
 float rotationAngle = 0.0f;
 int animationActive = NONE;
-float cameraX = 6.0f;
-float cameraY = 6.0f;
-float cameraZ = 6.0f;
+float cameraX = 7.0f;
+float cameraY = 7.0f;
+float cameraZ = 7.0f;
 bool side = UP;
 std::string solution;
+std::string argv;
+int lines;
 
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
@@ -26,7 +28,7 @@ void display() {
     gluLookAt(cameraX, cameraY, cameraZ, 0, 0, 0, 0, 1, 0);
 
     glPushMatrix();
-    drawCube(animationActive, CubeState);
+    drawCube(animationActive);
     glPopMatrix();
 
     glPushMatrix();
@@ -39,60 +41,41 @@ void display() {
     else if (animationActive == L || animationActive == L_PRIME ||
     animationActive == R || animationActive == R_PRIME)
         glRotatef(rotationAngle, 1.0f, 0.0f, 0.0f);
-    drawFace(animationActive, CubeState);
+    drawFace(animationActive);
     glPopMatrix();
+    
+    std::string line[lines];
+    glColor3f(1.0f, 1.0f, 1.0f);
+    for (int i = 0; i < lines; i++) {
+        std::string sub_text = argv.substr(i * 30, 30);
+        line[i] = sub_text;
+
+        glRasterPos2f(0.0f, 3.2f - i * 0.2f);
+
+        for (char c : sub_text) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
+    }
+    std::string info = "x: " + std::to_string(cameraX) + 
+    " | y: " + std::to_string(cameraY) + " | z: " + std::to_string(cameraZ);
+    glRasterPos2f(0.0f, 3.4f);
+    for (char c : info) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
+
+    info = "use WASD to inspect the cube";
+    glRasterPos2f(0.0f, 3.6f);
+    for (char c : info) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
+    info = "use F1 to solve the cube";
+    glRasterPos2f(0.0f, 3.8f);
+    for (char c : info) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
+    info = "use F2 to adjust the coordinates";
+    glRasterPos2f(0.0f, 4.0f);
+    for (char c : info) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
 
     glutSwapBuffers();
 }
 
-// std::function<void(int)> rotationCallback;
-
-// void timerWrapper(int value) {
-//     if (rotationCallback) {
-//         rotationCallback(value);
-//     }
-// }
-
-// void genericRotation(int move, float angleIncrement, int delay) {
-//     if (animationActive != NONE && animationActive != move) {
-//         rotationCallback = std::bind(genericRotation, move, angleIncrement, delay);
-//         glutTimerFunc(16, timerWrapper, 0);
-//         std::cout << "anim is: " << animationActive << std::endl;
-//         std::cout << "move is: " << move << std::endl;
-//         return;
-//     }
-//     rotationAngle += angleIncrement;
-//     animationActive = move;
-
-//     bool isComplete = (angleIncrement > 0) ? rotationAngle >= 90.0f : rotationAngle <= -90.0f;
-//     if (isComplete) {
-//         rotationAngle = 0.0f;
-//         glutPostRedisplay();
-//         animationActive = NONE;
-//         updateState(move);
-//         return;
-//     }
-//     glutPostRedisplay();
-//     rotationCallback = std::bind(genericRotation, move, angleIncrement, delay);
-//     glutTimerFunc(16, timerWrapper, 0);
-// }
-
-// void rotationF(int delay) { genericRotation(F, -2.0f, delay); }
-// void rotationFP(int delay) { genericRotation(F_PRIME, 2.0f, delay); }
-// void rotationB(int delay) { genericRotation(B, 2.0f, delay); }
-// void rotationBP(int delay) { genericRotation(B_PRIME, -2.0f, delay); }
-// void rotationU(int delay) { genericRotation(U, -2.0f, delay); }
-// void rotationUP(int delay) { genericRotation(U_PRIME, 2.0f, delay); }
-// void rotationD(int delay) { genericRotation(D, 2.0f, delay); }
-// void rotationDP(int delay) { genericRotation(D_PRIME, -2.0f, delay); }
-// void rotationL(int delay) { genericRotation(L, 2.0f, delay); }
-// void rotationLP(int delay) { genericRotation(L_PRIME, -2.0f, delay); }
-// void rotationR(int delay) { genericRotation(R, -2.0f, delay); }
-// void rotationRP(int delay) { genericRotation(R_PRIME, 2.0f, delay); }
-
-void rotationF(int delay) {
+void rotationF(int value) {
+    (void)value;
     if (animationActive != NONE && animationActive != F) {
-        glutTimerFunc((16 * delay), rotationF, 0);
+        glutTimerFunc(16, rotationF, 0);
         return;
     }
     rotationAngle -= 2.0f;
@@ -109,6 +92,7 @@ void rotationF(int delay) {
 }
 
 void rotationFP(int value) {
+    (void)value;
     if (animationActive != NONE && animationActive != F_PRIME) {
         glutTimerFunc(16, rotationFP, 0);
         return;
@@ -127,9 +111,10 @@ void rotationFP(int value) {
 }
 
 
-void rotationB(int delay) {
+void rotationB(int value) {
+    (void)value;
     if (animationActive != NONE && animationActive != B) {
-        glutTimerFunc((16 * delay), rotationB, 0);
+        glutTimerFunc(16, rotationB, 0);
         return;
     }
     rotationAngle += 2.0f;
@@ -146,6 +131,7 @@ void rotationB(int delay) {
 }
 
 void rotationBP(int value) {
+    (void)value;
     if (animationActive != NONE && animationActive != B_PRIME) {
         glutTimerFunc(16, rotationBP, 0);
         return;
@@ -164,6 +150,7 @@ void rotationBP(int value) {
 }
 
 void rotationU(int value) {
+    (void)value;
     if (animationActive != NONE && animationActive != U) {
         glutTimerFunc(16, rotationU, 0);
         return;
@@ -182,6 +169,7 @@ void rotationU(int value) {
 }
 
 void rotationUP(int value) {
+    (void)value;
     if (animationActive != NONE && animationActive != U_PRIME) {
         glutTimerFunc(16, rotationUP, 0);
         return;
@@ -200,6 +188,7 @@ void rotationUP(int value) {
 }
 
 void rotationD(int value) {
+    (void)value;
     if (animationActive != NONE && animationActive != D) {
         glutTimerFunc(16, rotationD, 0);
         return;
@@ -218,6 +207,7 @@ void rotationD(int value) {
 }
 
 void rotationDP(int value) {
+    (void)value;
     if (animationActive != NONE && animationActive != D_PRIME) {
         glutTimerFunc(16, rotationDP, 0);
         return;
@@ -236,6 +226,7 @@ void rotationDP(int value) {
 }
 
 void rotationL(int value) {
+    (void)value;
     if (animationActive != NONE && animationActive != L) {
         glutTimerFunc(16, rotationL, 0);
         return;
@@ -254,6 +245,7 @@ void rotationL(int value) {
 }
 
 void rotationLP(int value) {
+    (void)value;
     if (animationActive != NONE && animationActive != L_PRIME) {
         glutTimerFunc(16, rotationLP, 0);
         return;
@@ -272,6 +264,7 @@ void rotationLP(int value) {
 }
 
 void rotationR(int value) {
+    (void)value;
     if (animationActive != NONE && animationActive != R) {
         glutTimerFunc(16, rotationR, 0);
         return;
@@ -290,6 +283,7 @@ void rotationR(int value) {
 }
 
 void rotationRP(int value) {
+    (void)value;
     if (animationActive != NONE && animationActive != R_PRIME) {
         glutTimerFunc(16, rotationRP, 0);
         return;
@@ -401,11 +395,8 @@ void    parsing(std::string moves) {
     }
 }
 
-const float X_LIMIT = 7.0f;
-const float Y_LIMIT = 7.0f;
-const float Z_LIMIT = 7.0f;
-
 void rotateCameraA(int value) {
+    (void)value;
     static float angle = 0.0f;
     const float increment = 2.0f;
     const float targetAngle = 90.0f;
@@ -436,6 +427,7 @@ void rotateCameraA(int value) {
 }
 
 void rotateCameraD(int value) {
+    (void)value;
     static float angle = 0.0f;
     const float increment = 2.0f;
     const float targetAngle = 90.0f;
@@ -467,6 +459,7 @@ void rotateCameraD(int value) {
 
 
 void rotateCameraS(int value) {
+    (void)value;
     static float currentAngle = 0.0f;
     const float increment = 2.0f;
     const float targetAngle = 90.0f;
@@ -505,6 +498,7 @@ void rotateCameraS(int value) {
 }
 
 void rotateCameraW(int value) {
+    (void)value;
     static float currentAngle = 0.0f;
     const float increment = 2.0f;
     const float targetAngle = 90.0f;
@@ -543,6 +537,8 @@ void rotateCameraW(int value) {
 
 
 void keyboard(unsigned char key, int x, int y) {
+    (void)x;
+    (void)y;
     if (key == 'a' || key == 'A')
         glutTimerFunc(0, rotateCameraA, 0);
     else if (key == 'd' || key == 'D')
@@ -557,6 +553,8 @@ void keyboard(unsigned char key, int x, int y) {
 }
 
 void SpecialInput(int key, int x, int y) {
+    (void)x;
+    (void)y;
     switch(key) {
         case GLUT_KEY_UP:
             glutTimerFunc(0, rotateCameraW, 0);
@@ -572,6 +570,11 @@ void SpecialInput(int key, int x, int y) {
             break;
         case GLUT_KEY_F1:
             parsing(solution);
+            break;
+        case GLUT_KEY_F2:
+            cameraX = 7.0f;
+            cameraY = 7.0f;
+            cameraZ = 7.0f;
             break;
     }
     glutPostRedisplay();
@@ -616,8 +619,12 @@ int visualizer(int ac, char** av, std::string fullSolution) {
     glutAddMenuEntry("Enter scramble", 2);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 
-    if (ac == 2)
+    if (ac == 2) {
+        std::string prefix = "scramble: ";
+        argv = prefix + av[1];
+        lines = (argv.size() / 30) + 1;
         parsing(av[1]);
+    }
     glutMainLoop();
     return 0;
 }

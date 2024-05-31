@@ -1,5 +1,6 @@
 #include "draw.hpp"
 #include "moves.hpp"
+#include "visualizer.hpp"
 
 float rotationAngle = 0.0f;
 int animationActive = NONE;
@@ -7,6 +8,7 @@ float cameraX = 6.0f;
 float cameraY = 6.0f;
 float cameraZ = 6.0f;
 bool side = UP;
+std::string solution;
 
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
@@ -568,6 +570,9 @@ void SpecialInput(int key, int x, int y) {
         case GLUT_KEY_RIGHT:
             glutTimerFunc(0, rotateCameraD, 0);
             break;
+        case GLUT_KEY_F1:
+            parsing(solution);
+            break;
     }
     glutPostRedisplay();
 }
@@ -582,6 +587,9 @@ void captureUserInput(const std::string& prompt, std::function<void(const std::s
 void menuHandler(int option) {
     switch (option) {
         case 1:
+            parsing(solution);
+            break;
+        case 2:
             captureUserInput("Enter your scramble: ", [](const std::string& input) {
                 std::cout << "Processing..." << std::endl;
                 parsing(input);
@@ -590,8 +598,9 @@ void menuHandler(int option) {
     }
 }
 
-int main(int argc, char** argv) {
-    glutInit(&argc, argv);
+int visualizer(int ac, char** av, std::string fullSolution) {
+    solution = fullSolution;
+    glutInit(&ac, av);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(550, 750);
     glutInitWindowPosition(1100, 200);
@@ -603,11 +612,12 @@ int main(int argc, char** argv) {
     glutSpecialFunc(SpecialInput);
 
     glutCreateMenu(menuHandler);
-    glutAddMenuEntry("enter terminal input", 1);
+    glutAddMenuEntry("Initiate solving", 1);
+    glutAddMenuEntry("Enter scramble", 2);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 
-    if (argc == 2)
-        parsing(argv[1]);
+    if (ac == 2)
+        parsing(av[1]);
     glutMainLoop();
     return 0;
 }

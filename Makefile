@@ -1,40 +1,28 @@
-###########################################################
-#### NAME
-
-NAME			= RubiksCube
-
-###########################################################
-#### PATH TO SOURCES
+NAME = RubiksCube
 
 PATH_SRCS		+= srcs/
-
-###########################################################
-#### SOURCES
 
 SRCS			+= main.cpp
 SRCS			+= RubiksCube.cpp
 SRCS			+= PruningTable.cpp
 SRCS			+= ThistlewaiteSolver.cpp
+SRCS			+= visualizer.cpp
+SRCS			+= moves.cpp
+SRCS			+= draw.cpp
 
 vpath %.cpp $(PATH_SRCS)
 vpath %.hpp $(PATH_SRCS)
 
-###########################################################
-#### OBJS
-
 PATH_OBJS		= objs/
 OBJS			= $(patsubst %.cpp, $(PATH_OBJS)/%.o, $(SRCS))
-
-###########################################################
-#### INCLUDES
 
 HEADER			+= RubiksCube.hpp
 HEADER			+= PruningTable.hpp
 HEADER			+= ThistlewaiteSolver.hpp
 HEADER			+= math.hpp
-
-###########################################################
-#### COMPILATION
+HEADER			+= draw.hpp
+HEADER			+= moves.hpp
+HEADER			+= visualizer.hpp
 
 CC				= c++
 CFLAGS			+= -Wall
@@ -42,14 +30,12 @@ CFLAGS			+= -Wextra
 # CFLAGS			+= -Werror
 CFLAGS			+= -std=c++17
 SMAKE		= make --no-print-directory
-
-###########################################################
-#### RULES
+LDFLAGS = -lGL -lGLU -lglut
 
 all : $(NAME)
 
 $(NAME): $(OBJS)
-	@$(CC) $(CFLAGS) $(OBJS) -o $@ 
+	@$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS)
 	@echo "\033[1;35m=======  compilation complete  =======\033[0m"
 
 $(OBJS): $(PATH_OBJS)/%.o: %.cpp $(HEADER)

@@ -1,5 +1,6 @@
 #include "RubiksCube.hpp"
 #include "ThistlewaiteSolver.hpp"
+#include "visualizer.hpp"
 
 /*
  U
@@ -66,6 +67,9 @@ int main(int argc, char* argv[]) {
 	// exit(1);`
 	ThistlewaiteSolver			ThistlewaiteSolver(cube, table);
 	ThistlewaiteSolver.solveCube();
+
+	std::string solution = ThistlewaiteSolver.fullSolution;
+	visualizer(argc, argv, solution);
 
     return 0;
 }

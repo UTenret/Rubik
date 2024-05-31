@@ -44,12 +44,13 @@ void ThistlewaiteSolver::solveCube() {
 		else std::cout << "Cube already solved for " << group << std::endl;
 	}
 	int totalMoves = 0;
-	std::cout << "Cube has been solved, full solution :";
+	std::cout << "Cube has been solved, full solution: ";
 	for (const auto& groupSolution : solution) {
 		totalMoves += groupSolution.size();
-		for (const auto& move : groupSolution) std::cout << move << " ";
+		for (const auto& move : groupSolution) fullSolution += move + " ";
 	}
-	std::cout << std::endl << "Number of moves: " << totalMoves << std::endl;
+	std::cout << fullSolution << std::endl;
+	std::cout << "Number of moves: " << totalMoves << std::endl;
 	// WE NEED TO PRUNE MOVES !!! R L L2 R2 is prunable into R' L'
 	cube.printCube();
     // solveGroup([this]() { return cube.isSolved(); }, group3Moves, solution);

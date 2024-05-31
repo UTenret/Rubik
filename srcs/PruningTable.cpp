@@ -1,14 +1,11 @@
 #include "PruningTable.hpp"
 
-// PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts[0](2048, -1), luts[1](1082565, -1) {}
-// PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts(4) {}
 PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts{
           std::vector<int>(G0_N_SOLUTIONS, -1),
           std::vector<int>(G1_N_SOLUTIONS, -1),
           std::vector<int>(G2_N_SOLUTIONS, -1),
           std::vector<int>(G3_N_SOLUTIONS, -1)
-      }
-														{}
+      } {}
 
 /*
 the queue holds cube state as a string and the distance to solved

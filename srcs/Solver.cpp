@@ -1,39 +1,5 @@
 #include "Solver.hpp"
 
-bool Solver::iddfs(int depth, int maxDepth, std::vector<std::string>& solution, 
-			std::function<bool()> isSolved,
-			 const std::vector<std::string>& allowedMoves) {
-	if(isSolved()){
-		cube.printCube();
-		std::cout << "FULL SOLUTION :";
-		for (const auto& move : solution) {
-			std::cout << move << " ";
-		}
-		std::cout << std::endl;
-		return true;
-	}
-
-	if(depth == maxDepth) {
-		// std::cout << "Max depth reached without a solution" << std::endl;
-		return false;
-	}
-
-	for (const auto& moveStr : allowedMoves) {
-		if (!solution.empty() && isMovePrunable(solution.back(), moveStr)) {
-            continue;
-        }
-		// moveFunc();
-		cube.applyMove(moveStr);
-		solution.push_back(moveStr);
-		if (iddfs(depth + 1, maxDepth, solution, isSolved, allowedMoves)) {
-			return true;
-		}
-		cube.applyInverseMove(moveStr); 
-		solution.pop_back();
-	}
-	return false;
-}
-
 // can improve by directly identifying which group this belongs to and not loading unecessary
 // luts or useless functions calls, same thing if group0 solves the cube for example
 // + symmetry
@@ -117,13 +83,6 @@ bool Solver::isMovePrunable(const std::string& lastMove, const std::string& curr
         }
     }
     return false;
-}
-
-void Solver::solveGroup(std::function<bool()> groupSolveCondition, const std::vector<std::string>& moves, std::vector<std::string> solution) {
-    for (int i = 1; i < MAX_DEPTH; i++) {
-        if (iddfs(0, i, solution, groupSolveCondition, moves))
-            break;
-    }
 }
 
 void Solver::iterativeSolve(

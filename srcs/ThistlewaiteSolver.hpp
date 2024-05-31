@@ -6,6 +6,7 @@
 
 class ThistlewaiteSolver {
 public:
+	std::string fullSolution;
 	typedef int (*CalculateIndexFunc)(const RubiksCube&);
 
 	explicit ThistlewaiteSolver(const RubiksCube& cube, const PruningTable& table) : cube(cube), table(table) {}

@@ -43,49 +43,267 @@ void display() {
     glutSwapBuffers();
 }
 
-std::function<void(int)> rotationCallback;
+// std::function<void(int)> rotationCallback;
 
-void timerWrapper(int value) {
-    if (rotationCallback) {
-        rotationCallback(value);
-    }
-}
+// void timerWrapper(int value) {
+//     if (rotationCallback) {
+//         rotationCallback(value);
+//     }
+// }
 
-void genericRotation(int move, float angleIncrement, int delay) {
-    if (animationActive != NONE && animationActive != move) {
-        rotationCallback = std::bind(genericRotation, move, angleIncrement, 1);
-        glutTimerFunc((16 * delay), timerWrapper, 0);
+// void genericRotation(int move, float angleIncrement, int delay) {
+//     if (animationActive != NONE && animationActive != move) {
+//         rotationCallback = std::bind(genericRotation, move, angleIncrement, delay);
+//         glutTimerFunc(16, timerWrapper, 0);
+//         std::cout << "anim is: " << animationActive << std::endl;
+//         std::cout << "move is: " << move << std::endl;
+//         return;
+//     }
+//     rotationAngle += angleIncrement;
+//     animationActive = move;
+
+//     bool isComplete = (angleIncrement > 0) ? rotationAngle >= 90.0f : rotationAngle <= -90.0f;
+//     if (isComplete) {
+//         rotationAngle = 0.0f;
+//         glutPostRedisplay();
+//         animationActive = NONE;
+//         updateState(move);
+//         return;
+//     }
+//     glutPostRedisplay();
+//     rotationCallback = std::bind(genericRotation, move, angleIncrement, delay);
+//     glutTimerFunc(16, timerWrapper, 0);
+// }
+
+// void rotationF(int delay) { genericRotation(F, -2.0f, delay); }
+// void rotationFP(int delay) { genericRotation(F_PRIME, 2.0f, delay); }
+// void rotationB(int delay) { genericRotation(B, 2.0f, delay); }
+// void rotationBP(int delay) { genericRotation(B_PRIME, -2.0f, delay); }
+// void rotationU(int delay) { genericRotation(U, -2.0f, delay); }
+// void rotationUP(int delay) { genericRotation(U_PRIME, 2.0f, delay); }
+// void rotationD(int delay) { genericRotation(D, 2.0f, delay); }
+// void rotationDP(int delay) { genericRotation(D_PRIME, -2.0f, delay); }
+// void rotationL(int delay) { genericRotation(L, 2.0f, delay); }
+// void rotationLP(int delay) { genericRotation(L_PRIME, -2.0f, delay); }
+// void rotationR(int delay) { genericRotation(R, -2.0f, delay); }
+// void rotationRP(int delay) { genericRotation(R_PRIME, 2.0f, delay); }
+
+void rotationF(int delay) {
+    if (animationActive != NONE && animationActive != F) {
+        glutTimerFunc((16 * delay), rotationF, 0);
         return;
     }
-    rotationAngle += angleIncrement;
-    animationActive = move;
-    bool isComplete = (angleIncrement > 0) ? rotationAngle >= 90.0f : rotationAngle <= -90.0f;
-
-    if (isComplete) {
+    rotationAngle -= 2.0f;
+    animationActive = F;
+    if (rotationAngle <= -90.0f) {
         rotationAngle = 0.0f;
         glutPostRedisplay();
         animationActive = NONE;
-        updateState(move);
+        updateState(F);
         return;
     }
-
     glutPostRedisplay();
-    rotationCallback = std::bind(genericRotation, move, angleIncrement, 1);
-    glutTimerFunc(16, timerWrapper, 0);
+    glutTimerFunc(16, rotationF, 0);
 }
 
-void rotationF(int delay) { genericRotation(F, -2.0f, delay); }
-void rotationFP(int delay) { genericRotation(F_PRIME, 2.0f, delay); }
-void rotationB(int delay) { genericRotation(B, 2.0f, delay); }
-void rotationBP(int delay) { genericRotation(B_PRIME, -2.0f, delay); }
-void rotationU(int delay) { genericRotation(U, -2.0f, delay); }
-void rotationUP(int delay) { genericRotation(U_PRIME, 2.0f, delay); }
-void rotationD(int delay) { genericRotation(D, 2.0f, delay); }
-void rotationDP(int delay) { genericRotation(D_PRIME, -2.0f, delay); }
-void rotationL(int delay) { genericRotation(L, 2.0f, delay); }
-void rotationLP(int delay) { genericRotation(L_PRIME, -2.0f, delay); }
-void rotationR(int delay) { genericRotation(R, -2.0f, delay); }
-void rotationRP(int delay) { genericRotation(R_PRIME, 2.0f, delay); }
+void rotationFP(int value) {
+    if (animationActive != NONE && animationActive != F_PRIME) {
+        glutTimerFunc(16, rotationFP, 0);
+        return;
+    }
+    rotationAngle += 2.0f;
+    animationActive = F_PRIME;
+    if (rotationAngle >= 90.0f) {
+        rotationAngle = 0.0f;
+        glutPostRedisplay();
+        animationActive = NONE;
+        updateState(F_PRIME);
+        return;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(16, rotationFP, 0);
+}
+
+
+void rotationB(int delay) {
+    if (animationActive != NONE && animationActive != B) {
+        glutTimerFunc((16 * delay), rotationB, 0);
+        return;
+    }
+    rotationAngle += 2.0f;
+    animationActive = B;
+    if (rotationAngle >= 90.0f) {
+        rotationAngle = 0.0f;
+        glutPostRedisplay();
+        animationActive = NONE;
+        updateState(B);
+        return;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(16, rotationB, 0);
+}
+
+void rotationBP(int value) {
+    if (animationActive != NONE && animationActive != B_PRIME) {
+        glutTimerFunc(16, rotationBP, 0);
+        return;
+    }
+    rotationAngle -= 2.0f;
+    animationActive = B_PRIME;
+    if (rotationAngle <= -90.0f) {
+        rotationAngle = 0.0f;
+        glutPostRedisplay();
+        animationActive = NONE;
+        updateState(B_PRIME);
+        return;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(16, rotationBP, 0);
+}
+
+void rotationU(int value) {
+    if (animationActive != NONE && animationActive != U) {
+        glutTimerFunc(16, rotationU, 0);
+        return;
+    }
+    rotationAngle -= 2.0f;
+    animationActive = U;
+    if (rotationAngle <= -90.0f) {
+        rotationAngle = 0.0f;
+        glutPostRedisplay();
+        animationActive = NONE;
+        updateState(U);
+        return;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(16, rotationU, 0);
+}
+
+void rotationUP(int value) {
+    if (animationActive != NONE && animationActive != U_PRIME) {
+        glutTimerFunc(16, rotationUP, 0);
+        return;
+    }
+    rotationAngle += 2.0f;
+    animationActive = U_PRIME;
+    if (rotationAngle >= 90.0f) {
+        rotationAngle = 0.0f;
+        glutPostRedisplay();
+        animationActive = NONE;
+        updateState(U_PRIME);
+        return;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(16, rotationUP, 0);
+}
+
+void rotationD(int value) {
+    if (animationActive != NONE && animationActive != D) {
+        glutTimerFunc(16, rotationD, 0);
+        return;
+    }
+    rotationAngle += 2.0f;
+    animationActive = D;
+    if (rotationAngle >= 90.0f) {
+        rotationAngle = 0.0f;
+        glutPostRedisplay();
+        animationActive = NONE;
+        updateState(D);
+        return;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(16, rotationD, 0);
+}
+
+void rotationDP(int value) {
+    if (animationActive != NONE && animationActive != D_PRIME) {
+        glutTimerFunc(16, rotationDP, 0);
+        return;
+    }
+    rotationAngle -= 2.0f;
+    animationActive = D_PRIME;
+    if (rotationAngle <= -90.0f) {
+        rotationAngle = 0.0f;
+        glutPostRedisplay();
+        animationActive = NONE;
+        updateState(D_PRIME);
+        return;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(16, rotationDP, 0);
+}
+
+void rotationL(int value) {
+    if (animationActive != NONE && animationActive != L) {
+        glutTimerFunc(16, rotationL, 0);
+        return;
+    }
+    rotationAngle += 2.0f;
+    animationActive = L;
+    if (rotationAngle >= 90.0f) {
+        rotationAngle = 0.0f;
+        glutPostRedisplay();
+        animationActive = NONE;
+        updateState(L);
+        return;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(16, rotationL, 0);
+}
+
+void rotationLP(int value) {
+    if (animationActive != NONE && animationActive != L_PRIME) {
+        glutTimerFunc(16, rotationLP, 0);
+        return;
+    }
+    rotationAngle -= 2.0f;
+    animationActive = L_PRIME;
+    if (rotationAngle <= -90.0f) {
+        rotationAngle = 0.0f;
+        glutPostRedisplay();
+        animationActive = NONE;
+        updateState(L_PRIME);
+        return;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(16, rotationLP, 0);
+}
+
+void rotationR(int value) {
+    if (animationActive != NONE && animationActive != R) {
+        glutTimerFunc(16, rotationR, 0);
+        return;
+    }
+    rotationAngle -= 2.0f;
+    animationActive = R;
+    if (rotationAngle <= -90.0f) {
+        rotationAngle = 0.0f;
+        glutPostRedisplay();
+        animationActive = NONE;
+        updateState(R);
+        return;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(16, rotationR, 0);
+}
+
+void rotationRP(int value) {
+    if (animationActive != NONE && animationActive != R_PRIME) {
+        glutTimerFunc(16, rotationRP, 0);
+        return;
+    }
+    rotationAngle += 2.0f;
+    animationActive = R_PRIME;
+    if (rotationAngle >= 90.0f) {
+        rotationAngle = 0.0f;
+        glutPostRedisplay();
+        animationActive = NONE;
+        updateState(R_PRIME);
+        return;
+    }
+    glutPostRedisplay();
+    glutTimerFunc(16, rotationRP, 0);
+}
 
 void delay(float secs)
 {
@@ -93,92 +311,90 @@ void delay(float secs)
 	while((clock()/CLOCKS_PER_SEC) < end);
 }
 
-void    parsing(char *moves) {
+void    parsing(std::string moves) {
     int i = 0;
     int delay = 900;
     int moveNum = 0;
     while (moves[i] != '\0') {
-        if (moves[i] == ' ') {
+        if (moves[i] == ' ')
             i++;
-            continue;
-        }
+        auto timerFunc = [&](void (*func)(int)) {
+            glutTimerFunc(delay * moveNum++, func, 0);
+        };
         if (moves[i] == 'F') {
             if (moves[i + 1] && moves[i + 1] == '2') {
-                glutTimerFunc((delay * moveNum++), rotationF, 0);
-                glutTimerFunc((delay * moveNum++), rotationF, 0);
-                i += 2;
-            } else if (moves[i + 1] && moves[i + 1] == '\'') {
-                glutTimerFunc((delay * moveNum++), rotationFP, 0);
-                i += 2;
-            } else {
-                glutTimerFunc((delay * moveNum++), rotationF, 0);
+                timerFunc(rotationF);
+                timerFunc(rotationF);
                 i++;
-            }
+            } else if (moves[i + 1] && moves[i + 1] == '\'') {
+                timerFunc(rotationFP);
+                i++;
+            } else
+                timerFunc(rotationF);
+            i++;
         }
         else if (moves[i] == 'B') {
             if (moves[i + 1] && moves[i + 1] == '2') {
-                glutTimerFunc((delay * moveNum++), rotationB, 0);
-                glutTimerFunc((delay * moveNum++), rotationB, 0);
-                i += 2;
-            } else if (moves[i + 1] && moves[i + 1] == '\'') {
-                glutTimerFunc((delay * moveNum++), rotationBP, 0);
-                i += 2;
-            } else {
-                glutTimerFunc((delay * moveNum++), rotationB, 0);
+                timerFunc(rotationB);
+                timerFunc(rotationB);
                 i++;
-            }
+            } else if (moves[i + 1] && moves[i + 1] == '\'') {
+                timerFunc(rotationBP);
+                i++;
+            } else
+                timerFunc(rotationB);
+            i++;
         }
         else if (moves[i] == 'U') {
             if (moves[i + 1] && moves[i + 1] == '2') {
-                glutTimerFunc((delay * moveNum++), rotationU, 0);
-                glutTimerFunc((delay * moveNum++), rotationU, 0);
-                i += 2;
-            } else if (moves[i + 1] && moves[i + 1] == '\'') {
-                glutTimerFunc((delay * moveNum++), rotationUP, 0);
-                i += 2;
-            } else {
-                glutTimerFunc((delay * moveNum++), rotationU, 0);
+                timerFunc(rotationU);
+                timerFunc(rotationU);
                 i++;
-            }
+            } else if (moves[i + 1] && moves[i + 1] == '\'') {
+                timerFunc(rotationUP);
+                i++;
+            } else
+                timerFunc(rotationU);
+            i++;
         }
         else if (moves[i] == 'D') {
             if (moves[i + 1] && moves[i + 1] == '2') {
-                glutTimerFunc((delay * moveNum++), rotationD, 0);
-                glutTimerFunc((delay * moveNum++), rotationD, 0);
-                i += 2;
-            } else if (moves[i + 1] && moves[i + 1] == '\'') {
-                glutTimerFunc((delay * moveNum++), rotationDP, 0);
-                i += 2;
-            } else {
-                glutTimerFunc((delay * moveNum++), rotationD, 0);
+                timerFunc(rotationD);
+                timerFunc(rotationD);
                 i++;
-            }
+            } else if (moves[i + 1] && moves[i + 1] == '\'') {
+                timerFunc(rotationDP);
+                i++;
+            } else
+                timerFunc(rotationD);
+            i++;
         }
         else if (moves[i] == 'L') {
             if (moves[i + 1] && moves[i + 1] == '2') {
-                glutTimerFunc((delay * moveNum++), rotationL, 0);
-                glutTimerFunc((delay * moveNum++), rotationL, 0);
-                i += 2;
-            } else if (moves[i + 1] && moves[i + 1] == '\'') {
-                glutTimerFunc((delay * moveNum++), rotationLP, 0);
-                i += 2;
-            } else {
-                glutTimerFunc((delay * moveNum++), rotationL, 0);
+                timerFunc(rotationL);
+                timerFunc(rotationL);
                 i++;
-            }
+            } else if (moves[i + 1] && moves[i + 1] == '\'') {
+                timerFunc(rotationLP);
+                i++;
+            } else
+                timerFunc(rotationL);
+            i++;
         }
         else if (moves[i] == 'R') {
             if (moves[i + 1] && moves[i + 1] == '2') {
-                glutTimerFunc((delay * moveNum++), rotationR, 0);
-                glutTimerFunc((delay * moveNum++), rotationR, 0);
-                i += 2;
-            } else if (moves[i + 1] && moves[i + 1] == '\'') {
-                glutTimerFunc((delay * moveNum++), rotationRP, 0);
-                i += 2;
-            } else {
-                glutTimerFunc((delay * moveNum++), rotationR, 0);
+                timerFunc(rotationR);
+                timerFunc(rotationR);
                 i++;
-            }
+            } else if (moves[i + 1] && moves[i + 1] == '\'') {
+                timerFunc(rotationRP);
+                i++;
+            } else
+                timerFunc(rotationR);
+            i++;
+        }
+        else {
+            i++;
         }
     }
 }
@@ -356,10 +572,29 @@ void SpecialInput(int key, int x, int y) {
     glutPostRedisplay();
 }
 
+void captureUserInput(const std::string& prompt, std::function<void(const std::string&)> callback) {
+    std::string input;
+    std::cout << prompt;
+    std::getline(std::cin, input);
+    callback(input);
+}
+
+void menuHandler(int option) {
+    switch (option) {
+        case 1:
+            captureUserInput("Enter your scramble: ", [](const std::string& input) {
+                std::cout << "Processing..." << std::endl;
+                parsing(input);
+            });
+            break;
+    }
+}
+
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(550, 750);
+    glutInitWindowPosition(1100, 200);
     glutCreateWindow("Rubik's visualizer");
     glEnable(GL_DEPTH_TEST);
     glutDisplayFunc(display);
@@ -367,11 +602,12 @@ int main(int argc, char** argv) {
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(SpecialInput);
 
-    if (argc != 2)
-        std::cout << "Enter moves sequence" << std::endl;
-    else {
+    glutCreateMenu(menuHandler);
+    glutAddMenuEntry("enter terminal input", 1);
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
+
+    if (argc == 2)
         parsing(argv[1]);
-    }
     glutMainLoop();
     return 0;
 }

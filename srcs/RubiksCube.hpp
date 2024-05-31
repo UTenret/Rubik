@@ -170,9 +170,9 @@ class RubiksCube {
     void printState() const;
     void scramble(const std::string& moves);
 
-	private:
-
 	std::string state;
+
+	private:
 
     void moveU();
     void moveUPrime();

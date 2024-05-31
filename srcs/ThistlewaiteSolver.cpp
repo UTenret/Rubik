@@ -1,58 +1,99 @@
 #include "ThistlewaiteSolver.hpp"
+#include "Group0.hpp"
+#include "Group1.hpp"
+#include "Group2.hpp"
+#include "Group3.hpp"
 
 // can improve by directly identifying which group this belongs to and not loading unecessary
 // luts or useless functions calls, same thing if group0 solves the cube for example
 // + symmetry
 
-void ThistlewaiteSolver::solveCube() {
-	std::vector<std::vector<std::string>> solution(4);
+// void ThistlewaiteSolver::solveCube() {
+// 	std::vector<std::vector<std::string>> solution(4);
 
-	table.setLUT(0, table.loadLUTFromFile("Database/Thistlewaite/G0.txt", G0_N_SOLUTIONS));
-	table.setLUT(1, table.loadLUTFromFile("Database/Thistlewaite/G1.txt", G1_N_SOLUTIONS));
-	table.setLUT(2, table.loadLUTFromFile("Database/Thistlewaite/G2.txt", G2_N_SOLUTIONS));
-	table.setLUT(3, table.loadLUTFromFile("Database/Thistlewaite/G3.txt", G3_N_SOLUTIONS));
+// 	table.setLUT(0, table.loadLUTFromFile("Database/Thistlewaite/G0.txt", G0_N_SOLUTIONS));
+// 	table.setLUT(1, table.loadLUTFromFile("Database/Thistlewaite/G1.txt", G1_N_SOLUTIONS));
+// 	table.setLUT(2, table.loadLUTFromFile("Database/Thistlewaite/G2.txt", G2_N_SOLUTIONS));
+// 	table.setLUT(3, table.loadLUTFromFile("Database/Thistlewaite/G3.txt", G3_N_SOLUTIONS));
 
-	iterativeSolve(table.getLUT(0),
-					group0Moves,
-					  RubiksCube::calculateStateIndexG0,
-					   solution[0]);
+// 	iterativeSolve(table.getLUT(0),
+// 					group0Moves,
+// 					  RubiksCube::calculateStateIndexG0,
+// 					   solution[0]);
 	
-	iterativeSolve(table.getLUT(1),
-					group1Moves,
-					  RubiksCube::calculateStateIndexG1,
-					   solution[1]);
+// 	iterativeSolve(table.getLUT(1),
+// 					group1Moves,
+// 					  RubiksCube::calculateStateIndexG1,
+// 					   solution[1]);
 
-	iterativeSolve(table.getLUT(2),
-					group2Moves,
-					  RubiksCube::calculateStateIndexG2,
-					   solution[2]);
+// 	iterativeSolve(table.getLUT(2),
+// 					group2Moves,
+// 					  RubiksCube::calculateStateIndexG2,
+// 					   solution[2]);
 
-	iterativeSolve(table.getLUT(3),
-					group3Moves,
-					  RubiksCube::calculateStateIndexG3,
-					   solution[3]);
-	for (int i = 0; i < solution.size(); i++) {
-		std::string group = "G" + std::to_string(i) + "-G" + std::to_string(i+1);
-		if (!solution[i].empty()) {
-			std::cout << "Solution found for " << group << " transition: ";
-			for (const auto& move : solution[i]) std::cout << move << " ";
-			std::cout << std::endl;
-			// std::cout << std::endl << "After " << group << std::endl;
-			// cube.printCube(); if I print here it will always be solved as cube has been solved
-			// still need group visu but need to think about it
-		}
-		else std::cout << "Cube already solved for " << group << std::endl;
-	}
-	int totalMoves = 0;
-	std::cout << "Cube has been solved, full solution: ";
-	for (const auto& groupSolution : solution) {
-		totalMoves += groupSolution.size();
-		for (const auto& move : groupSolution) fullSolution += move + " ";
-	}
-	std::cout << fullSolution << std::endl;
-	std::cout << "Number of moves: " << totalMoves << std::endl;
-	// WE NEED TO PRUNE MOVES !!! R L L2 R2 is prunable into R' L'
-	cube.printCube();
+// 	iterativeSolve(table.getLUT(3),
+// 					group3Moves,
+// 					  RubiksCube::calculateStateIndexG3,
+// 					   solution[3]);
+// 	for (int i = 0; i < solution.size(); i++) {
+// 		std::string group = "G" + std::to_string(i) + "-G" + std::to_string(i+1);
+// 		if (!solution[i].empty()) {
+// 			std::cout << "Solution found for " << group << " transition: ";
+// 			for (const auto& move : solution[i]) std::cout << move << " ";
+// 			std::cout << std::endl;
+// 			// std::cout << std::endl << "After " << group << std::endl;
+// 			// cube.printCube(); if I print here it will always be solved as cube has been solved
+// 			// still need group visu but need to think about it
+// 		}
+// 		else std::cout << "Cube already solved for " << group << std::endl;
+// 	}
+// 	int totalMoves = 0;
+// 	std::cout << "Cube has been solved, full solution: ";
+// 	for (const auto& groupSolution : solution) {
+// 		totalMoves += groupSolution.size();
+// 		for (const auto& move : groupSolution) fullSolution += move + " ";
+// 	}
+// 	std::cout << fullSolution << std::endl;
+// 	std::cout << "Number of moves: " << totalMoves << std::endl;
+// 	// WE NEED TO PRUNE MOVES !!! R L L2 R2 is prunable into R' L'
+// 	cube.printCube();
+// }
+
+void ThistlewaiteSolver::solveCube() {
+    std::vector<std::vector<std::string>> solution(4);
+    std::string fullSolution;
+
+    table.setLUT(0, table.loadLUTFromFile("Database/Thistlewaite/G0.txt", G0_N_SOLUTIONS));
+    table.setLUT(1, table.loadLUTFromFile("Database/Thistlewaite/G1.txt", G1_N_SOLUTIONS));
+    table.setLUT(2, table.loadLUTFromFile("Database/Thistlewaite/G2.txt", G2_N_SOLUTIONS));
+    table.setLUT(3, table.loadLUTFromFile("Database/Thistlewaite/G3.txt", G3_N_SOLUTIONS));
+
+    iterativeSolve(table.getLUT(0), Group0::moves, Group0::calculateStateIndex, solution[0]);
+    iterativeSolve(table.getLUT(1), Group1::moves, Group1::calculateStateIndex, solution[1]);
+    iterativeSolve(table.getLUT(2), Group2::moves, Group2::calculateStateIndex, solution[2]);
+    iterativeSolve(table.getLUT(3), Group3::moves, Group3::calculateStateIndex, solution[3]);
+
+    for (int i = 0; i < solution.size(); i++) {
+        std::string group = "G" + std::to_string(i) + "-G" + std::to_string(i + 1);
+        if (!solution[i].empty()) {
+            std::cout << "Solution found for " << group << " transition: ";
+            for (const auto& move : solution[i]) std::cout << move << " ";
+            std::cout << std::endl;
+        } else {
+            std::cout << "Cube already solved for " << group << std::endl;
+        }
+    }
+
+    int totalMoves = 0;
+    std::cout << "Cube has been solved, full solution: ";
+    for (const auto& groupSolution : solution) {
+        totalMoves += groupSolution.size();
+        for (const auto& move : groupSolution) fullSolution += move + " ";
+    }
+    std::cout << fullSolution << std::endl;
+    std::cout << "Number of moves: " << totalMoves << std::endl;
+    // WE NEED TO PRUNE MOVES !!! R L L2 R2 is prunable into R' L'
+    cube.printCube();
 }
 
 bool ThistlewaiteSolver::isMovePrunable(const std::string& lastMove, const std::string& currentMove) {

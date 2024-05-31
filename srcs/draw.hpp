@@ -24,6 +24,6 @@ const std::vector<int> rightFaceIndices = {9, 10, 11, 12, 13, 14, 15, 16, 17, 2,
 
 extern std::string CubeState;
 
-void drawCubie(int i, const std::string& CubeState);
-void drawFace(int animation, const std::string& CubeState);
-void drawCube(int animation, const std::string& CubeState);
+void drawCubie(int i);
+void drawFace(int animation);
+void drawCube(int animation);

@@ -18,7 +18,7 @@ void    colorize(int index) {
         glColor3fv(orange);
 }
 
-void drawCubie(int index, const std::string& CubeState) {
+void drawCubie(int index) {
     static const float initialPositions[54][3] = {
         {-1.0, 1.0, 1.0}, {0.0, 1.0, 1.0}, {1.0, 1.0, 1.0},
         {-1.0, 0.0, 1.0},  {0.0, 0.0, 1.0},  {1.0, 0.0, 1.0},
@@ -133,7 +133,7 @@ bool inRightFace(int i) {
     return inFace(rightFaceIndices, i);
 }
 
-void drawCube(int animat, const std::string& CubeState) {
+void drawCube(int animat) {
     for (int i = 0; i < 54; ++i) {
         if (((animat == F || animat == F_PRIME) && inFrontFace(i)) ||
         ((animat == U || animat == U_PRIME) && inUpFace(i)) ||
@@ -142,11 +142,11 @@ void drawCube(int animat, const std::string& CubeState) {
         ((animat == R || animat == R_PRIME) && inRightFace(i)) ||
         ((animat == B || animat == B_PRIME) && inBackFace(i)))
             continue;
-        drawCubie(i, CubeState);
+        drawCubie(i);
     }
 }
 
-void drawFace(int animation, const std::string& CubeState) {
+void drawFace(int animation) {
     if (animation == NONE)
         return;
 
@@ -185,6 +185,6 @@ void drawFace(int animation, const std::string& CubeState) {
         return;
 
     for (int i : *faceIndices) {
-        drawCubie(i, CubeState);
+        drawCubie(i);
     }
 }

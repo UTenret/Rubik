@@ -47,7 +47,7 @@ void display() {
     std::string line[lines];
     glColor3f(1.0f, 1.0f, 1.0f);
     for (int i = 0; i < lines; i++) {
-        std::string sub_text = argv.substr(i * 30, 30);
+        std::string sub_text = argv.substr(i * 40, 40);
         line[i] = sub_text;
 
         glRasterPos2f(0.0f, 3.2f - i * 0.2f);
@@ -56,16 +56,13 @@ void display() {
     }
     std::string info = "x: " + std::to_string(cameraX) + 
     " | y: " + std::to_string(cameraY) + " | z: " + std::to_string(cameraZ);
-    glRasterPos2f(0.0f, 3.4f);
+    glRasterPos2f(0.0f, 3.5f);
     for (char c : info) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
 
-    info = "use WASD to inspect the cube";
-    glRasterPos2f(0.0f, 3.6f);
-    for (char c : info) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
-    info = "use F1 to solve the cube";
+    info = "use WASD or arrows to inspect the cube";
     glRasterPos2f(0.0f, 3.8f);
     for (char c : info) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
-    info = "use F2 to adjust the coordinates";
+    info = "use F1 to solve the cube";
     glRasterPos2f(0.0f, 4.0f);
     for (char c : info) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
 
@@ -299,12 +296,6 @@ void rotationRP(int value) {
     }
     glutPostRedisplay();
     glutTimerFunc(16, rotationRP, 0);
-}
-
-void delay(float secs)
-{
-	float end = clock()/CLOCKS_PER_SEC + secs;
-	while((clock()/CLOCKS_PER_SEC) < end);
 }
 
 void    parsing(std::string moves) {
@@ -552,6 +543,13 @@ void keyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
+void captureUserInput(const std::string& prompt, std::function<void(const std::string&)> callback) {
+    std::string input;
+    std::cout << prompt;
+    std::getline(std::cin, input);
+    callback(input);
+}
+
 void SpecialInput(int key, int x, int y) {
     (void)x;
     (void)y;
@@ -572,33 +570,18 @@ void SpecialInput(int key, int x, int y) {
             parsing(solution);
             break;
         case GLUT_KEY_F2:
+            captureUserInput("Enter your scramble: ", [](const std::string& input) {
+                std::cout << "Processing..." << std::endl;
+                parsing(input);
+            });
+            break;
+        case GLUT_KEY_F3:
             cameraX = 7.0f;
             cameraY = 7.0f;
             cameraZ = 7.0f;
             break;
     }
     glutPostRedisplay();
-}
-
-void captureUserInput(const std::string& prompt, std::function<void(const std::string&)> callback) {
-    std::string input;
-    std::cout << prompt;
-    std::getline(std::cin, input);
-    callback(input);
-}
-
-void menuHandler(int option) {
-    switch (option) {
-        case 1:
-            parsing(solution);
-            break;
-        case 2:
-            captureUserInput("Enter your scramble: ", [](const std::string& input) {
-                std::cout << "Processing..." << std::endl;
-                parsing(input);
-            });
-            break;
-    }
 }
 
 int visualizer(int ac, char** av, std::string fullSolution) {
@@ -614,15 +597,10 @@ int visualizer(int ac, char** av, std::string fullSolution) {
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(SpecialInput);
 
-    glutCreateMenu(menuHandler);
-    glutAddMenuEntry("Initiate solving", 1);
-    glutAddMenuEntry("Enter scramble", 2);
-    glutAttachMenu(GLUT_RIGHT_BUTTON);
-
     if (ac == 2) {
         std::string prefix = "scramble: ";
         argv = prefix + av[1];
-        lines = (argv.size() / 30) + 1;
+        lines = (argv.size() / 40) + 1;
         parsing(av[1]);
     }
     glutMainLoop();

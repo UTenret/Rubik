@@ -49,19 +49,6 @@ void PruningTable::bfsGenerateLUT(std::vector<int>& lut,
 }
 
 void PruningTable::generateLUT() {
-	const std::vector<std::string> group0Moves = {
-    	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'"
-	};
-	const std::vector<std::string> group1Moves = {
-		"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"
-	};
-	const std::vector<std::string> group2Moves = {
-		"U", "U'", "D", "D'", "R2", "L2", "F2", "B2"
-	};
-	const std::vector<std::string> group3Moves = {
-		"U2", "D2", "R2", "L2", "F2", "B2"
-	};
-
 	bfsGenerateLUT(luts[0], RubiksCube::calculateStateIndexG0, group0Moves);
 	bfsGenerateLUT(luts[1], RubiksCube::calculateStateIndexG1, group1Moves);
 	bfsGenerateLUT(luts[2], RubiksCube::calculateStateIndexG2, group2Moves);

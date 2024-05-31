@@ -4,11 +4,11 @@
 #include "RubiksCube.hpp"
 #include "PruningTable.hpp"
 
-class Solver {
+class ThistlewaiteSolver {
 public:
 	typedef int (*CalculateIndexFunc)(const RubiksCube&);
 
-	explicit Solver(const RubiksCube& cube, const PruningTable& table) : cube(cube), table(table) {}
+	explicit ThistlewaiteSolver(const RubiksCube& cube, const PruningTable& table) : cube(cube), table(table) {}
 
 	bool iddfs(int depth, int maxDepth, std::vector<std::string>& solution, 
            std::function<bool ()> isSolved,

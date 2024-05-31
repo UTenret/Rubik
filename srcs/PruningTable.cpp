@@ -1,14 +1,11 @@
 #include "PruningTable.hpp"
 
-// PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts[0](2048, -1), luts[1](1082565, -1) {}
-// PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts(4) {}
 PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts{
           std::vector<int>(G0_N_SOLUTIONS, -1),
           std::vector<int>(G1_N_SOLUTIONS, -1),
           std::vector<int>(G2_N_SOLUTIONS, -1),
           std::vector<int>(G3_N_SOLUTIONS, -1)
-      }
-														{}
+      } {}
 
 /*
 the queue holds cube state as a string and the distance to solved
@@ -52,19 +49,6 @@ void PruningTable::bfsGenerateLUT(std::vector<int>& lut,
 }
 
 void PruningTable::generateLUT() {
-	const std::vector<std::string> group0Moves = {
-    	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'"
-	};
-	const std::vector<std::string> group1Moves = {
-		"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"
-	};
-	const std::vector<std::string> group2Moves = {
-		"U", "U'", "D", "D'", "R2", "L2", "F2", "B2"
-	};
-	const std::vector<std::string> group3Moves = {
-		"U2", "D2", "R2", "L2", "F2", "B2"
-	};
-
 	bfsGenerateLUT(luts[0], RubiksCube::calculateStateIndexG0, group0Moves);
 	bfsGenerateLUT(luts[1], RubiksCube::calculateStateIndexG1, group1Moves);
 	bfsGenerateLUT(luts[2], RubiksCube::calculateStateIndexG2, group2Moves);

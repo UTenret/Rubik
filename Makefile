@@ -14,7 +14,7 @@ PATH_SRCS		+= srcs/
 SRCS			+= main.cpp
 SRCS			+= RubiksCube.cpp
 SRCS			+= PruningTable.cpp
-SRCS			+= Solver.cpp
+SRCS			+= ThistlewaiteSolver.cpp
 
 vpath %.cpp $(PATH_SRCS)
 vpath %.hpp $(PATH_SRCS)
@@ -30,7 +30,7 @@ OBJS			= $(patsubst %.cpp, $(PATH_OBJS)/%.o, $(SRCS))
 
 HEADER			+= RubiksCube.hpp
 HEADER			+= PruningTable.hpp
-HEADER			+= Solver.hpp
+HEADER			+= ThistlewaiteSolver.hpp
 HEADER			+= math.hpp
 
 ###########################################################

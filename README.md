@@ -1,1 +1,3 @@
-This is the 42 project Rubik
+##A Rubiks Cube ThistlewaiteSolver made with Thistlewaithe's algorithm using databases.
+
+

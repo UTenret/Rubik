@@ -1,58 +1,11 @@
-#include "Solver.hpp"
-
-bool Solver::iddfs(int depth, int maxDepth, std::vector<std::string>& solution, 
-			std::function<bool()> isSolved,
-			 const std::vector<std::string>& allowedMoves) {
-	if(isSolved()){
-		cube.printCube();
-		std::cout << "FULL SOLUTION :";
-		for (const auto& move : solution) {
-			std::cout << move << " ";
-		}
-		std::cout << std::endl;
-		return true;
-	}
-
-	if(depth == maxDepth) {
-		// std::cout << "Max depth reached without a solution" << std::endl;
-		return false;
-	}
-
-	for (const auto& moveStr : allowedMoves) {
-		if (!solution.empty() && isMovePrunable(solution.back(), moveStr)) {
-            continue;
-        }
-		// moveFunc();
-		cube.applyMove(moveStr);
-		solution.push_back(moveStr);
-		if (iddfs(depth + 1, maxDepth, solution, isSolved, allowedMoves)) {
-			return true;
-		}
-		cube.applyInverseMove(moveStr); 
-		solution.pop_back();
-	}
-	return false;
-}
+#include "ThistlewaiteSolver.hpp"
 
 // can improve by directly identifying which group this belongs to and not loading unecessary
 // luts or useless functions calls, same thing if group0 solves the cube for example
 // + symmetry
 
-void Solver::solveCube() {
+void ThistlewaiteSolver::solveCube() {
 	std::vector<std::vector<std::string>> solution(4);
-
-	const std::vector<std::string> group0Moves = {
-    	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'"
-	};
-    const std::vector<std::string> group1Moves = {
-		"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"
-	};
-	const std::vector<std::string> group2Moves = { // no F, F', B, B', L, L', R, R'
-		"U", "U'", "D", "D'", "L2", "R2", "F2", "B2"
-    };
-	const std::vector<std::string> group3Moves = { // only half turn moves
-		"U2", "D2", "L2", "R2", "F2", "B2"
-    };
 
 	table.setLUT(0, table.loadLUTFromFile("Database/Thistlewaite/G0.txt", G0_N_SOLUTIONS));
 	table.setLUT(1, table.loadLUTFromFile("Database/Thistlewaite/G1.txt", G1_N_SOLUTIONS));
@@ -102,7 +55,7 @@ void Solver::solveCube() {
     // solveGroup([this]() { return cube.isSolved(); }, group3Moves, solution);
 }
 
-bool Solver::isMovePrunable(const std::string& lastMove, const std::string& currentMove) {
+bool ThistlewaiteSolver::isMovePrunable(const std::string& lastMove, const std::string& currentMove) {
     if (lastMove.front() == currentMove.front()) {
         if ((lastMove == "U" && currentMove == "U'") || (lastMove == "U'" && currentMove == "U") ||
             (lastMove == "R" && currentMove == "R'") || (lastMove == "R'" && currentMove == "R") ||
@@ -119,14 +72,7 @@ bool Solver::isMovePrunable(const std::string& lastMove, const std::string& curr
     return false;
 }
 
-void Solver::solveGroup(std::function<bool()> groupSolveCondition, const std::vector<std::string>& moves, std::vector<std::string> solution) {
-    for (int i = 1; i < MAX_DEPTH; i++) {
-        if (iddfs(0, i, solution, groupSolveCondition, moves))
-            break;
-    }
-}
-
-void Solver::iterativeSolve(
+void ThistlewaiteSolver::iterativeSolve(
     const std::vector<int>& lut,
     const std::vector<std::string>& moves,
     CalculateIndexFunc calculateIndex,

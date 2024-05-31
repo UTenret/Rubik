@@ -4,11 +4,11 @@
 #include "RubiksCube.hpp"
 #include "PruningTable.hpp"
 
-class Solver {
+class ThistlewaiteSolver {
 public:
 	typedef int (*CalculateIndexFunc)(const RubiksCube&);
 
-	explicit Solver(const RubiksCube& cube, const PruningTable& table) : cube(cube), table(table) {}
+	explicit ThistlewaiteSolver(const RubiksCube& cube, const PruningTable& table) : cube(cube), table(table) {}
 
 	bool iddfs(int depth, int maxDepth, std::vector<std::string>& solution, 
            std::function<bool ()> isSolved,
@@ -21,24 +21,6 @@ public:
 		const std::vector<std::string>& moves,
 		CalculateIndexFunc calculateIndex,
 		std::vector<std::string>& solution
-	);
-
-	void iterativeSolveG1(
-    const std::vector<int>& lut,
-    const std::vector<std::string>& moves,
-    std::vector<std::string>& solution
-	);
-
-	void iterativeSolveG2(
-    const std::vector<int>& lut,
-    const std::vector<std::string>& moves,
-    std::vector<std::string>& solution
-	);
-
-	void iterativeSolveG3(
-    const std::vector<int>& lut,
-    const std::vector<std::string>& moves,
-    std::vector<std::string>& solution
 	);
 
 	void solveGroup(std::function<bool()> groupSolveCondition, const std::vector<std::string>& moves,

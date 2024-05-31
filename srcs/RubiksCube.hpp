@@ -16,17 +16,23 @@
 #include <bitset>
 #include "math.hpp"
 
+constexpr int EDGE_COUNT = 12;
+constexpr int CORNER_COUNT = 8;
+constexpr int MAX_DEPTH = 16;
+constexpr int G0_N_SOLUTIONS = 2048;
+constexpr int G1_N_SOLUTIONS = 1082565;
+constexpr int G2_N_SOLUTIONS = 352800;
+constexpr int G3_N_SOLUTIONS = 663552;
+
 enum EdgePositions {
 	UB, UR, UF, UL,
 	DR, DF, DL, DB,
-	FR, FL, BR, BL,
-	EDGE_COUNT
+	FR, FL, BR, BL
 };
 
 enum CornerPositions {
     UBL, UBR, UFR, UFL,
-    DBL, DBR, DFR, DFL,
-    CORNER_COUNT
+    DBL, DBR, DFR, DFL
 };
 
 const int edgeIndices[EDGE_COUNT][2] = {
@@ -107,26 +113,23 @@ const int cornerIndices[CORNER_COUNT][3] = {
     {51, 26, 33},		// WGO || DBL			//T 1
 };
 
-#define MAX_DEPTH 26
-// #define MAX_DEPTH 3
-#define G0_N_SOLUTIONS 2048
-#define G1_N_SOLUTIONS 1082565
-#define G2_N_SOLUTIONS 352800
-#define G3_N_SOLUTIONS 663552
+	const std::vector<std::string> group0Moves = {
+    	"U", "U'", "F", "F'", "R", "R'", "D", "D'", "L", "L'", "B", "B'"
+	};
+	const std::vector<std::string> group1Moves = {
+		"U", "U'", "D", "D'", "R", "R'", "L", "L'", "F2", "B2"
+	};
+	const std::vector<std::string> group2Moves = {
+		"U", "U'", "D", "D'", "R2", "L2", "F2", "B2"
+	};
+	const std::vector<std::string> group3Moves = {
+		"U2", "D2", "R2", "L2", "F2", "B2"
+	};
 
 class RubiksCube {
 	public:
 	
-	// namespace ThistleWaite {
-        // static std::string encodeEdgeOrientationsG0(const std::string& cube);
-        // static int calculateStateIndexG0(const std::string& edgeOrientation);
-    // };
 
-	struct Corner {
-		char top;
-		char left;
-		char right;
-	};
 
 	std::string encodeEdgeOrientationsG0() const;
 	static int calculateStateIndexG0(const RubiksCube& cube);
@@ -166,12 +169,6 @@ class RubiksCube {
     void printCube() const;
     void printState() const;
     void scramble(const std::string& moves);
-
-	void calculateCornerTetradIndex() const;
-	static void IsCornerInCorrectTetrad(const RubiksCube& cube);
-
-	void CalculateCycles();
-
 
 	private:
 

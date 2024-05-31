@@ -1,5 +1,5 @@
 #include "RubiksCube.hpp"
-#include "Solver.hpp"
+#include "ThistlewaiteSolver.hpp"
 
 /*
  U
@@ -64,8 +64,8 @@ int main(int argc, char* argv[]) {
 	// cube.applyMove("R2");
 	// std::cout << "indexis: " << RubiksCube::calculateStateIndexG3(cube) << std::endl;
 	// exit(1);`
-	Solver			solver(cube, table);
-	solver.solveCube();
+	ThistlewaiteSolver			ThistlewaiteSolver(cube, table);
+	ThistlewaiteSolver.solveCube();
 
     return 0;
 }

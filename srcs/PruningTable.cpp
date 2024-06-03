@@ -11,11 +11,10 @@ PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts{
           std::vector<int>(G3_N_SOLUTIONS, -1)
       } {}
 
-/*
-the queue holds cube state as a string and the distance to solved
-visited holds the edges orientations because we dont care about anything else for G0->G1
-
-*/
+bool PruningTable::checkLUTFileExists(const std::string& filename) {
+    struct stat buffer;
+    return (stat(filename.c_str(), &buffer) == 0);
+}
 
 void PruningTable::bfsGenerateLUT(std::vector<int>& lut,
 									CalculateIndexFunc calculateIndex,
@@ -62,6 +61,29 @@ void PruningTable::generateLUT() {
     saveLUTToFile(luts[1], "Database/Thistlewaite/G1.txt");
     saveLUTToFile(luts[2], "Database/Thistlewaite/G2.txt");
     saveLUTToFile(luts[3], "Database/Thistlewaite/G3.txt");
+}
+
+void PruningTable::generateMissingLUTs() {
+    if (!checkLUTFileExists("Database/Thistlewaite/G0.txt")) {
+        std::cout << "Generating LUT for Group 0...\n";
+        bfsGenerateLUT(luts[0], Group0::calculateStateIndex, Group0::moves);
+        saveLUTToFile(luts[0], "Database/Thistlewaite/G0.txt");
+    }
+    if (!checkLUTFileExists("Database/Thistlewaite/G1.txt")) {
+        std::cout << "Generating LUT for Group 1...\n";
+        bfsGenerateLUT(luts[1], Group1::calculateStateIndex, Group1::moves);
+        saveLUTToFile(luts[1], "Database/Thistlewaite/G1.txt");
+    }
+    if (!checkLUTFileExists("Database/Thistlewaite/G2.txt")) {
+        std::cout << "Generating LUT for Group 2...\n";
+        bfsGenerateLUT(luts[2], Group2::calculateStateIndex, Group2::moves);
+        saveLUTToFile(luts[2], "Database/Thistlewaite/G2.txt");
+    }
+    if (!checkLUTFileExists("Database/Thistlewaite/G3.txt")) {
+        std::cout << "Generating LUT for Group 3...\n";
+        bfsGenerateLUT(luts[3], Group3::calculateStateIndex, Group3::moves);
+        saveLUTToFile(luts[3], "Database/Thistlewaite/G3.txt");
+    }
 }
 
 std::vector<int> PruningTable::loadLUTFromFile(const std::string& filename, int size) {

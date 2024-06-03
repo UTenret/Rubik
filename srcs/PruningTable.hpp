@@ -6,6 +6,7 @@
 #include <set>
 #include <cstring>
 #include <functional>
+#include <sys/stat.h>
 #include "RubiksCube.hpp"
 
 
@@ -18,12 +19,13 @@ public:
 	void bfsGenerateLUT(std::vector<int>& lut,
 						CalculateIndexFunc calculateIndex,
 						const std::vector<std::string>& moves);
-
+    void generateMissingLUTs();
     void generateLUT();
 	void saveLUTToFile(const std::vector<int>& lut, const std::string& filename);
     std::vector<int> loadLUTFromFile(const std::string& filename, int size);
 	const std::vector<int>& getLUT(int lutNumber) const;
 	void setLUT(int lutNumber, const std::vector<int>& lutData);
+	bool checkLUTFileExists(const std::string& filename);
 
 private:
 	RubiksCube cube;

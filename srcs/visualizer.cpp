@@ -561,8 +561,10 @@ void keyboard(unsigned char key, int x, int y) {
     else if ((key == 's' || key == 'S') && side == UP)
         glutTimerFunc(0, rotateCameraS, 0 );
     else if (key == 13) { //enter
-        parsing(solution);
-        solved = true;
+        if (solved == false) {
+            parsing(solution);
+            solved = true;
+        } else std::cout << "Cube is already solved" << std::endl;
     } else if (key == 27) //escape
         exit(0);
     glutPostRedisplay();

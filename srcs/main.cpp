@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
     table.generateMissingLUTs();
 
     cube.scramble(scramble);
-    cube.printCube();
+    // cube.printCube();
 
     ThistlewaiteSolver solver(cube, table);
     solver.solveCube();

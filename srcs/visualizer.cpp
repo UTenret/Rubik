@@ -307,7 +307,7 @@ void rotationRP(int value) {
 
 void    parsing(std::string moves) {
     int i = 0;
-    int delay = 900;
+    int delay = 750;
     int moveNum = 0;
     while (moves[i] != '\0') {
         if (moves[i] == ' ')
@@ -561,10 +561,11 @@ void keyboard(unsigned char key, int x, int y) {
     else if ((key == 's' || key == 'S') && side == UP)
         glutTimerFunc(0, rotateCameraS, 0 );
     else if (key == 13) { //enter
-        if (solved == false) {
+        if (solved == false && animationActive == NONE) {
             parsing(solution);
             solved = true;
-        } else std::cout << "Cube is already solved" << std::endl;
+        } else if (solved == true) std::cout << CYAN << "Cube is already solved" << RESET << std::endl;
+        else std::cout << RED << "Animation in progress..." << RESET << std::endl;
     } else if (key == 27) //escape
         exit(0);
     glutPostRedisplay();
@@ -602,7 +603,7 @@ void SpecialInput(int key, int x, int y) {
             glutTimerFunc(0, rotateCameraD, 0);
             break;
         case GLUT_KEY_F2:
-            if (solved == true) {
+            if (solved == true && animationActive == NONE) {
                 captureUserInput("Enter length of a scramble: ", [](int length) {
                     std::cout << "Processing..." << std::endl;
                     std::string scramble = generateScramble(length);
@@ -614,7 +615,8 @@ void SpecialInput(int key, int x, int y) {
                     argv = prefix + scramble;
                     lines = (argv.size() / 40) + 1;
                 });
-            } else std::cout << "Cube is already scrambled" << std::endl;
+            } else if (solved == false) std::cout << CYAN << "Cube is already scrambled" << RESET << std::endl;
+            else std::cout << RED << "Animation in progress..." << RESET << std::endl;
             break;
     }
     glutPostRedisplay();

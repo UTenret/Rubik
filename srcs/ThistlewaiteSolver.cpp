@@ -59,6 +59,36 @@
 // 	cube.printCube();
 // }
 
+void printExplanation(int phase)
+{
+	switch (phase){
+		case 0:
+            std::cout << MAGENTA << "===== Phase 1: Edge Orientation =====" << RESET << std::endl;
+			std::cout << WHITE << "During this phase, all 12 edges should be oriented correctly, considering two orientations for each. The orientations of 11 determine the 12th (because every twist either flips 0 or 4 edges, the total edge orientation is always divisible by 2, so only 1/2 of the edge permutation orientations are reachable)." << std::endl;
+            std::cout << WHITE << "Therefore, there are" << CYAN << " 2¹¹ = 2048 " << WHITE << "states total." << std::endl;
+			std::cout << CYAN << "Target subgroup: {F, B, L, R, U, D}" << std::endl;
+			break ;
+		case 1:
+            std::cout << MAGENTA << "===== Phase 2: Top and Bottom Colors =====" << RESET << std::endl;
+			std::cout << WHITE << "During this phase, all M-slice edges should be placed correctly, and corner orientations should be solved. For the M-edges, there are 12C4 combinations: 4 edges and 12 positions, regardless of order. For the corners, the orientations of 7 determine the 8th (because the total orientation of the corners is always divisible by 3, so only 1/3 of the corner orientation permutations are reachable)." << std::endl;
+            std::cout << WHITE << "Therefore, there are" << CYAN << " 12C4 * 3⁷ = 1082565" << WHITE << " states total." << std::endl;
+			std::cout << CYAN << "Target subgroup: {F2, B2, L, R, U, D}" << std::endl;
+			break ;
+		case 2:
+            std::cout << MAGENTA << "===== Phase 3: All Colors Combination =====" << RESET << std::endl;
+			std::cout << WHITE << "During this phase, all edges and all corners should be in their slices/orbits. Tetrad-paired corners create unique pairs, totaling 4 combinations due to 8 corners. This results in 8C2*6C2*4C2 = 2520 elements. For the edges, there are 8C4 combinations due to 8 positions and 4 edges (M-slice already solved). Parity is accounted for, doubling the elements." << std::endl;
+            std::cout << WHITE << "Therefore, there are" << CYAN << " 8C2 * 6C2 * 4C2 * 8C4 * 2 = 352800" << WHITE << " states total." << std::endl;
+			std::cout << CYAN << "Target subgroup: {F2, B2, L2, R2, U, D}" << std::endl;
+			break ;
+		default:
+            std::cout << MAGENTA << "===== Phase 4: Final Solution with Half-Turns =====" << RESET << std::endl;
+			std::cout << WHITE << "For the edges, each slice's 4 edges can be permuted in 4! ways, giving 4!^3 permutations. However, edge parity is fixed, allowing only half of these states. With 10 edges solved, the remaining 2 must also be solved as it's not possible to make just one swap. Similarly, corners have even parity since previous phase, halving the reachable permutations of 4!^2. Additionally, fixed tetrad twists mean 3-cycle twists of corners aren't possible. Thus, only 4!4!/(2*3) = 96 corner permutations are reachable." << std::endl;
+            std::cout << WHITE << "Therefore, there are" << CYAN << " 4!³ / 2 * 96 = 663552" << WHITE << " states total." << std::endl;
+			std::cout << CYAN << "Target subgroup: {F2, B2, L2, R2, U2, D2}" << std::endl;
+			break ;
+	}
+}
+
 void ThistlewaiteSolver::solveCube() {
     std::vector<std::vector<std::string>> solution(4);
 
@@ -73,26 +103,26 @@ void ThistlewaiteSolver::solveCube() {
     iterativeSolve(table.getLUT(3), Group3::moves, Group3::calculateStateIndex, solution[3]);
 
     for (int i = 0; i < solution.size(); i++) {
+        printExplanation(i);
         std::string group = "G" + std::to_string(i) + "-G" + std::to_string(i + 1);
         if (!solution[i].empty()) {
-            std::cout << "Solution found for " << group << " transition: ";
+            std::cout << GREEN << "Phase moves: ";
             for (const auto& move : solution[i]) std::cout << move << " ";
-            std::cout << std::endl;
+            std::cout << std::endl << std::endl;
         } else {
-            std::cout << "Cube already solved for " << group << std::endl;
+            std::cout << GREEN << "Cube already solved for this phase" << std::endl;
         }
     }
 
     int totalMoves = 0;
-    std::cout << "Cube has been solved, full solution: ";
+    std::cout << "===== Full solution =====" << WHITE << std::endl;
     for (const auto& groupSolution : solution) {
         totalMoves += groupSolution.size();
         for (const auto& move : groupSolution) fullSolution += move + " ";
     }
-    std::cout << fullSolution << std::endl;
-    std::cout << "Number of moves: " << totalMoves << std::endl;
-    // WE NEED TO PRUNE MOVES !!! R L L2 R2 is prunable into R' L'
-    cube.printCube();
+    std::cout << fullSolution << GREEN << std::endl;
+    std::cout << "Total moves: " << WHITE << totalMoves << RESET << std::endl;
+    // cube.printCube();
 }
 
 bool ThistlewaiteSolver::isMovePrunable(const std::string& lastMove, const std::string& currentMove) {

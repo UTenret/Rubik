@@ -26,6 +26,7 @@ public:
 	const std::vector<int>& getLUT(int lutNumber) const;
 	void setLUT(int lutNumber, const std::vector<int>& lutData);
 	bool checkLUTFileExists(const std::string& filename);
+	void setFileReadOnly(const std::string& filename);
 
 private:
 	RubiksCube cube;

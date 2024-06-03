@@ -61,6 +61,11 @@ void PruningTable::generateLUT() {
     saveLUTToFile(luts[1], "Database/Thistlewaite/G1.txt");
     saveLUTToFile(luts[2], "Database/Thistlewaite/G2.txt");
     saveLUTToFile(luts[3], "Database/Thistlewaite/G3.txt");
+
+	setFileReadOnly("Database/Thistlewaite/G0.txt");
+    setFileReadOnly("Database/Thistlewaite/G1.txt");
+    setFileReadOnly("Database/Thistlewaite/G2.txt");
+    setFileReadOnly("Database/Thistlewaite/G3.txt");
 }
 
 void PruningTable::generateMissingLUTs() {
@@ -68,21 +73,25 @@ void PruningTable::generateMissingLUTs() {
         std::cout << "Generating LUT for Group 0...\n";
         bfsGenerateLUT(luts[0], Group0::calculateStateIndex, Group0::moves);
         saveLUTToFile(luts[0], "Database/Thistlewaite/G0.txt");
+		setFileReadOnly("Database/Thistlewaite/G0.txt");
     }
     if (!checkLUTFileExists("Database/Thistlewaite/G1.txt")) {
         std::cout << "Generating LUT for Group 1...\n";
         bfsGenerateLUT(luts[1], Group1::calculateStateIndex, Group1::moves);
         saveLUTToFile(luts[1], "Database/Thistlewaite/G1.txt");
+		setFileReadOnly("Database/Thistlewaite/G1.txt");
     }
     if (!checkLUTFileExists("Database/Thistlewaite/G2.txt")) {
         std::cout << "Generating LUT for Group 2...\n";
         bfsGenerateLUT(luts[2], Group2::calculateStateIndex, Group2::moves);
         saveLUTToFile(luts[2], "Database/Thistlewaite/G2.txt");
+		setFileReadOnly("Database/Thistlewaite/G2.txt");
     }
     if (!checkLUTFileExists("Database/Thistlewaite/G3.txt")) {
         std::cout << "Generating LUT for Group 3...\n";
         bfsGenerateLUT(luts[3], Group3::calculateStateIndex, Group3::moves);
         saveLUTToFile(luts[3], "Database/Thistlewaite/G3.txt");
+		setFileReadOnly("Database/Thistlewaite/G3.txt");
     }
 }
 
@@ -139,5 +148,12 @@ void PruningTable::saveLUTToFile(const std::vector<int>& lut, const std::string&
     }
     for (int value : lut) {
         file << value << std::endl;
+    }
+}
+
+void PruningTable::setFileReadOnly(const std::string& filename) {
+    if (chmod(filename.c_str(), S_IRUSR | S_IRGRP | S_IROTH) != 0) {
+        std::cerr << "Error: could not change file permissions for " << filename << std::endl;
+        exit(1);
     }
 }

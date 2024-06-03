@@ -597,18 +597,20 @@ void SpecialInput(int key, int x, int y) {
     (void)y;
     switch(key) {
         case GLUT_KEY_UP:
-            if (side == DOWN)
+            if (side == DOWN && cameraMoves == true)
                 glutTimerFunc(0, rotateCameraW, 0);
             break;
         case GLUT_KEY_DOWN:
-            if (side == UP)
-            glutTimerFunc(0, rotateCameraS, 0 );
+            if (side == UP && cameraMoves == true)
+                glutTimerFunc(0, rotateCameraS, 0 );
             break;
         case GLUT_KEY_LEFT:
-            glutTimerFunc(0, rotateCameraA, 0);
+            if (cameraMoves == true)
+                glutTimerFunc(0, rotateCameraA, 0);
             break;
         case GLUT_KEY_RIGHT:
-            glutTimerFunc(0, rotateCameraD, 0);
+            if (cameraMoves == true)
+                glutTimerFunc(0, rotateCameraD, 0);
             break;
         case GLUT_KEY_F2:
             if (solved == true && animationActive == NONE) {

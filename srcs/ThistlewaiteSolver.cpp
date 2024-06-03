@@ -64,12 +64,10 @@ void ThistlewaiteSolver::solveCube() {
     }
 
     std::vector<std::string> combinedSolution;
-    int totalMoves = 0;
     std::cout << "===== Full solution =====" << WHITE << std::endl;
     for (const auto& groupSolution : solution) {
         combinedSolution.insert(combinedSolution.end(), groupSolution.begin(), groupSolution.end());
     }
-    std::cout << "Number of moves before pruning: " << combinedSolution.size() << std::endl;
 
     std::vector<std::string> simplifiedSolution = simplifySolution(combinedSolution);
     fullSolution.clear();
@@ -77,8 +75,7 @@ void ThistlewaiteSolver::solveCube() {
         fullSolution += move + " ";
     }
     std::cout << fullSolution << GREEN << std::endl;
-    std::cout << "Total moves: " << WHITE << totalMoves << RESET << std::endl;
-    // cube.printCube();
+    std::cout << "Total moves: " << WHITE << simplifiedSolution.size() << RESET << std::endl;
 }
 
 void ThistlewaiteSolver::iterativeSolve(

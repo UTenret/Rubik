@@ -36,6 +36,25 @@ void printUsage() {
     std::cout << "  <scramble> : A valid scramble sequence (e.g., \"U F2 R' D B2 L2\")\n";
 }
 
+std::string    rescramble(std::string result) {
+	std::string initialState = 
+    "BBBBBBBBB"
+    "RRRRRRRRR"
+    "GGGGGGGGG"
+    "OOOOOOOOO"
+    "YYYYYYYYY"
+    "WWWWWWWWW";
+
+	RubiksCube	cube(initialState);
+	PruningTable	table(cube);
+    std::string scramble = result;
+    cube.scramble(scramble);
+    ThistlewaiteSolver	ThistlewaiteSolver(cube, table);
+	ThistlewaiteSolver.solveCube();
+	std::string solution = ThistlewaiteSolver.fullSolution;
+    return solution;
+}
+
 int main(int argc, char* argv[]) {
     std::string initialState = 
     "BBBBBBBBB"  // FRONT: 0 - 8

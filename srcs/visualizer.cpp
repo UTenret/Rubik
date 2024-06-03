@@ -1,8 +1,10 @@
 #include "draw.hpp"
 #include "moves.hpp"
 #include "visualizer.hpp"
+#include "ThistlewaiteSolver.hpp"
 
 float rotationAngle = 0.0f;
+float cameraAngle = 0.0f;
 int animationActive = NONE;
 float cameraX = 7.0f;
 float cameraY = 7.0f;
@@ -11,6 +13,7 @@ bool side = UP;
 std::string solution;
 std::string argv;
 int lines;
+bool solved;
 
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
@@ -62,9 +65,13 @@ void display() {
     info = "use WASD or arrows to inspect the cube";
     glRasterPos2f(0.0f, 3.8f);
     for (char c : info) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
-    info = "use F1 to solve the cube";
+    info = "use F2 to rescramble the cube";
     glRasterPos2f(0.0f, 4.0f);
     for (char c : info) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
+    info = "use enter to solve the cube";
+    glRasterPos2f(0.0f, 4.2f);
+    for (char c : info) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, c);
+
 
     glutSwapBuffers();
 }
@@ -386,28 +393,35 @@ void    parsing(std::string moves) {
     }
 }
 
+void    adjustCoords() {
+    if (cameraX > 0) cameraX = 7.0f;
+    else cameraX = -7.0f;
+    if (cameraY > 0) cameraY = 7.0f;
+    else cameraY = -7.0f;
+    if (cameraZ > 0) cameraZ = 7.0f;
+    else cameraZ = -7.0f;
+}
+
 void rotateCameraA(int value) {
     (void)value;
-    static float angle = 0.0f;
-    const float increment = 2.0f;
-    const float targetAngle = 90.0f;
     
     if (animationActive != NONE && animationActive != CAM_A) {
         glutTimerFunc(16, rotateCameraA, 0);
         return;
     }
 
-    angle += increment;
+    cameraAngle += 2.0f;
     animationActive = CAM_A;
-    if (angle >= targetAngle) {
-        angle = targetAngle;
+    if (cameraAngle >= 90.0f) {
+        cameraAngle = 90.0f;
         animationActive = NONE;
         glutPostRedisplay();
-        angle = 0.0f;
+        cameraAngle = 0.0f;
+        adjustCoords();
         return;
     }
     
-    float radians = (increment * M_PI) / 180.0f;
+    float radians = (2.0f * M_PI) / 180.0f;
     float newCameraX = cameraX * cos(radians) - cameraZ * sin(radians);
     float newCameraZ = cameraX * sin(radians) + cameraZ * cos(radians);
     cameraX = newCameraX;
@@ -419,26 +433,24 @@ void rotateCameraA(int value) {
 
 void rotateCameraD(int value) {
     (void)value;
-    static float angle = 0.0f;
-    const float increment = 2.0f;
-    const float targetAngle = 90.0f;
 
     if (animationActive != NONE && animationActive != CAM_D) {
         glutTimerFunc(16, rotateCameraD, 0);
         return;
     }
 
-    angle += increment;
+    cameraAngle += 2.0f;
     animationActive = CAM_D;
-    if (angle >= targetAngle) {
-        angle = targetAngle;
+    if (cameraAngle >= 90.0f) {
+        cameraAngle = 90.0f;
         animationActive = NONE;
         glutPostRedisplay();
-        angle = 0.0f;
+        cameraAngle = 0.0f;
+        adjustCoords();
         return;
     }
 
-    float radians = (-increment * M_PI) / 180.0f;
+    float radians = (-2.0f * M_PI) / 180.0f;
     float newCameraX = cameraX * cos(radians) - cameraZ * sin(radians);
     float newCameraZ = cameraX * sin(radians) + cameraZ * cos(radians);
     cameraX = newCameraX;
@@ -451,27 +463,25 @@ void rotateCameraD(int value) {
 
 void rotateCameraS(int value) {
     (void)value;
-    static float currentAngle = 0.0f;
-    const float increment = 2.0f;
-    const float targetAngle = 90.0f;
 
     if (animationActive != NONE && animationActive != CAM_W) {
         glutTimerFunc(16, rotateCameraS, 0);
         return;
     }
 
-    currentAngle += increment;
+    cameraAngle += 2.0f;
     animationActive = CAM_W;
-    if (currentAngle >= targetAngle) {
+    if (cameraAngle >= 90.0f) {
         side = DOWN;
-        currentAngle = targetAngle;
+        cameraAngle = 90.0f;
         animationActive = NONE;
         glutPostRedisplay();
-        currentAngle = 0.0f;
+        cameraAngle = 0.0f;
+        adjustCoords();
         return;
     }
 
-    float radians = (increment * M_PI) / 180.0f;
+    float radians = (2.0f * M_PI) / 180.0f;
     if (cameraZ > 0) {
         float newCameraY = cameraY * cos(radians) - cameraZ * sin(radians);
         float newCameraZ = cameraY * sin(radians) + cameraZ * cos(radians);
@@ -490,26 +500,24 @@ void rotateCameraS(int value) {
 
 void rotateCameraW(int value) {
     (void)value;
-    static float currentAngle = 0.0f;
-    const float increment = 2.0f;
-    const float targetAngle = 90.0f;
 
     if (animationActive != NONE && animationActive != CAM_S) {
         glutTimerFunc(16, rotateCameraW, 0);
         return;
     }
 
-    currentAngle += increment;
+    cameraAngle += 2.0f;
     animationActive = CAM_S;
-    if (currentAngle >= targetAngle) {
+    if (cameraAngle >= 90.0f) {
         side = UP;
-        currentAngle = targetAngle;
+        cameraAngle = 90.0f;
         animationActive = NONE;
         glutPostRedisplay();
-        currentAngle = 0.0f;
+        cameraAngle = 0.0f;
+        adjustCoords();
         return;
     }
-    float radians = (-increment * M_PI) / 180.0f;
+    float radians = (-2.0f * M_PI) / 180.0f;
     if (cameraZ > 0) {
         float newCameraY = cameraY * cos(radians) - cameraZ * sin(radians);
         float newCameraZ = cameraY * sin(radians) + cameraZ * cos(radians);
@@ -526,6 +534,20 @@ void rotateCameraW(int value) {
     glutTimerFunc(16, rotateCameraW, 0);
 }
 
+std::string generateScramble(int length) {
+    const std::vector<std::string> moves = {"R", "L", "U", "D", "F", "B"};
+    const std::vector<std::string> modifiers = {"", "'", "2"};
+    std::string scramble;
+
+    srand(time(0));
+    for (int i = 0; i < length; ++i) {
+        std::string move = moves[rand() % moves.size()];
+        std::string modifier = modifiers[rand() % modifiers.size()];
+        scramble += move + modifier + " ";
+    }
+
+    return scramble;
+}
 
 void keyboard(unsigned char key, int x, int y) {
     (void)x;
@@ -538,16 +560,27 @@ void keyboard(unsigned char key, int x, int y) {
         glutTimerFunc(0, rotateCameraW, 0);
     else if ((key == 's' || key == 'S') && side == UP)
         glutTimerFunc(0, rotateCameraS, 0 );
-    else if (key == 27)
+    else if (key == 13) { //enter
+        if (solved == false) {
+            parsing(solution);
+            solved = true;
+        } else std::cout << "Cube is already solved" << std::endl;
+    } else if (key == 27) //escape
         exit(0);
     glutPostRedisplay();
 }
 
-void captureUserInput(const std::string& prompt, std::function<void(const std::string&)> callback) {
-    std::string input;
+void captureUserInput(const std::string& prompt, const std::function<void(int)>& callback) {
     std::cout << prompt;
+    std::string input;
     std::getline(std::cin, input);
-    callback(input);
+    
+    try {
+        int value = std::stoi(input);
+        callback(value);
+    } catch (std::invalid_argument& e) {
+        std::cerr << "Invalid input, please enter a valid integer." << std::endl;
+    }
 }
 
 void SpecialInput(int key, int x, int y) {
@@ -555,9 +588,11 @@ void SpecialInput(int key, int x, int y) {
     (void)y;
     switch(key) {
         case GLUT_KEY_UP:
-            glutTimerFunc(0, rotateCameraW, 0);
+            if (side == DOWN)
+                glutTimerFunc(0, rotateCameraW, 0);
             break;
         case GLUT_KEY_DOWN:
+            if (side == UP)
             glutTimerFunc(0, rotateCameraS, 0 );
             break;
         case GLUT_KEY_LEFT:
@@ -566,19 +601,20 @@ void SpecialInput(int key, int x, int y) {
         case GLUT_KEY_RIGHT:
             glutTimerFunc(0, rotateCameraD, 0);
             break;
-        case GLUT_KEY_F1:
-            parsing(solution);
-            break;
         case GLUT_KEY_F2:
-            captureUserInput("Enter your scramble: ", [](const std::string& input) {
-                std::cout << "Processing..." << std::endl;
-                parsing(input);
-            });
-            break;
-        case GLUT_KEY_F3:
-            cameraX = 7.0f;
-            cameraY = 7.0f;
-            cameraZ = 7.0f;
+            if (solved == true) {
+                captureUserInput("Enter length of a scramble: ", [](int length) {
+                    std::cout << "Processing..." << std::endl;
+                    std::string scramble = generateScramble(length);
+                    std::cout << scramble << std::endl;
+                    parsing(scramble);
+                    solution = rescramble(scramble);
+                    solved = false;
+                    std::string prefix = "scramble: ";
+                    argv = prefix + scramble;
+                    lines = (argv.size() / 40) + 1;
+                });
+            } else std::cout << "Cube is already scrambled" << std::endl;
             break;
     }
     glutPostRedisplay();
@@ -586,6 +622,10 @@ void SpecialInput(int key, int x, int y) {
 
 int visualizer(int ac, char** av, std::string fullSolution) {
     solution = fullSolution;
+    if (ac > 1)
+        argv = av[1];
+    else
+        argv = "";
     glutInit(&ac, av);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(550, 750);
@@ -602,6 +642,7 @@ int visualizer(int ac, char** av, std::string fullSolution) {
         argv = prefix + av[1];
         lines = (argv.size() / 40) + 1;
         parsing(av[1]);
+        solved = false;
     }
     glutMainLoop();
     return 0;

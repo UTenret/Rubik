@@ -28,7 +28,8 @@ public:
 		std::vector<std::string>& solution
 	);
 
-	bool isMovePrunable(const std::string& lastMove, const std::string& currentMove);
+	std::vector<std::string> simplifySolution(const std::vector<std::string>& solution);
+
 
 private:
 

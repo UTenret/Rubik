@@ -114,32 +114,22 @@ void ThistlewaiteSolver::solveCube() {
         }
     }
 
+    std::vector<std::string> combinedSolution;
     int totalMoves = 0;
     std::cout << "===== Full solution =====" << WHITE << std::endl;
     for (const auto& groupSolution : solution) {
-        totalMoves += groupSolution.size();
-        for (const auto& move : groupSolution) fullSolution += move + " ";
+        combinedSolution.insert(combinedSolution.end(), groupSolution.begin(), groupSolution.end());
+    }
+    std::cout << "Number of moves before pruning: " << combinedSolution.size() << std::endl;
+
+    std::vector<std::string> simplifiedSolution = simplifySolution(combinedSolution);
+    fullSolution.clear();
+    for (const auto& move : simplifiedSolution) {
+        fullSolution += move + " ";
     }
     std::cout << fullSolution << GREEN << std::endl;
     std::cout << "Total moves: " << WHITE << totalMoves << RESET << std::endl;
     // cube.printCube();
-}
-
-bool ThistlewaiteSolver::isMovePrunable(const std::string& lastMove, const std::string& currentMove) {
-    if (lastMove.front() == currentMove.front()) {
-        if ((lastMove == "U" && currentMove == "U'") || (lastMove == "U'" && currentMove == "U") ||
-            (lastMove == "R" && currentMove == "R'") || (lastMove == "R'" && currentMove == "R") ||
-            (lastMove == "F" && currentMove == "F'") || (lastMove == "F'" && currentMove == "F") ||
-            (lastMove == "D" && currentMove == "D'") || (lastMove == "D'" && currentMove == "D") ||
-            (lastMove == "L" && currentMove == "L'") || (lastMove == "L'" && currentMove == "L") ||
-            (lastMove == "B" && currentMove == "B'") || (lastMove == "B'" && currentMove == "B")) {
-            return true;
-        }
-        else if (lastMove == currentMove) {
-            return true;
-        }
-    }
-    return false;
 }
 
 void ThistlewaiteSolver::iterativeSolve(
@@ -171,4 +161,45 @@ void ThistlewaiteSolver::iterativeSolve(
             }
         }
     }
+}
+
+std::vector<std::string> ThistlewaiteSolver::simplifySolution(const std::vector<std::string>& solution) {
+    std::vector<std::string> simplified;
+
+    for (const auto& move : solution) {
+        if (!simplified.empty()) {
+            std::string lastMove = simplified.back();
+
+            if (lastMove.front() == move.front()) {
+                char face = lastMove.front();
+                int lastCount = (lastMove.length() == 1) ? 1 : (lastMove[1] == '2' ? 2 : -1);
+                int currentCount = (move.length() == 1) ? 1 : (move[1] == '2' ? 2 : -1);
+                int newCount = lastCount + currentCount;
+
+                if (newCount % 4 == 0) {
+                    simplified.pop_back();
+                    continue;
+                }
+
+                if (newCount % 4 == 2) {
+                    simplified.back() = face + std::string("2");
+                    continue;
+                }
+
+                if (newCount % 4 == 1) {
+                    simplified.back() = face + std::string("");
+                    continue;
+                }
+
+                if (newCount % 4 == 3) {
+                    simplified.back() = face + std::string("'");
+                    continue;
+                }
+            }
+        }
+
+        simplified.push_back(move);
+    }
+
+    return simplified;
 }

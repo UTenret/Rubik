@@ -307,7 +307,7 @@ void rotationRP(int value) {
 
 void    parsing(std::string moves) {
     int i = 0;
-    int delay = 750;
+    int delay = 800;
     int moveNum = 0;
     while (moves[i] != '\0') {
         if (moves[i] == ' ')

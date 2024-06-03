@@ -1,4 +1,8 @@
 #include "PruningTable.hpp"
+#include "Group0.hpp"
+#include "Group1.hpp"
+#include "Group2.hpp"
+#include "Group3.hpp"
 
 PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts{
           std::vector<int>(G0_N_SOLUTIONS, -1),
@@ -7,11 +11,10 @@ PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts{
           std::vector<int>(G3_N_SOLUTIONS, -1)
       } {}
 
-/*
-the queue holds cube state as a string and the distance to solved
-visited holds the edges orientations because we dont care about anything else for G0->G1
-
-*/
+bool PruningTable::checkLUTFileExists(const std::string& filename) {
+    struct stat buffer;
+    return (stat(filename.c_str(), &buffer) == 0);
+}
 
 void PruningTable::bfsGenerateLUT(std::vector<int>& lut,
 									CalculateIndexFunc calculateIndex,
@@ -49,15 +52,47 @@ void PruningTable::bfsGenerateLUT(std::vector<int>& lut,
 }
 
 void PruningTable::generateLUT() {
-	bfsGenerateLUT(luts[0], RubiksCube::calculateStateIndexG0, group0Moves);
-	bfsGenerateLUT(luts[1], RubiksCube::calculateStateIndexG1, group1Moves);
-	bfsGenerateLUT(luts[2], RubiksCube::calculateStateIndexG2, group2Moves);
-	bfsGenerateLUT(luts[3], RubiksCube::calculateStateIndexG3, group3Moves);
+	bfsGenerateLUT(luts[0], Group0::calculateStateIndex, group0Moves);
+	bfsGenerateLUT(luts[1], Group1::calculateStateIndex, group1Moves);
+	bfsGenerateLUT(luts[2], Group2::calculateStateIndex, group2Moves);
+	bfsGenerateLUT(luts[3], Group3::calculateStateIndex, group3Moves);
 
 	saveLUTToFile(luts[0], "Database/Thistlewaite/G0.txt");
     saveLUTToFile(luts[1], "Database/Thistlewaite/G1.txt");
     saveLUTToFile(luts[2], "Database/Thistlewaite/G2.txt");
     saveLUTToFile(luts[3], "Database/Thistlewaite/G3.txt");
+
+	setFileReadOnly("Database/Thistlewaite/G0.txt");
+    setFileReadOnly("Database/Thistlewaite/G1.txt");
+    setFileReadOnly("Database/Thistlewaite/G2.txt");
+    setFileReadOnly("Database/Thistlewaite/G3.txt");
+}
+
+void PruningTable::generateMissingLUTs() {
+    if (!checkLUTFileExists("Database/Thistlewaite/G0.txt")) {
+        std::cout << "Generating LUT for Group 0...\n";
+        bfsGenerateLUT(luts[0], Group0::calculateStateIndex, Group0::moves);
+        saveLUTToFile(luts[0], "Database/Thistlewaite/G0.txt");
+		setFileReadOnly("Database/Thistlewaite/G0.txt");
+    }
+    if (!checkLUTFileExists("Database/Thistlewaite/G1.txt")) {
+        std::cout << "Generating LUT for Group 1...\n";
+        bfsGenerateLUT(luts[1], Group1::calculateStateIndex, Group1::moves);
+        saveLUTToFile(luts[1], "Database/Thistlewaite/G1.txt");
+		setFileReadOnly("Database/Thistlewaite/G1.txt");
+    }
+    if (!checkLUTFileExists("Database/Thistlewaite/G2.txt")) {
+        std::cout << "Generating LUT for Group 2...\n";
+        bfsGenerateLUT(luts[2], Group2::calculateStateIndex, Group2::moves);
+        saveLUTToFile(luts[2], "Database/Thistlewaite/G2.txt");
+		setFileReadOnly("Database/Thistlewaite/G2.txt");
+    }
+    if (!checkLUTFileExists("Database/Thistlewaite/G3.txt")) {
+        std::cout << "Generating LUT for Group 3...\n";
+        bfsGenerateLUT(luts[3], Group3::calculateStateIndex, Group3::moves);
+        saveLUTToFile(luts[3], "Database/Thistlewaite/G3.txt");
+		setFileReadOnly("Database/Thistlewaite/G3.txt");
+    }
 }
 
 std::vector<int> PruningTable::loadLUTFromFile(const std::string& filename, int size) {
@@ -113,5 +148,12 @@ void PruningTable::saveLUTToFile(const std::vector<int>& lut, const std::string&
     }
     for (int value : lut) {
         file << value << std::endl;
+    }
+}
+
+void PruningTable::setFileReadOnly(const std::string& filename) {
+    if (chmod(filename.c_str(), S_IRUSR | S_IRGRP | S_IROTH) != 0) {
+        std::cerr << "Error: could not change file permissions for " << filename << std::endl;
+        exit(1);
     }
 }

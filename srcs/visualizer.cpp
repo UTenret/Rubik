@@ -14,6 +14,7 @@ std::string solution;
 std::string argv;
 int lines;
 bool solved;
+bool cameraMoves;
 
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
@@ -305,10 +306,16 @@ void rotationRP(int value) {
     glutTimerFunc(16, rotationRP, 0);
 }
 
+void    cameraDelay(int value) {
+    (void)value;
+    cameraMoves = true;
+}
+
 void    parsing(std::string moves) {
     int i = 0;
     int delay = 800;
     int moveNum = 0;
+    cameraMoves = false;
     while (moves[i] != '\0') {
         if (moves[i] == ' ')
             i++;
@@ -391,6 +398,7 @@ void    parsing(std::string moves) {
             i++;
         }
     }
+    glutTimerFunc(delay * moveNum++, cameraDelay, 0);
 }
 
 void    adjustCoords() {
@@ -552,13 +560,13 @@ std::string generateScramble(int length) {
 void keyboard(unsigned char key, int x, int y) {
     (void)x;
     (void)y;
-    if (key == 'a' || key == 'A')
+    if ((key == 'a' || key == 'A') && cameraMoves == true)
         glutTimerFunc(0, rotateCameraA, 0);
-    else if (key == 'd' || key == 'D')
+    else if ((key == 'd' || key == 'D') && cameraMoves == true)
         glutTimerFunc(0, rotateCameraD, 0);
-    else if ((key == 'w' || key == 'W') && side == DOWN)
+    else if (((key == 'w' || key == 'W') && cameraMoves == true) && side == DOWN)
         glutTimerFunc(0, rotateCameraW, 0);
-    else if ((key == 's' || key == 'S') && side == UP)
+    else if (((key == 's' || key == 'S') && cameraMoves == true) && side == UP)
         glutTimerFunc(0, rotateCameraS, 0 );
     else if (key == 13) { //enter
         if (solved == false && animationActive == NONE) {
@@ -624,6 +632,7 @@ void SpecialInput(int key, int x, int y) {
 
 int visualizer(int ac, char** av, std::string fullSolution) {
     solution = fullSolution;
+    cameraMoves = false;
     if (ac > 1)
         argv = av[1];
     else

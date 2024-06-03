@@ -7,61 +7,8 @@
 // can improve by directly identifying which group this belongs to and not loading unecessary
 // luts or useless functions calls, same thing if group0 solves the cube for example
 // + symmetry
-
-// void ThistlewaiteSolver::solveCube() {
-// 	std::vector<std::vector<std::string>> solution(4);
-
-// 	table.setLUT(0, table.loadLUTFromFile("Database/Thistlewaite/G0.txt", G0_N_SOLUTIONS));
-// 	table.setLUT(1, table.loadLUTFromFile("Database/Thistlewaite/G1.txt", G1_N_SOLUTIONS));
-// 	table.setLUT(2, table.loadLUTFromFile("Database/Thistlewaite/G2.txt", G2_N_SOLUTIONS));
-// 	table.setLUT(3, table.loadLUTFromFile("Database/Thistlewaite/G3.txt", G3_N_SOLUTIONS));
-
-// 	iterativeSolve(table.getLUT(0),
-// 					group0Moves,
-// 					  RubiksCube::calculateStateIndexG0,
-// 					   solution[0]);
-	
-// 	iterativeSolve(table.getLUT(1),
-// 					group1Moves,
-// 					  RubiksCube::calculateStateIndexG1,
-// 					   solution[1]);
-
-// 	iterativeSolve(table.getLUT(2),
-// 					group2Moves,
-// 					  RubiksCube::calculateStateIndexG2,
-// 					   solution[2]);
-
-// 	iterativeSolve(table.getLUT(3),
-// 					group3Moves,
-// 					  RubiksCube::calculateStateIndexG3,
-// 					   solution[3]);
-// 	for (int i = 0; i < solution.size(); i++) {
-// 		std::string group = "G" + std::to_string(i) + "-G" + std::to_string(i+1);
-// 		if (!solution[i].empty()) {
-// 			std::cout << "Solution found for " << group << " transition: ";
-// 			for (const auto& move : solution[i]) std::cout << move << " ";
-// 			std::cout << std::endl;
-// 			// std::cout << std::endl << "After " << group << std::endl;
-// 			// cube.printCube(); if I print here it will always be solved as cube has been solved
-// 			// still need group visu but need to think about it
-// 		}
-// 		else std::cout << "Cube already solved for " << group << std::endl;
-// 	}
-// 	int totalMoves = 0;
-// 	std::cout << "Cube has been solved, full solution: ";
-// 	for (const auto& groupSolution : solution) {
-// 		totalMoves += groupSolution.size();
-// 		for (const auto& move : groupSolution) fullSolution += move + " ";
-// 	}
-// 	std::cout << fullSolution << std::endl;
-// 	std::cout << "Number of moves: " << totalMoves << std::endl;
-// 	// WE NEED TO PRUNE MOVES !!! R L L2 R2 is prunable into R' L'
-// 	cube.printCube();
-// }
-
 void ThistlewaiteSolver::solveCube() {
     std::vector<std::vector<std::string>> solution(4);
-    std::string fullSolution;
 
     table.setLUT(0, table.loadLUTFromFile("Database/Thistlewaite/G0.txt", G0_N_SOLUTIONS));
     table.setLUT(1, table.loadLUTFromFile("Database/Thistlewaite/G1.txt", G1_N_SOLUTIONS));
@@ -84,33 +31,22 @@ void ThistlewaiteSolver::solveCube() {
         }
     }
 
-    int totalMoves = 0;
-    std::cout << "Cube has been solved, full solution: ";
+    std::vector<std::string> combinedSolution;
     for (const auto& groupSolution : solution) {
-        totalMoves += groupSolution.size();
-        for (const auto& move : groupSolution) fullSolution += move + " ";
+        combinedSolution.insert(combinedSolution.end(), groupSolution.begin(), groupSolution.end());
     }
-    std::cout << fullSolution << std::endl;
-    std::cout << "Number of moves: " << totalMoves << std::endl;
-    // WE NEED TO PRUNE MOVES !!! R L L2 R2 is prunable into R' L'
-    cube.printCube();
-}
+    std::cout << "Number of moves before pruning: " << combinedSolution.size() << std::endl;
 
-bool ThistlewaiteSolver::isMovePrunable(const std::string& lastMove, const std::string& currentMove) {
-    if (lastMove.front() == currentMove.front()) {
-        if ((lastMove == "U" && currentMove == "U'") || (lastMove == "U'" && currentMove == "U") ||
-            (lastMove == "R" && currentMove == "R'") || (lastMove == "R'" && currentMove == "R") ||
-            (lastMove == "F" && currentMove == "F'") || (lastMove == "F'" && currentMove == "F") ||
-            (lastMove == "D" && currentMove == "D'") || (lastMove == "D'" && currentMove == "D") ||
-            (lastMove == "L" && currentMove == "L'") || (lastMove == "L'" && currentMove == "L") ||
-            (lastMove == "B" && currentMove == "B'") || (lastMove == "B'" && currentMove == "B")) {
-            return true;
-        }
-        else if (lastMove == currentMove) {
-            return true;
-        }
+    std::vector<std::string> simplifiedSolution = simplifySolution(combinedSolution);
+    fullSolution.clear();
+    for (const auto& move : simplifiedSolution) {
+        fullSolution += move + " ";
     }
-    return false;
+
+    std::cout << "Cube has been solved, full solution: " << fullSolution << std::endl;
+    std::cout << "Number of moves: " << simplifiedSolution.size() << std::endl;
+
+    cube.printCube();
 }
 
 void ThistlewaiteSolver::iterativeSolve(
@@ -142,4 +78,45 @@ void ThistlewaiteSolver::iterativeSolve(
             }
         }
     }
+}
+
+std::vector<std::string> ThistlewaiteSolver::simplifySolution(const std::vector<std::string>& solution) {
+    std::vector<std::string> simplified;
+
+    for (const auto& move : solution) {
+        if (!simplified.empty()) {
+            std::string lastMove = simplified.back();
+
+            if (lastMove.front() == move.front()) {
+                char face = lastMove.front();
+                int lastCount = (lastMove.length() == 1) ? 1 : (lastMove[1] == '2' ? 2 : -1);
+                int currentCount = (move.length() == 1) ? 1 : (move[1] == '2' ? 2 : -1);
+                int newCount = lastCount + currentCount;
+
+                if (newCount % 4 == 0) {
+                    simplified.pop_back();
+                    continue;
+                }
+
+                if (newCount % 4 == 2) {
+                    simplified.back() = face + std::string("2");
+                    continue;
+                }
+
+                if (newCount % 4 == 1) {
+                    simplified.back() = face + std::string("");
+                    continue;
+                }
+
+                if (newCount % 4 == 3) {
+                    simplified.back() = face + std::string("'");
+                    continue;
+                }
+            }
+        }
+
+        simplified.push_back(move);
+    }
+
+    return simplified;
 }

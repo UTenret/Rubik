@@ -16,7 +16,8 @@ std::vector<std::string> splitString(const std::string& str, char delimiter = ' 
 }
 
 bool isValidMove(const std::string& move) {
-    static const std::regex moveRegex("^(U|D|L|R|F|B|U'|D'|L'|R'|F'|B'|U2|D2|L2|F2|B2)$");
+    static const std::regex moveRegex("^(U|D|L|R|F|B|U'|D'|L'|R'|F'|B'|U2|D2|L2|F2|B2|R2)$");
+	std::cout << "move: " << move << std::endl;
     return std::regex_match(move, moveRegex);
 }
 

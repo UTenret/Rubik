@@ -51,7 +51,7 @@ HEADER          += visualizer.hpp
 ###########################################################
 #### COMPILATION
 
-CC              = c++
+CC              = @c++
 CFLAGS          += -Wall
 CFLAGS          += -Wextra
 # CFLAGS         += -Werror

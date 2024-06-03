@@ -27,3 +27,5 @@ private:
 	RubiksCube cube;
 	PruningTable table;
 };
+
+std::string    rescramble(std::string result);

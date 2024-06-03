@@ -61,7 +61,6 @@
 
 void ThistlewaiteSolver::solveCube() {
     std::vector<std::vector<std::string>> solution(4);
-    std::string fullSolution;
 
     table.setLUT(0, table.loadLUTFromFile("Database/Thistlewaite/G0.txt", G0_N_SOLUTIONS));
     table.setLUT(1, table.loadLUTFromFile("Database/Thistlewaite/G1.txt", G1_N_SOLUTIONS));

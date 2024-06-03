@@ -1,4 +1,8 @@
 #include "PruningTable.hpp"
+#include "Group0.hpp"
+#include "Group1.hpp"
+#include "Group2.hpp"
+#include "Group3.hpp"
 
 PruningTable::PruningTable(const RubiksCube& cube) : cube(cube), luts{
           std::vector<int>(G0_N_SOLUTIONS, -1),
@@ -49,10 +53,10 @@ void PruningTable::bfsGenerateLUT(std::vector<int>& lut,
 }
 
 void PruningTable::generateLUT() {
-	bfsGenerateLUT(luts[0], RubiksCube::calculateStateIndexG0, group0Moves);
-	bfsGenerateLUT(luts[1], RubiksCube::calculateStateIndexG1, group1Moves);
-	bfsGenerateLUT(luts[2], RubiksCube::calculateStateIndexG2, group2Moves);
-	bfsGenerateLUT(luts[3], RubiksCube::calculateStateIndexG3, group3Moves);
+	bfsGenerateLUT(luts[0], Group0::calculateStateIndex, group0Moves);
+	bfsGenerateLUT(luts[1], Group1::calculateStateIndex, group1Moves);
+	bfsGenerateLUT(luts[2], Group2::calculateStateIndex, group2Moves);
+	bfsGenerateLUT(luts[3], Group3::calculateStateIndex, group3Moves);
 
 	saveLUTToFile(luts[0], "Database/Thistlewaite/G0.txt");
     saveLUTToFile(luts[1], "Database/Thistlewaite/G1.txt");

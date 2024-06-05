@@ -80,7 +80,7 @@ int Group2::calculateCornerIndex(const std::string& state) {
             if ((sPair.first == rPair.first && sPair.second == rPair.second) ||
                 (sPair.first == rPair.second && sPair.second == rPair.first)) {
                 rank += r * bases[n];
-                break; // Found the match, stop searching
+                break;
             }
         }
 

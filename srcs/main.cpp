@@ -2,6 +2,7 @@
 #include "ThistlewaiteSolver.hpp"
 #include "visualizer.hpp"
 #include <regex>
+#include <algorithm>
 
 std::vector<std::string> splitString(const std::string& str, char delimiter = ' ') {
     std::vector<std::string> tokens;
@@ -31,12 +32,13 @@ bool isValidScramble(const std::string& scramble) {
 }
 
 void printUsage() {
-    std::cout << "Usage: ./RubiksCubeSolver <scramble>\n";
+    std::cout << "Usage: ./RubiksCubeSolver <scramble> [--novisualizer]\n";
     std::cout << "  <scramble> : A valid scramble sequence (e.g., \"U F2 R' D B2 L2\")\n";
+    std::cout << "  [--novisualizer] : Optional flag to run without the visualizer\n";
 }
 
-std::string    rescramble(std::string result) {
-	std::string initialState = 
+std::string rescramble(std::string result) {
+    std::string initialState = 
     "BBBBBBBBB"
     "RRRRRRRRR"
     "GGGGGGGGG"
@@ -44,13 +46,13 @@ std::string    rescramble(std::string result) {
     "YYYYYYYYY"
     "WWWWWWWWW";
 
-	RubiksCube	cube(initialState);
-	PruningTable	table(cube);
+    RubiksCube cube(initialState);
+    PruningTable table(cube);
     std::string scramble = result;
     cube.scramble(scramble);
-    ThistlewaiteSolver	ThistlewaiteSolver(cube, table);
-	ThistlewaiteSolver.solveCube();
-	std::string solution = ThistlewaiteSolver.fullSolution;
+    ThistlewaiteSolver solver(cube, table);
+    solver.solveCube();
+    std::string solution = solver.fullSolution;
     return solution;
 }
 
@@ -63,13 +65,27 @@ int main(int argc, char* argv[]) {
     "YYYYYYYYY"  // UP: 36 - 44
     "WWWWWWWWW"; // DOWN: 45 - 53
 
-    if (argc != 2) {
+    bool useVisualizer = true;
+
+    if (argc < 2 || argc > 3) {
         std::cout << "Error: Invalid number of parameters.\n";
         printUsage();
         return 1;
     }
 
     std::string scramble = argv[1];
+    if (argc == 3) {
+        std::string option = argv[2];
+        std::transform(option.begin(), option.end(), option.begin(), ::tolower);
+        if (option == "--novisualizer") {
+            useVisualizer = false;
+        } else {
+            std::cout << "Error: Invalid option.\n";
+            printUsage();
+            return 1;
+        }
+    }
+
     if (!isValidScramble(scramble)) {
         std::cout << "Error: Invalid scramble sequence.\n";
         printUsage();
@@ -82,13 +98,22 @@ int main(int argc, char* argv[]) {
     table.generateMissingLUTs();
 
     cube.scramble(scramble);
-    // cube.printCube();
 
     ThistlewaiteSolver solver(cube, table);
     solver.solveCube();
 
     std::string solution = solver.fullSolution;
-    visualizer(argc, argv, solution);
+
+    std::vector<std::string> moves = splitString(solution);
+    for (const auto& move : moves) {
+        cube.applyMove(move);
+    }
+
+    if (useVisualizer) {
+        visualizer(argc, argv, solution);
+    } else {
+    	cube.printCube();
+    }
 
     return 0;
 }

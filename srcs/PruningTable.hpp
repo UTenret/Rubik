@@ -23,8 +23,8 @@ public:
     void generateLUT();
 	void saveLUTToFile(const std::vector<int>& lut, const std::string& filename);
     std::vector<int> loadLUTFromFile(const std::string& filename, int size);
-	const std::vector<int>& getLUT(int lutNumber) const;
-	void setLUT(int lutNumber, const std::vector<int>& lutData);
+	const std::vector<int>& getLUT(unsigned long lutNumber) const;
+	void setLUT(unsigned long lutNumber, const std::vector<int>& lutData);
 	bool checkLUTFileExists(const std::string& filename);
 	void setFileReadOnly(const std::string& filename);
 

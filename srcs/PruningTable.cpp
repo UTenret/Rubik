@@ -108,7 +108,7 @@ std::vector<int> PruningTable::loadLUTFromFile(const std::string& filename, int 
     return loadedLUT;
 }
 
-const std::vector<int>& PruningTable::getLUT(int lutNumber) const {
+const std::vector<int>& PruningTable::getLUT(unsigned long lutNumber) const {
 	if (lutNumber < 0 || lutNumber > luts.size()) {
 		std::cerr << "we need an error message here\n";
 		exit(1);
@@ -130,7 +130,7 @@ const std::vector<int>& PruningTable::getLUT(int lutNumber) const {
 	exit(1);
 }
 
-void PruningTable::setLUT(int lutNumber, const std::vector<int>& lutData) {
+void PruningTable::setLUT(unsigned long lutNumber, const std::vector<int>& lutData) {
     if (lutNumber < 0 || lutNumber > luts.size()) {
         throw std::out_of_range("LUT number out of range.");
     }

@@ -71,7 +71,6 @@ int Group2::calculateCornerIndex(const std::string& state) {
     unsigned numRemaining = 28;
 
     for (unsigned n = 0; n < 3; ++n) {
-        unsigned remainingInd = 0;
         const auto& sPair = cornerPairs[n];
 
         for (unsigned r = 0; r < numRemaining; ++r) {
@@ -99,8 +98,8 @@ int Group2::calculateCornerIndex(const std::string& state) {
 
 int Group2::calculateParity(const std::vector<int>& permutation) {
 	int parity = 0;
-	for (int i = 0; i < permutation.size(); ++i) {
-		for (int j = i + 1; j < permutation.size(); ++j) {
+	for (unsigned long i = 0; i < permutation.size(); ++i) {
+		for (unsigned long j = i + 1; j < permutation.size(); ++j) {
 			parity ^= permutation[i] < permutation[j];
 		}
 	}

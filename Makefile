@@ -54,7 +54,7 @@ HEADER          += visualizer.hpp
 CC              = @c++
 CFLAGS          += -Wall
 CFLAGS          += -Wextra
-# CFLAGS         += -Werror
+CFLAGS         += -Werror
 CFLAGS          += -std=c++17
 CFLAGS          += -Isrcs
 CFLAGS          += -Isrcs/ThistlewaiteGroups

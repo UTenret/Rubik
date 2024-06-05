@@ -51,7 +51,7 @@ void ThistlewaiteSolver::solveCube() {
     iterativeSolve(table.getLUT(2), Group2::moves, Group2::calculateStateIndex, solution[2]);
     iterativeSolve(table.getLUT(3), Group3::moves, Group3::calculateStateIndex, solution[3]);
 
-    for (int i = 0; i < solution.size(); i++) {
+    for (unsigned long i = 0; i < solution.size(); i++) {
         printExplanation(i);
         std::string group = "G" + std::to_string(i) + "-G" + std::to_string(i + 1);
         if (!solution[i].empty()) {

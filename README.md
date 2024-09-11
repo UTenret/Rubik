@@ -22,5 +22,5 @@ Run the solver with a valid scramble sequence. Optionally, you can disable the v
 ```
 
 ## Parameters:
-<scramble>: A valid scramble sequence (e.g., "U F2 R' D B2 L2")
+A valid scramble sequence (e.g., "U F2 R' D B2 L2").
 [--novisualizer]: (Optional) Disable the 3D visualizer.
